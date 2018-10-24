@@ -1,4 +1,4 @@
-# FlyINN
+# FlyInn
 
 Intermodal mobility app for a sharing economy.
 
