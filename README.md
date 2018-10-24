@@ -1,6 +1,5 @@
 # FlyInn
 
-## Product vision
 
 Remote control and screen sharing for Android devices with a focus on easy
 pairing and usage on shared third-party hardware.
