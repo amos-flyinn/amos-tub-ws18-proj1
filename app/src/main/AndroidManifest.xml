@@ -23,12 +23,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WifiP2PActivity">
+
+        <activity android:name=".WifiP2PActivity"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
+            android:label="Searching Peer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".MainActivity">
+
         </activity>
     </application>
 

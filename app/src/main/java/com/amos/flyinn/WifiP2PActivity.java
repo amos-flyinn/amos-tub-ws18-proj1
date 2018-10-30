@@ -3,16 +3,24 @@ package com.amos.flyinn;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.amos.flyinn.wifimanager.WifiReceiverP2P;
 
 import java.lang.reflect.Array;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,24 +49,55 @@ public class WifiP2PActivity extends ListActivity {
         // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
+        this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        this.mChannel = mManager.initialize(this, getMainLooper(), null);
 
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+        this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
+                Toast.makeText(WifiP2PActivity.this,"Listening to Peers", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onFailure(int i) {
-
+                Toast.makeText(WifiP2PActivity.this,"Error listening to Peers", Toast.LENGTH_SHORT).show();
             }
         });
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,this.nameOfPeers);
         setListAdapter(adapter);
 
+
+
+    }
+
+
+
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        WifiP2pDevice selectedDevice = this.listOfPeers.get(position);
+        Toast.makeText(this,"Selected device was : " + selectedDevice.deviceName, Toast.LENGTH_SHORT).show();
+        this.connectToPeer(selectedDevice);
+    }
+
+    private void connectToPeer(WifiP2pDevice deviceToConnect){
+        WifiP2pConfig newConfigWifi = new WifiP2pConfig();
+        newConfigWifi.deviceAddress = deviceToConnect.deviceAddress;
+
+        this.mManager.connect(mChannel, newConfigWifi, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(WifiP2PActivity.this,"Connection Successfull", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Toast.makeText(WifiP2PActivity.this,"Error connecting to device!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void setEnableWifi(boolean enableWifi) {
@@ -82,6 +121,8 @@ public class WifiP2PActivity extends ListActivity {
         }
 
         return nameOfDevices;
+
+
 
     }
 
