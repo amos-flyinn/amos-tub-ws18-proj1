@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.amos.flyinn.WifiP2PActivity;
 
@@ -15,12 +17,14 @@ public class WifiReceiverP2P extends BroadcastReceiver {
     private WifiP2pManager.Channel mChannel;
     private WifiP2PActivity activity;
     private PeersListenerService servicePeers;
+    private WifiConnectionService connectionService;
     public WifiReceiverP2P(WifiP2pManager manager, WifiP2pManager.Channel channel , Activity activity)
     {
         this.mManager = manager;
         this.mChannel = channel;
         this.activity = (WifiP2PActivity)activity;
         this.servicePeers = new PeersListenerService(this.activity);
+        this.connectionService = new WifiConnectionService(this.activity);
     }
 
 
@@ -47,6 +51,19 @@ public class WifiReceiverP2P extends BroadcastReceiver {
 
             // Connection state changed! We should probably do something about
             // that.
+            if(mManager != null)
+            {
+                NetworkInfo infoNet = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+                if(infoNet.isConnected())
+                {
+                    mManager.requestConnectionInfo(mChannel,this.connectionService);
+                }
+
+
+            }
+
+
             Log.d("WifiReceiverP2P","Connection Changed Action");
 
             if (mManager != null) {
