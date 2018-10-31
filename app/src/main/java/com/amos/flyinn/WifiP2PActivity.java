@@ -68,8 +68,6 @@ public class WifiP2PActivity extends ListActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,this.nameOfPeers);
         setListAdapter(adapter);
 
-
-
     }
 
 
@@ -119,11 +117,7 @@ public class WifiP2PActivity extends ListActivity {
         for (WifiP2pDevice device : devices) {
             nameOfDevices.add(device.deviceName);
         }
-
         return nameOfDevices;
-
-
-
     }
 
 

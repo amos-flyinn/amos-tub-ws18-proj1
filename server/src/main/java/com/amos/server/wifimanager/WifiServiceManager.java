@@ -1,4 +1,4 @@
-package com.amos.flyinn.wifimanager;
+package com.amos.server.wifimanager;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -7,23 +7,20 @@ import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.amos.flyinn.WifiP2PActivity;
+import com.amos.server.P2PActivityServer;
 
-public class WifiReceiverP2P extends BroadcastReceiver {
-
+public class WifiServiceManager extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private WifiP2PActivity activity;
-    private PeersListenerService servicePeers;
+    private P2PActivityServer activity;
     private WifiConnectionService connectionService;
-    public WifiReceiverP2P(WifiP2pManager manager, WifiP2pManager.Channel channel , Activity activity)
+
+    public WifiServiceManager(WifiP2pManager manager, WifiP2pManager.Channel channel , Activity activity)
     {
         this.mManager = manager;
         this.mChannel = channel;
-        this.activity = (WifiP2PActivity)activity;
-        this.servicePeers = new PeersListenerService(this.activity);
+        this.activity = (P2PActivityServer)activity;
         this.connectionService = new WifiConnectionService(this.activity);
     }
 
@@ -46,14 +43,13 @@ public class WifiReceiverP2P extends BroadcastReceiver {
             // The peer list has changed! We should probably do something about
             // that.
             Log.d("WifiReceiverP2P","Peers Changed Action");
-            if (mManager != null) {
-                mManager.requestPeers(mChannel, servicePeers);
-            }
+
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 
             // Connection state changed! We should probably do something about
             // that.
+
             if(mManager != null)
             {
                 NetworkInfo infoNet = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
@@ -71,5 +67,6 @@ public class WifiReceiverP2P extends BroadcastReceiver {
             Log.d("WifiReceiverP2P","This Device Changed Action");
         }
     }
+
 
 }
