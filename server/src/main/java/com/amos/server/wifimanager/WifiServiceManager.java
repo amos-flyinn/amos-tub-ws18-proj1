@@ -15,13 +15,14 @@ public class WifiServiceManager extends BroadcastReceiver {
     private WifiP2pManager.Channel mChannel;
     private P2PActivityServer activity;
     private WifiConnectionService connectionService;
-
+    private PeersListenerService servicePeers;
     public WifiServiceManager(WifiP2pManager manager, WifiP2pManager.Channel channel , Activity activity)
     {
         this.mManager = manager;
         this.mChannel = channel;
         this.activity = (P2PActivityServer)activity;
-        this.connectionService = new WifiConnectionService(this.activity);
+        this.connectionService = new WifiConnectionService(this.activity,mManager,mChannel);
+        this.servicePeers = new PeersListenerService(this.activity);
     }
 
 
@@ -42,8 +43,6 @@ public class WifiServiceManager extends BroadcastReceiver {
 
             // The peer list has changed! We should probably do something about
             // that.
-            Log.d("WifiReceiverP2P","Peers Changed Action");
-
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 

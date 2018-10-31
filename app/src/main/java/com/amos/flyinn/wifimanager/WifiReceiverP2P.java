@@ -24,7 +24,7 @@ public class WifiReceiverP2P extends BroadcastReceiver {
         this.mChannel = channel;
         this.activity = (WifiP2PActivity)activity;
         this.servicePeers = new PeersListenerService(this.activity);
-        this.connectionService = new WifiConnectionService(this.activity);
+        this.connectionService = new WifiConnectionService(this.activity,this.mManager,this.mChannel);
     }
 
 
