@@ -1,4 +1,4 @@
-package com.amos.flyinn.wifimanager;
+package com.amos.server.wifimanager;
 
 import android.app.Activity;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -6,7 +6,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.amos.flyinn.WifiP2PActivity;
+import com.amos.server.P2PActivityServer;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -15,10 +15,10 @@ import java.util.Enumeration;
 
 public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
-    private WifiP2PActivity activity;
+    private P2PActivityServer activity;
 
     public WifiConnectionService(Activity activity) {
-       this.activity = (WifiP2PActivity)activity;
+       this.activity = (P2PActivityServer)activity;
     }
 
     @Override
