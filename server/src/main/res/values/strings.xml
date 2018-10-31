@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">server</string>
+    <string name="title_activity_event_grab_demo">EventGrabDemo</string>
 </resources>
