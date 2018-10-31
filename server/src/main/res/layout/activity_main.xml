@@ -16,19 +16,4 @@
         android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <View
-        android:id="@+id/tracker"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <TextView
-        android:id="@+id/debugOutput"
-        android:layout_width="273dp"
-        android:layout_height="153dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="35dp"
-        tools:layout_editor_absoluteY="63dp" />
 </android.support.constraint.ConstraintLayout>
