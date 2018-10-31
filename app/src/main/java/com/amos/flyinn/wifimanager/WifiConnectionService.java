@@ -38,6 +38,7 @@ public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListe
             @Override
             public void onSuccess() {
                 Toast.makeText(activity,"Discovery mode closed Succeessfully",Toast.LENGTH_LONG).show();
+                activity.cleanPeers();
             }
 
             @Override

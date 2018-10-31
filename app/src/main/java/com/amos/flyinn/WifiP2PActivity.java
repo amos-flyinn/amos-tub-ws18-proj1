@@ -72,6 +72,13 @@ public class WifiP2PActivity extends ListActivity {
     }
 
 
+    public void cleanPeers(){
+        this.nameOfPeers.clear();
+        this.listOfPeers.clear();
+        ((ArrayAdapter)this.getListAdapter()).notifyDataSetChanged();
+    }
+
+
 
 
     @Override
