@@ -62,6 +62,7 @@ public class WifiP2PActivity extends ListActivity {
             @Override
             public void onFailure(int i) {
                 Toast.makeText(WifiP2PActivity.this,"Error listening to Peers", Toast.LENGTH_SHORT).show();
+                Log.d("WifiP2PActivity" , "Error listening to peers : " + i );
             }
         });
 
@@ -78,10 +79,10 @@ public class WifiP2PActivity extends ListActivity {
         super.onListItemClick(l, v, position, id);
         WifiP2pDevice selectedDevice = this.listOfPeers.get(position);
         Toast.makeText(this,"Selected device was : " + selectedDevice.deviceName, Toast.LENGTH_SHORT).show();
-        this.connectToPeer(selectedDevice);
+        this.connectToPeer(selectedDevice,position);
     }
 
-    private void connectToPeer(WifiP2pDevice deviceToConnect){
+    private void connectToPeer(WifiP2pDevice deviceToConnect, final int position){
         WifiP2pConfig newConfigWifi = new WifiP2pConfig();
         newConfigWifi.deviceAddress = deviceToConnect.deviceAddress;
 
@@ -94,6 +95,8 @@ public class WifiP2PActivity extends ListActivity {
             @Override
             public void onFailure(int i) {
                 Toast.makeText(WifiP2PActivity.this,"Error connecting to device!", Toast.LENGTH_SHORT).show();
+                listOfPeers.remove(position);
+                nameOfPeers.remove(position);
             }
         });
     }

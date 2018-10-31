@@ -9,12 +9,15 @@ import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.amos.server.wifimanager.WifiServiceManager;
+
 public class P2PActivityServer extends Activity {
 
     private boolean enableWifi;
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
+    private WifiServiceManager receiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,11 +38,11 @@ public class P2PActivityServer extends Activity {
         this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         this.mChannel = mManager.initialize(this, getMainLooper(), null);
 
+        //Making the smartphone in discovery mode for other peers
         this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(P2PActivityServer.this,"Listening to Peers", Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
@@ -65,7 +68,7 @@ public class P2PActivityServer extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        receiver = new P2(mManager, mChannel, this);
+        receiver = new WifiServiceManager(mManager, mChannel, this);
         registerReceiver(receiver, intentFilter);
     }
 

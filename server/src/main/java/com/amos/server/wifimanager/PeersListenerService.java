@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.util.Log;
 
 import com.amos.server.P2PActivityServer;
 
@@ -20,7 +21,7 @@ public class PeersListenerService implements WifiP2pManager.PeerListListener {
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-
+        Log.d("PeersLitenerService",wifiP2pDeviceList.toString());
     }
 
     public List<WifiP2pDevice> getListOfPeers() {
