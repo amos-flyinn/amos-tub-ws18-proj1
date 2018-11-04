@@ -23,4 +23,12 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.amos.server", appContext.getPackageName());
     }
+
+    @Test
+    public void testingCI() {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+
+        assertEquals("com.server", appContext.getPackageName());
+    }
 }

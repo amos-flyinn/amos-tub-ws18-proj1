@@ -23,4 +23,12 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.amos.flyinn", appContext.getPackageName());
     }
+
+    @Test
+    public void TestingCI() {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+
+        assertEquals("com.flyinn", appContext.getPackageName());
+    }
 }
