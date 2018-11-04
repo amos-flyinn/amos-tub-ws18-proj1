@@ -25,6 +25,11 @@ install:
   - echo "y" | sdkmanager "ndk-bundle"
   - echo "y" | sdkmanager "cmake;$CMAKE_VERSION"
   - echo "y" | sdkmanager "lldb;$LLDB_VERSION"
+  - export NINJA_LATEST=$(curl -s https://api.github.com/repos/ninja-build/ninja/releases/latest | grep browser_download_url | cut -d '"' -f 4 | grep ninja-linux.zip)
+  - wget "$NINJA_LATEST"
+  - unzip -q ninja-linux.zip -d build
+  - export PATH="$PWD/build:$PATH"
+  - pip install meson
 
 android:
   components:
@@ -43,4 +48,5 @@ before_script:
   - bash before_operations.sh
 
 script:
+  - bash update_fakeinput_jar_asset.sh
   - bash build_operations.sh

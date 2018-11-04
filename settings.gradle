@@ -1,1 +1,1 @@
-include ':app', ':server'
+include ':app', ':server', ':fakeinputlib'

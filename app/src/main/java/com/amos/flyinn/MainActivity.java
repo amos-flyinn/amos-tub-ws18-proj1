@@ -1,12 +1,15 @@
 package com.amos.flyinn;
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,14 +22,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.wifip2p_activity:
-                Intent intent = new Intent(this,WifiP2PActivity.class);
-                startActivity(intent);
+                intent = new Intent(this,WifiP2PActivity.class);
+                break;
+            case R.id.adb_activity:
+                intent = new Intent(this,ADBActivity.class);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
+
         }
+        startActivity(intent);
+        return super.onOptionsItemSelected(item);
     }
 
     // Used to load the 'native-lib' library on application startup.
