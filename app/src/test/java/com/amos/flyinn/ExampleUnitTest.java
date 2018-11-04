@@ -15,8 +15,4 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void testingCI() {
-        assertEquals(3, 2 + 2);
-    }
 }
