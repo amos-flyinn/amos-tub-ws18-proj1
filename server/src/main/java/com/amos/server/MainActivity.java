@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.p2pserver_activity:
                 Intent intent = new Intent(this,P2PActivityServer.class);
                 startActivity(intent);
+            case R.id.build_info_activity:
+                intent = new Intent(this, BuildInfoActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

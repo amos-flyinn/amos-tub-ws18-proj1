@@ -24,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.wifip2p_activity:
                 Intent intent = new Intent(this,WifiP2PActivity.class);
                 startActivity(intent);
+            case R.id.build_info_activity:
+                intent = new Intent(this, BuildInfoActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
