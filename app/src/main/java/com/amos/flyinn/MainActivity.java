@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
+import com.amos.flyinn.screenRecording.RecordingActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,4 +53,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
+    public void toScreenActivityOnClick(View view) {
+        Intent intent = new Intent(this, RecordingActivity.class);
+        startActivity(intent);
+    }
 }
