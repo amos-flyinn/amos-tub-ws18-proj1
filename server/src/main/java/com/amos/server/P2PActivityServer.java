@@ -1,10 +1,14 @@
 package com.amos.server;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.widget.Toast;
@@ -18,10 +22,18 @@ public class P2PActivityServer extends Activity {
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private WifiServiceManager receiver;
+    private static final int COARSE_LOCATION = 1001;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this,"Requesting permission for peers",Toast.LENGTH_SHORT).show();
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_LOCATION);
+        }
 
         // Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -76,5 +88,13 @@ public class P2PActivityServer extends Activity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this,"Permission for peers listening given",Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
