@@ -24,6 +24,7 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
+import org.webrtc.SurfaceViewRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +35,17 @@ public class WebRTCActivity extends Activity {
     private ClientSocket clientSocket;
     private PeerWrapper peerWrapper;
     private Button buttonInit;
+    private SurfaceViewRenderer render;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webrtc);
-
-        this.clientSocket = new ClientSocket(URI.create("ws://192.168.178.23:8080"));
+        initViews();
+        this.peerWrapper = new PeerWrapper(this);
+        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.205:8080"),this.peerWrapper);
         this.clientSocket.connect();
-        this.peerWrapper = new PeerWrapper((Emitter) this.clientSocket, this.getApplicationContext());
+        this.peerWrapper.setEmitter((Emitter) this.clientSocket);
         this.buttonInit = (Button) this.findViewById(R.id.webrtc_init);
 
 
@@ -58,6 +61,15 @@ public class WebRTCActivity extends Activity {
     private void initWebRTC(){
         Log.d("WebRTCActivity","initWEBRTC");
         this.peerWrapper.beginTransactionWithOffer();
+    }
+
+
+    public SurfaceViewRenderer getRender(){
+        return render;
+    }
+
+    private void initViews(){
+        render = findViewById(R.id.surface_local_viewer);
     }
 
 

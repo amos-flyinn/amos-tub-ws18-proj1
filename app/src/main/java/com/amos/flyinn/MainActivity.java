@@ -23,13 +23,18 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.wifip2p_activity:
                 intent = new Intent(this, WifiP2PActivity.class);
-                startActivity(intent);
+                break;
             case R.id.webrtc_activity:
                 intent = new Intent(this, WebRTCActivity.class);
-                startActivity(intent);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        startActivity(intent);
+
+        return super.onOptionsItemSelected(item);
+
     }
 
     // Used to load the 'native-lib' library on application startup.

@@ -44,12 +44,15 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.p2pserver_activity:
                 intent = new Intent(this,P2PActivityServer.class);
-                startActivity(intent);
+                break;
             case R.id.webrtc_server_activity:
                 intent = new Intent(this,WebRTCServerActivity.class);
-                startActivity(intent);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        startActivity(intent);
+        return super.onOptionsItemSelected(item);
     }
 }
