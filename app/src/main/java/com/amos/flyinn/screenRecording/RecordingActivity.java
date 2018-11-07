@@ -68,7 +68,6 @@ public class RecordingActivity extends AppCompatActivity {
         mProjectionManager = (MediaProjectionManager) getSystemService
                 (Context.MEDIA_PROJECTION_SERVICE);
 
-        // 1 warning that casting is reduntant - mToggleButton = (ToggleButton) findViewById(R.id.toggle);
         mToggleButton = findViewById(R.id.toggle);
         mToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
