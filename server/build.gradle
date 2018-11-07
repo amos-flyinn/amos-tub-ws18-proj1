@@ -1,6 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def lintTask = tasks["lint${variant.name.capitalize()}"]
+            output.assemble.dependsOn lintTask
+        }
+    }
+    lintOptions {
+        htmlReport true
+        htmlOutput file("lint-report.html")
+        textReport true
+        textOutput 'stdout'
+        abortOnError true
+        warningsAsErrors false
+    }
+
     compileSdkVersion 28
 
 
@@ -22,6 +37,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+
 
 }
 
