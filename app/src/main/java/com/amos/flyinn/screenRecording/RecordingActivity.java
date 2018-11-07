@@ -68,7 +68,8 @@ public class RecordingActivity extends AppCompatActivity {
         mProjectionManager = (MediaProjectionManager) getSystemService
                 (Context.MEDIA_PROJECTION_SERVICE);
 
-        mToggleButton = (ToggleButton) findViewById(R.id.toggle);
+        // 1 warning that casting is reduntant - mToggleButton = (ToggleButton) findViewById(R.id.toggle);
+        mToggleButton = findViewById(R.id.toggle);
         mToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +162,7 @@ public class RecordingActivity extends AppCompatActivity {
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mMediaRecorder.setOutputFile(Environment
                     .getExternalStoragePublicDirectory(Environment
-                            .DIRECTORY_DOWNLOADS) + "/video.mp4");
+                            .DIRECTORY_DOWNLOADS) + "/video.mp4"); // Location of file
             mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
             mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
@@ -242,7 +243,7 @@ public class RecordingActivity extends AppCompatActivity {
                                 }
                             }).show();
                 }
-                return;
+                //return;
             }
         }
     }
