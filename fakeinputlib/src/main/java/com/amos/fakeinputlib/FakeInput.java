@@ -28,11 +28,9 @@ public class FakeInput {
         injectInputEventMethod = InputManager.class.getMethod(methodName, InputEvent.class, Integer.TYPE);
     }
 
-    public void sendEvent(int action, float x, float y) throws Exception {
-        long time = SystemClock.uptimeMillis();
-        MotionEvent event = MotionEvent.obtain(time, time, action, x, y, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
-        event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
-        injectInputEventMethod.invoke(im, event, 0);
+    public void sendMotionEvent(MotionEvent e) throws Exception {
+        e.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+        injectInputEventMethod.invoke(im, e, 0);
     }
 
     void sendTap(int x, int y) throws Exception {

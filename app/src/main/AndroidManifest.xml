@@ -42,9 +42,6 @@
             android:label="@string/title_activity_adb"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service
-            android:name=".FakeInputService"
-            android:exported="true"></service>
     </application>
 
 </manifest>
