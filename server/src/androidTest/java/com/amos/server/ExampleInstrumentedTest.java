@@ -23,4 +23,5 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.amos.server", appContext.getPackageName());
     }
+
 }

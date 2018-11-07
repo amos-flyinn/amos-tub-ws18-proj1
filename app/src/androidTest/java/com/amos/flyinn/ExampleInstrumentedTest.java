@@ -23,4 +23,5 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.amos.flyinn", appContext.getPackageName());
     }
+
 }
