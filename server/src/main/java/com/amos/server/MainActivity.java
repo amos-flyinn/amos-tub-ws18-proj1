@@ -40,10 +40,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.p2pserver_activity:
-                Intent intent = new Intent(this,P2PActivityServer.class);
+                intent = new Intent(this,P2PActivityServer.class);
+                startActivity(intent);
+            case R.id.webrtc_server_activity:
+                intent = new Intent(this,WebRTCServerActivity.class);
                 startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);

@@ -26,6 +26,9 @@
         <activity android:name=".P2PActivityServer">
         </activity>
 
+        <activity android:name=".WebRTCServerActivity">
+        </activity>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

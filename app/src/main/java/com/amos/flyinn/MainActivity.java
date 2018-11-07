@@ -19,10 +19,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.wifip2p_activity:
-                Intent intent = new Intent(this,WifiP2PActivity.class);
+                intent = new Intent(this, WifiP2PActivity.class);
+                startActivity(intent);
+            case R.id.webrtc_activity:
+                intent = new Intent(this, WebRTCActivity.class);
                 startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
