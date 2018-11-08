@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.amos.flyinn">
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission
         android:name="android.permission.ACCESS_COARSE_LOCATION"
         android:required="true" />
+    <uses-permission
+        android:required="true"
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="true" />
@@ -13,11 +15,8 @@
         android:name="android.permission.CHANGE_WIFI_STATE"
         android:required="true" />
     <uses-permission
-        android:name="android.permission.INTERNET"
-        android:required="true" />
-    <uses-permission
-        android:name="android.permission.INTERNET"
-        android:required="true" />
+        android:required="true"
+        android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -26,10 +25,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".WifiP2PActivity"
-            android:label="Searching Peer"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" />
+
+        <activity android:name=".WifiP2PActivity"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
+            android:label="Searching Peer">
+        </activity>
+
+        <activity android:name=".WebRTCActivity"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
+            android:label="WEBRTC Example">
+        </activity>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +47,7 @@
             android:name=".ADBActivity"
             android:label="@string/title_activity_adb"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity android:name=".screenRecording.RecordingActivity"></activity>
     </application>
 
 </manifest>

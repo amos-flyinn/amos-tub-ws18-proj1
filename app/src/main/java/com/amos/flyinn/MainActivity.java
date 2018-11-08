@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONException;
+
+import com.amos.flyinn.screenRecording.RecordingActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,13 +29,15 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.wifip2p_activity:
                 intent = new Intent(this,WifiP2PActivity.class);
-                break;
+                startActivity(intent);
             case R.id.adb_activity:
                 intent = new Intent(this,ADBActivity.class);
                 break;
+            case R.id.webrtc_activity:
+                intent = new Intent(this, WebRTCActivity.class);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
         startActivity(intent);
         return super.onOptionsItemSelected(item);
@@ -59,4 +64,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
+    public void toScreenActivityOnClick(View view) {
+        Intent intent = new Intent(this, RecordingActivity.class);
+        startActivity(intent);
+    }
 }

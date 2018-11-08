@@ -6,6 +6,12 @@
         app:showAsAction="never"
         android:title="WIFIP2PActivity">
     </item>
+
+    <item
+        android:id="@+id/webrtc_activity"
+        app:showAsAction="never"
+        android:title="WEBRTCExample">
+    </item>
     <item
         android:id="@+id/adb_activity"
         android:title="ADB"

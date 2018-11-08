@@ -6,4 +6,10 @@
         app:showAsAction="never"
         android:title="P2PServerActivity">
     </item>
+
+    <item
+        android:id="@+id/webrtc_server_activity"
+        app:showAsAction="never"
+        android:title="WebRTCServerActivity">
+    </item>
 </menu>
