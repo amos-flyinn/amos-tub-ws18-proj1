@@ -51,5 +51,4 @@ public class ADBActivity extends AppCompatActivity {
             }
         });
     }
-
 }
