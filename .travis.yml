@@ -1,5 +1,8 @@
 language: android
+services:
+  - docker
 jdk: oraclejdk8
+python: 3.6
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
