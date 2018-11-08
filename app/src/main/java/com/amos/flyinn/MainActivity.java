@@ -1,6 +1,7 @@
 package com.amos.flyinn;
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +9,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import org.json.JSONException;
 
 import com.amos.flyinn.screenRecording.RecordingActivity;
 
@@ -25,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.wifip2p_activity:
-                intent = new Intent(this, WifiP2PActivity.class);
+                intent = new Intent(this,WifiP2PActivity.class);
+                startActivity(intent);
+            case R.id.adb_activity:
+                intent = new Intent(this,ADBActivity.class);
                 break;
             case R.id.webrtc_activity:
                 intent = new Intent(this, WebRTCActivity.class);
@@ -33,11 +39,8 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
         startActivity(intent);
-
         return super.onOptionsItemSelected(item);
-
     }
 
     // Used to load the 'native-lib' library on application startup.

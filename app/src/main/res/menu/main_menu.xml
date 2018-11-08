@@ -12,4 +12,8 @@
         app:showAsAction="never"
         android:title="WEBRTCExample">
     </item>
+    <item
+        android:id="@+id/adb_activity"
+        android:title="ADB"
+        app:showAsAction="never" />
 </menu>

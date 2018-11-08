@@ -1,4 +1,6 @@
 language: android
+services:
+  - docker
 jdk: oraclejdk8
 
 before_cache:
@@ -21,6 +23,13 @@ env:
     - LLDB_VERSION=3.0
 
 install:
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - export PATH="$PWD/build:$PATH"
+  - conda info -a
+  - source activate base
+  - conda install -y -c conda-forge meson ninja
   # Special packages for the project
   - echo "y" | sdkmanager "ndk-bundle"
   - echo "y" | sdkmanager "cmake;$CMAKE_VERSION"
@@ -43,4 +52,5 @@ before_script:
   - bash before_operations.sh
 
 script:
+  - bash update_fakeinput_jar_asset.sh
   - bash build_operations.sh
