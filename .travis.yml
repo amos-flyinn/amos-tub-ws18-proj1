@@ -23,13 +23,13 @@ env:
     - LLDB_VERSION=3.0
 
 install:
-  - wget https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-linux.zip && unzip -q ninja-linux.zip -d build;
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - export PATH="$PWD/build:$PATH"
   - conda info -a
   - source activate base
+  - conda install -c conda-forge meson ninja
   # Special packages for the project
   - echo "y" | sdkmanager "ndk-bundle"
   - echo "y" | sdkmanager "cmake;$CMAKE_VERSION"
