@@ -1,39 +1,29 @@
 package com.amos.fakeinputlib;
 
-import android.net.LocalSocket;
-import android.net.LocalServerSocket;
-
-import java.io.ObjectInputStream;
-import java.io.IOException;
+import android.util.Log;
 import android.view.MotionEvent;
 
-public class FakeInputReceiver {
-    private final LocalServerSocket socket;
+import com.amos.shared.TouchEvent;
 
-    private final String socket_str = "com.flyinn.fakeinput";
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-    public FakeInputReceiver() throws Exception {
-        socket = new LocalServerSocket(socket_str);
+class FakeInputReceiver {
+
+    FakeInputReceiver() {
     }
 
-    public void listen(FakeInput handler) {
-        LocalSocket connection;
-        ObjectInputStream istream;
-        MotionEvent event;
+    void listen(FakeInput handler) throws Exception {
+        ServerSocket fd = new ServerSocket(1337);
+        Socket connection = fd.accept();
+        ObjectInputStream istream = new ObjectInputStream(connection.getInputStream());
+
+        TouchEvent e;
         while (true) {
-            try {
-                connection = socket.accept();
-                istream = new ObjectInputStream(connection.getInputStream());
-                while (true) {
-                    try {
-                        event = (MotionEvent) istream.readObject();
-                        handler.sendMotionEvent(event);
-                    } catch (Exception e) {
-                        break;
-                    }
-                }
-            } catch (IOException e) {
-            }
+            e = (TouchEvent) istream.readObject();
+            Log.i("Server", "Got Event");
+            handler.sendMotionEvent(MotionEvent.obtain(e.downTime, e.eventTime,e.action, e.x, e.y, 0));
         }
-    }
+   }
 }

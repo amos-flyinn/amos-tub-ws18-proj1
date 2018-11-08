@@ -1,36 +1,26 @@
 package com.amos.flyinn.summoner;
 
-import android.net.LocalSocket;
-import android.net.LocalSocketAddress;
-
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.IOException;
 import android.view.MotionEvent;
 
+import com.amos.shared.TouchEvent;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+
 public class FakeInputSender {
-    private final LocalSocket socket;
     private ObjectOutputStream output;
 
-    private final String socket_addr = "com.flyinn.fakeinput";
-
     public FakeInputSender() {
-        socket = new LocalSocket();
     }
 
     public void connect() throws IOException {
-        LocalSocketAddress addr = new LocalSocketAddress(socket_addr);
-        socket.connect(addr);
-        output = new ObjectOutputStream(socket.getOutputStream());
-
+        Socket socket = new Socket("127.0.0.1", 1337);
+        this.output = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    public void sendMotionEvent(MotionEvent event) throws IOException {
-        output.writeObject(event);
-    }
-
-    public void close() throws IOException {
-        output.close();
-        socket.close();
+    public void sendMotionEvent(MotionEvent e) throws IOException {
+        this.output.writeObject(new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime(), e.getEventTime()));
     }
 }

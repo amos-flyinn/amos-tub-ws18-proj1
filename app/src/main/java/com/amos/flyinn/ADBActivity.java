@@ -6,29 +6,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
-
 import android.os.SystemClock;
-
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.summoner.FakeInputSender;
-
 import java.io.IOException;
 
 public class ADBActivity extends AppCompatActivity {
 
-    private void periodicNagging(FakeInputSender s) throws IOException {
+    private void periodicNagging(FakeInputSender s) throws IOException, InterruptedException {
         MotionEvent event;
-
-        float x = 100, y = 100;
-
         for (int i = 0; i < 10; i++) {
             long time = SystemClock.uptimeMillis();
-            long nextTime = time+500;
-            event = MotionEvent.obtain(
-                    time, time, MotionEvent.ACTION_DOWN, x, y, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
+            long nextTime = time + 500;
+
+            event = MotionEvent.obtain(time, time, MotionEvent.ACTION_DOWN, 0, 0, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
             s.sendMotionEvent(event);
-            event = MotionEvent.obtain(nextTime, nextTime, MotionEvent.ACTION_UP, x, y, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
+            event = MotionEvent.obtain(nextTime, nextTime, MotionEvent.ACTION_UP, 0, 0, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
             s.sendMotionEvent(event);
+            Thread.sleep(5000);
         }
     }
 
