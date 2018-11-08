@@ -2,7 +2,6 @@ language: android
 services:
   - docker
 jdk: oraclejdk8
-python: 3.6
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -25,8 +24,12 @@ env:
 
 install:
   - wget https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-linux.zip && unzip -q ninja-linux.zip -d build;
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
   - export PATH="$PWD/build:$PATH"
-  - pip3 install meson
+  - conda info -a
+  - source activate base
   # Special packages for the project
   - echo "y" | sdkmanager "ndk-bundle"
   - echo "y" | sdkmanager "cmake;$CMAKE_VERSION"
