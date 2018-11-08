@@ -29,7 +29,7 @@ install:
   - export PATH="$PWD/build:$PATH"
   - conda info -a
   - source activate base
-  - conda install -c conda-forge meson ninja
+  - conda install -y -c conda-forge meson ninja
   # Special packages for the project
   - echo "y" | sdkmanager "ndk-bundle"
   - echo "y" | sdkmanager "cmake;$CMAKE_VERSION"
