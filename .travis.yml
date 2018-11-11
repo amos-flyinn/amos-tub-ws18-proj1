@@ -54,3 +54,12 @@ before_script:
 script:
   - bash update_fakeinput_jar_asset.sh
   - bash build_operations.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: ZiWMeEJKwD4WHsT5d4qUy0EnX9idTpKDqEtOdqJ8+tHbjQTeNj9lANrvNJsnKpNZIFro1E6TjsC/HHlHe0XLwHop0AAe37E9iPjoWqy5DnTp1JvUStFMVNfIkLXNcUsCXPWc0XkMqA/S1Pz/6oEPvLa5LvkFvx3CKvoQt0Diadj50FQG8Dn0IA0y+zKmPoY96CdgFZdTB+xBsp8TEVpzacYh2TeNbNvd0ZCDMqjfORJHHsyDXTIYlINNRd9XI+ugNQfYVoaf8IYjAEfj9oS2SZ9u3CYG+y/brvJla3WmJV91F3E4yKVo2Yw6bXoEJJdHxdJVj8ODOUmpyMdB0RbTMDP2+UEVVTAE6ZPYQ/GyDhB4gkgTVgypd2C/ZV6IPAtLdw9qX6AojIjnUzHLXqK9gPSgMuRvcvxCdgXpQnRrX1oi+9MXTfBCy+BJL0vFbAwynSfKVdaMOUOAygH7m0Fpy2kVfXgT6CwcTHYDZqnTPYRD2dKF3w/wI+SD+nZhMifRXXj9MnypYm+/id3k816RmSBgOum9Ebotw7jJiriILa/aXxIUajxF7jbQK4wfLWnmtIZZ4mYvemM71f1+DjY+crJ4MFg9RDTOKuDWfcfKRomyEqqUv5PVPqL03aA2hSniowv6sYRrC5ySaOVUOCNGGf2Ks+PF1PYBZpJ2byeNp8U=
+  file: "amos-tub-ws18-proj1/*"
+  skip_cleanup: true
+  on:
+    tags: true
