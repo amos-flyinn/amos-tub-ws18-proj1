@@ -14,11 +14,6 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    public void activateEventGrabDemo(View v) {
-        Intent intent = new Intent(MainActivity.this, EventGrabDemo.class);
-        startActivity(intent);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.webrtc_server_activity:
                 intent = new Intent(this,WebRTCServerActivity.class);
+                break;
+            case R.id.event_grab_activity:
+                intent = new Intent(MainActivity.this, EventGrabDemo.class);
+                break;
+            case R.id.event_sender_activity:
+                intent = new Intent(MainActivity.this, EventSenderDemo.class);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
