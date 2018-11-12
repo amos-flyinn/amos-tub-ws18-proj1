@@ -1,5 +1,6 @@
 package com.amos.shared;
 
+import android.os.SystemClock;
 import android.view.MotionEvent;
 
 import java.io.Serializable;
@@ -19,7 +20,7 @@ public class TouchEvent implements Serializable {
     }
 
     public MotionEvent getConstructedMotionEvent() {
-        return MotionEvent.obtain(downTime, eventTime,action, x, y, 0);
+        return MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, x, y, 0);
     }
 
     TouchEvent(MotionEvent e) {
