@@ -18,11 +18,12 @@ import java.net.Socket;
 public class Daemon {
     private final String FAKE_INPUT_SERVER_PATH = Environment.getExternalStorageDirectory() + "/Android/data/flyinn_fakeinputlib.jar";
     // NOTE: cant use the FAKE_INPUT_SERVER_PATH as this will lead to permission issues, use "/sdcard/", which is a symlink.
-    private final String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar nohup app_process / com.amos.fakeinputlib.Main";
+    private String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar nohup app_process / com.amos.fakeinputlib.Main ";
 
     private Context context;
 
-    public Daemon(Context context) {
+    public Daemon(Context context, String addr) {
+        SHELL_FAKE_INPUT_NOHUP_COMMAND += addr;
         System.out.println(FAKE_INPUT_SERVER_PATH);
         System.out.println(SHELL_FAKE_INPUT_NOHUP_COMMAND);
         this.context = context;

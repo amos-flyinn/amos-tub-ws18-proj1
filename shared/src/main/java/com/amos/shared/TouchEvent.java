@@ -1,5 +1,7 @@
 package com.amos.shared;
 
+import android.view.MotionEvent;
+
 import java.io.Serializable;
 
 public class TouchEvent implements Serializable {
@@ -16,6 +18,18 @@ public class TouchEvent implements Serializable {
         this.eventTime = eventTime;
     }
 
-    TouchEvent(){}
+    public MotionEvent getConstructedMotionEvent() {
+        return MotionEvent.obtain(downTime, eventTime,action, x, y, 0);
+    }
+
+    TouchEvent(MotionEvent e) {
+        this(e.getX(), e.getY(), e.getAction(), e.getDownTime(), e.getEventTime());
+    }
+
+    TouchEvent() {
+    }
 }
+
+
+
 

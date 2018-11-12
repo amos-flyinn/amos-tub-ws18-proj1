@@ -15,8 +15,8 @@ public class FakeInputSender {
     public FakeInputSender() {
     }
 
-    public void connect() throws IOException {
-        Socket socket = new Socket("127.0.0.1", 1337);
+    public void connect(String addr) throws Exception {
+        Socket socket = new Socket(addr, 1337);
         this.output = new ObjectOutputStream(socket.getOutputStream());
     }
 
