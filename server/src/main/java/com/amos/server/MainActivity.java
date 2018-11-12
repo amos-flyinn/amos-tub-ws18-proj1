@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.event_grab_activity:
                 intent = new Intent(MainActivity.this, EventGrabDemo.class);
                 break;
+            case R.id.event_sender_activity:
+                intent = new Intent(MainActivity.this, EventSenderDemo.class);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
