@@ -37,12 +37,21 @@ public class EventServer implements Runnable{
 
     public void acceptQueue() {
         try {
+            Log.d("Test", "Waiting for connection");
             writer = new EventWriter(server.getStream());
+            Log.d("Test", "Accepted connection");
             while (true) {
                 try {
-                    MotionEvent e = queue.remove();
-                    writer.write(e);
-                } catch (Exception e) {
+                    MotionEvent e = queue.take();
+                    if (e != null) {
+                        Log.d("Test", "Sent motion event");
+                        writer.write(e);
+                    }
+                } catch (IOException e) {
+                    Log.d("Test", "IO Except");
+                    break;
+                } catch (InterruptedException e) {
+                    Log.d("Test", "Interrupted");
                     break;
                 }
             }
@@ -56,7 +65,7 @@ public class EventServer implements Runnable{
         try {
             server = new SocketServer();
             Log.d("Test", "Thread started");
-            accept();
+            acceptQueue();
             server.close();
         } catch (IOException e) {
         }
