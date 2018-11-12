@@ -12,4 +12,9 @@
         app:showAsAction="never"
         android:title="WebRTCServerActivity">
     </item>
+    <item
+        android:id="@+id/event_grab_activity"
+        app:showAsAction="never"
+        android:title="Event Grab Demo">
+    </item>
 </menu>
