@@ -22,7 +22,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    compile project(path: ':shared')
+    implementation project(path: ':shared')
 }
 
 //apply plugin: 'java-library'

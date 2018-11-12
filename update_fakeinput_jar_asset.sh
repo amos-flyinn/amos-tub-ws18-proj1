@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-./gradlew :fakeinputlib:build #connectedCheck
+./gradlew :fakeinputlib:build 
 
 if [[ ! -f ./x ]]; then
     meson fakeinput_dist --buildtype release --strip -Db_lto=true
