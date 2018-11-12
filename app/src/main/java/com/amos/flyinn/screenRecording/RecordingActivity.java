@@ -12,6 +12,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -108,6 +109,12 @@ public class RecordingActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IBinder iBinder = data.getExtras().getBinder("android.media.projection.extra.EXTRA_MEDIA_PROJECTION");
+        Log.i("Ibinder Debug", "starts: ");
+        if (iBinder != null) {
+            Log.i("Ibinder Debug", "Existieeeert");
+        }
+
         if (requestCode != REQUEST_CODE) {
             Log.e(TAG, "Unknown request code: " + requestCode);
             return;
