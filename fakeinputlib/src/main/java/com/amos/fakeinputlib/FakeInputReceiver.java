@@ -6,14 +6,17 @@ import android.view.MotionEvent;
 import com.amos.shared.TouchEvent;
 
 import java.io.ObjectInputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 class FakeInputReceiver {
     private final FakeInput handler;
+    private final int maxX;
+    private final int maxY;
 
-    FakeInputReceiver(FakeInput handler) {
+    FakeInputReceiver(FakeInput handler, int maxX, int maxY) {
         this.handler = handler;
+        this.maxX = maxX;
+        this.maxY = maxY;
     }
 
     void connectToHost(String addr) throws Exception {
@@ -38,15 +41,6 @@ class FakeInputReceiver {
         runEvalLoop(handler, fd);
     }
 
-    void listen() throws Exception {
-        ServerSocket fd = new ServerSocket(1000);
-
-        fd.setSoTimeout(10000);
-        fd.setReuseAddress(true);
-        Socket connection = fd.accept();
-        runEvalLoop(handler, connection);
-    }
-
     private void runEvalLoop(FakeInput handler, Socket connection) throws Exception {
         Log.d("FakeInput", "Starting fakeInputEvalLoop");
         ObjectInputStream istream = new ObjectInputStream(connection.getInputStream());
@@ -54,9 +48,9 @@ class FakeInputReceiver {
         TouchEvent e;
         while (true) {
             e = (TouchEvent) istream.readObject();
-            Log.d("FakeInput", "Got Event");
-            MotionEvent ev = e.getConstructedMotionEvent();
-            Log.d("FakeInput", String.format("Event: (%f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));
+            Log.d("FakeInput", "Got Event: "+e.toString());
+            MotionEvent ev = e.getConstructedMotionEvent(this.maxX, this.maxY);
+            Log.d("FakeInput", String.format("Event: (%f, %f, %f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));
             handler.sendMotionEvent(ev);
         }
     }
