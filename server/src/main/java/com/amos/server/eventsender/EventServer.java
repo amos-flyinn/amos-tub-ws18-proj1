@@ -2,8 +2,10 @@ package com.amos.server.eventsender;
 
 import com.amos.server.EventSenderDemo;
 import com.amos.server.signaling.SocketServer;
+import com.amos.shared.TouchEvent;
 
 import android.os.SystemClock;
+import android.text.method.Touch;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -15,9 +17,9 @@ public class EventServer implements Runnable{
     SocketServer server;
     EventWriter writer;
 
-    BlockingQueue<MotionEvent> queue;
+    BlockingQueue<TouchEvent> queue;
 
-    public EventServer(BlockingQueue<MotionEvent> mq) {
+    public EventServer(BlockingQueue<TouchEvent> mq) {
         queue = mq;
     }
 
@@ -42,9 +44,8 @@ public class EventServer implements Runnable{
             Log.d("Test", "Accepted connection");
             while (true) {
                 try {
-                    MotionEvent e = queue.take();
+                    TouchEvent e = queue.take();
                     if (e != null) {
-                        Log.d("Test", "Sent motion event");
                         writer.write(e);
                     }
                 } catch (IOException e) {
