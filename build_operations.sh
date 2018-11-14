@@ -1,2 +1,5 @@
-#Executing test and build the project
-./gradlew build lint connectedCheck
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+./gradlew build connectedCheck
