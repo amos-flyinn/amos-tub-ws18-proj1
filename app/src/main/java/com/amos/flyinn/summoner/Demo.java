@@ -1,6 +1,7 @@
 package com.amos.flyinn.summoner;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 
@@ -22,8 +23,8 @@ public class Demo {
     }
 
 
-    public static void start(Context context, String addr) {
-        Daemon d = new Daemon(context, addr);
+    public static void start(Context context, String addr, Point p) {
+        Daemon d = new Daemon(context, addr, p);
         FakeInputSender s = new FakeInputSender();
         try {
             d.writeFakeInputToFilesystem();

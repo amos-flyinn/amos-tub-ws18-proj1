@@ -1,7 +1,7 @@
 package com.amos.flyinn.summoner;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.graphics.Point;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
@@ -25,10 +25,10 @@ public class Daemon {
     private final String execCMD;
     private Context context;
 
-    public Daemon(Context context, String addr) {
-        execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, addr, Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().widthPixels);
+    public Daemon(Context context, String addr, Point p) {
+        execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, addr, p.x, p.y);
         Log.d("AdbDaemon", FAKE_INPUT_SERVER_PATH);
-        Log.d("AdbDaemon", SHELL_FAKE_INPUT_NOHUP_COMMAND);
+        Log.d("AdbDaemon", execCMD);
         this.context = context;
     }
 

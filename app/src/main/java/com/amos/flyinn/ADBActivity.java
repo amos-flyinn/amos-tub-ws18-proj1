@@ -1,5 +1,6 @@
 package com.amos.flyinn;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +24,9 @@ public class ADBActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    Demo.start(getApplicationContext(), WifiManager.getInstance().getWifiReceiverP2P().getHostAddr());
+                    Point p = new Point();
+                    getWindowManager().getDefaultDisplay().getRealSize(p);
+                    Demo.start(getApplicationContext(), WifiManager.getInstance().getWifiReceiverP2P().getHostAddr(), p);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
