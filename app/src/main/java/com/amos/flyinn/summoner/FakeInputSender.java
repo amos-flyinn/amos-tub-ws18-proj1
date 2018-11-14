@@ -21,6 +21,6 @@ public class FakeInputSender {
     }
 
     public void sendMotionEvent(MotionEvent e) throws IOException {
-        this.output.writeObject(new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime(), e.getEventTime()));
+        this.output.writeObject(new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime()));
     }
 }
