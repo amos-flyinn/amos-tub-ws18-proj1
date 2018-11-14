@@ -130,7 +130,7 @@ public class WebRTCActivity extends Activity {
 
         initViews();
         this.peerWrapper = new PeerWrapper(this,data);
-        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.1:8080"),this.peerWrapper);
+        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.205:8080"),this.peerWrapper);
         this.clientSocket.connect();
         this.peerWrapper.setEmitter((Emitter) this.clientSocket);
 
