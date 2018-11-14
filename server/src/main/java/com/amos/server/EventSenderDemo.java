@@ -40,16 +40,16 @@ public class EventSenderDemo extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         new Thread(new EventServer(mq)).start();
-        // base.setOnTouchListener(
-        //         new OnTouchListener() {
-        //             @Override
-        //             public boolean onTouch(View v, MotionEvent event) {
-        //                 Log.d("Test", event.toString());
-        //                 mq.add(event);
-        //                 return true;
-        //             }
-        //         }
-        // );
+        base.setOnTouchListener(
+                new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        // Log.d("Test", event.toString());
+                        mq.add(event);
+                        return true;
+                    }
+                }
+        );
     }
 
     @Override
