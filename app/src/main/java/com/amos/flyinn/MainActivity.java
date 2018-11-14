@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.wifip2p_activity:
                 intent = new Intent(this,WifiP2PActivity.class);
-                startActivity(intent);
                 break;
             case R.id.adb_activity:
                 intent = new Intent(this,ADBActivity.class);
