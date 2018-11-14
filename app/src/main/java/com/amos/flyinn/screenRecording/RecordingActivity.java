@@ -12,6 +12,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -68,7 +69,7 @@ public class RecordingActivity extends AppCompatActivity {
         mProjectionManager = (MediaProjectionManager) getSystemService
                 (Context.MEDIA_PROJECTION_SERVICE);
 
-        mToggleButton = findViewById(R.id.toggle);
+        mToggleButton = (ToggleButton) findViewById(R.id.toggle);
         mToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +83,7 @@ public class RecordingActivity extends AppCompatActivity {
                             ActivityCompat.shouldShowRequestPermissionRationale
                                     (RecordingActivity.this, Manifest.permission.RECORD_AUDIO)) {
                         mToggleButton.setChecked(false);
-                        Snackbar.make(findViewById(android.R.id.content), LABEL_PERMISSIONS,
+                        Snackbar.make(findViewById(android.R.id.content), "permission",
                                 Snackbar.LENGTH_INDEFINITE).setAction("ENABLE",
                                 new View.OnClickListener() {
                                     @Override
@@ -108,6 +109,12 @@ public class RecordingActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IBinder iBinder = data.getExtras().getBinder("android.media.projection.extra.EXTRA_MEDIA_PROJECTION");
+        Log.i("Ibinder Debug", "starts: ");
+        if (iBinder != null) {
+            Log.i("Ibinder Debug", "Existieeeert");
+        }
+
         if (requestCode != REQUEST_CODE) {
             Log.e(TAG, "Unknown request code: " + requestCode);
             return;
@@ -161,7 +168,7 @@ public class RecordingActivity extends AppCompatActivity {
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mMediaRecorder.setOutputFile(Environment
                     .getExternalStoragePublicDirectory(Environment
-                            .DIRECTORY_DOWNLOADS) + "/video.mp4"); // Location of file
+                            .DIRECTORY_DOWNLOADS) + "/video.mp4");
             mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
             mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
@@ -191,28 +198,28 @@ public class RecordingActivity extends AppCompatActivity {
     }
 
     private void stopScreenSharing() {
-        if (mVirtualDisplay == null) {
-            return;
-        }
-        mVirtualDisplay.release();
-        //mMediaRecorder.release(); //If used: mMediaRecorder object cannot
-        // be reused again
-        destroyMediaProjection();
+//        if (mVirtualDisplay == null) {
+//            return;
+//        }
+//        mVirtualDisplay.release();
+//        //mMediaRecorder.release(); //If used: mMediaRecorder object cannot
+//        // be reused again
+//        destroyMediaProjection();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        destroyMediaProjection();
+        //destroyMediaProjection();
     }
 
     private void destroyMediaProjection() {
-        if (mMediaProjection != null) {
-            mMediaProjection.unregisterCallback(mMediaProjectionCallback);
-            mMediaProjection.stop();
-            mMediaProjection = null;
-        }
-        Log.i(TAG, "MediaProjection Stopped");
+//        if (mMediaProjection != null) {
+//            mMediaProjection.unregisterCallback(mMediaProjectionCallback);
+//            mMediaProjection.stop();
+//            mMediaProjection = null;
+//        }
+//        Log.i(TAG, "MediaProjection Stopped");
     }
 
     @Override
@@ -226,7 +233,7 @@ public class RecordingActivity extends AppCompatActivity {
                     onToggleScreenShare(mToggleButton);
                 } else {
                     mToggleButton.setChecked(false);
-                    Snackbar.make(findViewById(android.R.id.content), LABEL_PERMISSIONS,
+                    Snackbar.make(findViewById(android.R.id.content), "Permission",
                             Snackbar.LENGTH_INDEFINITE).setAction("ENABLE",
                             new View.OnClickListener() {
                                 @Override
@@ -242,7 +249,7 @@ public class RecordingActivity extends AppCompatActivity {
                                 }
                             }).show();
                 }
-                //return;
+                return;
             }
         }
     }
