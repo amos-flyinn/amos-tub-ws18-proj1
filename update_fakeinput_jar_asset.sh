@@ -13,4 +13,5 @@ fi
     ninja;
 )
 
-cp fakeinput_dist/fakeinputlib/flyinn-fakeinputlib.jar app/src/main/res/raw/flyinn_fakeinputlib.jar
+mkdir -p app/src/main/res/raw/
+mv fakeinput_dist/fakeinputlib/flyinn-fakeinputlib.jar app/src/main/res/raw/flyinn_fakeinputlib.jar
