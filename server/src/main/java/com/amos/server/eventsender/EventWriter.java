@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ObjectOutputStream;
 import android.view.MotionEvent;
+import android.util.Log;
 
 
 public class EventWriter {
@@ -18,9 +19,9 @@ public class EventWriter {
     }
 
     public void write(MotionEvent e) throws IOException {
-        output.writeObject(
-                new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime())
-        );
+        TouchEvent te = new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
+        Log.d("Test", te.toString());
+        output.writeObject(te);
         output.flush();
     }
 

@@ -28,6 +28,11 @@ public class TouchEvent implements Serializable {
 
         return MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, (x / max) * maxX, (y / max) * maxY, 0);
     }
+
+    @Override
+    public String toString() {
+        return String.format("TE: X: %f Y: %f");
+    }
 }
 
 
