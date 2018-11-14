@@ -1,6 +1,7 @@
 package com.amos.fakeinputlib;
 
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.amos.shared.TouchEvent;
 
@@ -54,7 +55,9 @@ class FakeInputReceiver {
         while (true) {
             e = (TouchEvent) istream.readObject();
             Log.d("FakeInput", "Got Event");
-            handler.sendMotionEvent(e.getConstructedMotionEvent());
+            MotionEvent ev = e.getConstructedMotionEvent();
+            Log.d("FakeInput", String.format("Event: (%f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));
+            handler.sendMotionEvent(ev);
         }
     }
 }

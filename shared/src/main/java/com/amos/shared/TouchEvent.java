@@ -2,6 +2,7 @@ package com.amos.shared;
 
 import android.content.res.Resources;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.io.Serializable;
@@ -11,7 +12,7 @@ public class TouchEvent implements Serializable {
     public float y;
     public int action;
     public long downTime;
-    private int max = 1;
+    private float max = 1;
 
     public TouchEvent(float x, float y, int action, long downTime) {
         this.x = x;
@@ -23,15 +24,9 @@ public class TouchEvent implements Serializable {
     public MotionEvent getConstructedMotionEvent() {
         int maxX = Resources.getSystem().getDisplayMetrics().widthPixels;
         int maxY = Resources.getSystem().getDisplayMetrics().heightPixels;
+        Log.d("FakeInput", String.format("MaxY: %d, MaxX: %d", maxX, maxY));
 
         return MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, (x / max) * maxX, (y / max) * maxY, 0);
-    }
-
-    TouchEvent(MotionEvent e) {
-        this(e.getX(), e.getY(), e.getAction(), e.getDownTime());
-    }
-
-    TouchEvent() {
     }
 }
 
