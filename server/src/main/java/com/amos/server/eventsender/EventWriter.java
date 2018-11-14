@@ -19,7 +19,7 @@ public class EventWriter {
 
     public void write(MotionEvent e) throws IOException {
         output.writeObject(
-                new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime(), e.getEventTime())
+                new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime())
         );
         output.flush();
     }
