@@ -1,8 +1,19 @@
 package com.amos.flyinn;
 
+import android.Manifest;
 import android.app.Activity;
+import java.net.URI;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.projection.MediaProjectionManager;
+
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,32 +27,75 @@ import org.webrtc.SurfaceViewRenderer;
 
 import java.net.URI;
 
+import org.webrtc.PeerConnection;
+
+import org.webrtc.SurfaceViewRenderer;
+
+
 public class WebRTCActivity extends Activity {
 
     private PeerConnection localConnection;
     private ClientSocket clientSocket;
     private PeerWrapper peerWrapper;
+    private IBinder binderParam;
     private Button buttonInit;
     private SurfaceViewRenderer render;
+    private MediaProjectionManager mProjectionManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webrtc);
-        initViews();
-        this.peerWrapper = new PeerWrapper(this);
-        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.1:8080"),this.peerWrapper);
-        this.clientSocket.connect();
-        this.peerWrapper.setEmitter((Emitter) this.clientSocket);
+
+        mProjectionManager = (MediaProjectionManager) getSystemService
+                (Context.MEDIA_PROJECTION_SERVICE);
+
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 42);
+
         this.buttonInit = (Button) this.findViewById(R.id.webrtc_init);
-
-
         this.buttonInit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 initWebRTC();
             }
         });
+
+
+        //not necessary atm
+        requestNeededPermissions();
+    }
+
+    private void requestNeededPermissions() {
+        if (ContextCompat.checkSelfPermission(WebRTCActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat
+                .checkSelfPermission(WebRTCActivity.this,
+                        Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale
+                    (WebRTCActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale
+                            (WebRTCActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                Snackbar.make(findViewById(android.R.id.content), "permission",
+                        Snackbar.LENGTH_INDEFINITE).setAction("ENABLE",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ActivityCompat.requestPermissions(WebRTCActivity.this,
+                                        new String[]{Manifest.permission
+                                                .WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
+                                        10);
+                            }
+                        }).show();
+            } else {
+                ActivityCompat.requestPermissions(WebRTCActivity.this,
+                        new String[]{Manifest.permission
+                                .WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
+                        10);
+            }
+        } else {
+            //onToggleScreenShare(v);
+        }
+
     }
 
 
@@ -59,5 +113,33 @@ public class WebRTCActivity extends Activity {
         render = findViewById(R.id.surface_local_viewer);
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        IBinder iBinder = data.getExtras().getBinder("android.media.projection.extra.EXTRA_MEDIA_PROJECTION");
+//        Log.i("Ibinder Debug", "starts: ");
+//        if (iBinder != null) {
+//            Log.i("Ibinder Debug", "Existieeeert");
+//        }
+
+//        if (requestCode != 42) {
+//            Log.e(TAG, "Unknown request code: " + requestCode);
+//            return;
+//        }
+//        if (resultCode != RESULT_OK) {
+//            Toast.makeText(this,
+//                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
+//
+//            return;
+//        }
+
+        initViews();
+        this.peerWrapper = new PeerWrapper(this,data);
+        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.1:8080"),this.peerWrapper);
+        this.clientSocket.connect();
+        this.peerWrapper.setEmitter((Emitter) this.clientSocket);
+
+
+    }
 
 }
