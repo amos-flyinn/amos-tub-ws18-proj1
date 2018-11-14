@@ -2,13 +2,12 @@ package com.amos.flyinn;
 
 import android.Manifest;
 import android.app.Activity;
-
 import java.net.URI;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
+
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -22,9 +21,16 @@ import android.widget.Button;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.webrtc.PeerWrapper;
+
+import org.webrtc.PeerConnection;
+import org.webrtc.SurfaceViewRenderer;
+
+import java.net.URI;
+
 import org.webrtc.PeerConnection;
 
 import org.webrtc.SurfaceViewRenderer;
+
 
 public class WebRTCActivity extends Activity {
 
@@ -40,7 +46,6 @@ public class WebRTCActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webrtc);
-
 
         mProjectionManager = (MediaProjectionManager) getSystemService
                 (Context.MEDIA_PROJECTION_SERVICE);
