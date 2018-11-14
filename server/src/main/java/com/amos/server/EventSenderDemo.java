@@ -2,10 +2,12 @@ package com.amos.server;
 
 import com.amos.server.wifimanager.WifiServiceManager;
 import com.amos.server.eventsender.EventServer;
+import com.amos.shared.TouchEvent;
 
 import android.Manifest;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.Touch;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -25,7 +27,7 @@ public class EventSenderDemo extends AppCompatActivity {
 
     View base;
 
-    BlockingQueue<MotionEvent> mq;
+    BlockingQueue<TouchEvent> mq;
 
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
@@ -67,7 +69,7 @@ public class EventSenderDemo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_sender_demo);
         base = findViewById(R.id.senderlayout);
-        mq = new LinkedBlockingQueue<MotionEvent>();
+        mq = new LinkedBlockingQueue<TouchEvent>();
         createP2P(this);
     }
 
@@ -80,8 +82,8 @@ public class EventSenderDemo extends AppCompatActivity {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         event.setLocation(event.getX() / base.getWidth(), event.getY() / base.getHeight());
-                        Log.d("Test", event.toString());
-                        mq.add(event);
+                        TouchEvent te = new TouchEvent(event.getX(), event.getY(), event.getAction(), event.getDownTime());
+                        mq.add(te);
                         return true;
                     }
                 }
