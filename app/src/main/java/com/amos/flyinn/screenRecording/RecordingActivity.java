@@ -198,28 +198,28 @@ public class RecordingActivity extends AppCompatActivity {
     }
 
     private void stopScreenSharing() {
-        if (mVirtualDisplay == null) {
-            return;
-        }
-        mVirtualDisplay.release();
-        //mMediaRecorder.release(); //If used: mMediaRecorder object cannot
-        // be reused again
-        destroyMediaProjection();
+//        if (mVirtualDisplay == null) {
+//            return;
+//        }
+//        mVirtualDisplay.release();
+//        //mMediaRecorder.release(); //If used: mMediaRecorder object cannot
+//        // be reused again
+//        destroyMediaProjection();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        destroyMediaProjection();
+        //destroyMediaProjection();
     }
 
     private void destroyMediaProjection() {
-        if (mMediaProjection != null) {
-            mMediaProjection.unregisterCallback(mMediaProjectionCallback);
-            mMediaProjection.stop();
-            mMediaProjection = null;
-        }
-        Log.i(TAG, "MediaProjection Stopped");
+//        if (mMediaProjection != null) {
+//            mMediaProjection.unregisterCallback(mMediaProjectionCallback);
+//            mMediaProjection.stop();
+//            mMediaProjection = null;
+//        }
+//        Log.i(TAG, "MediaProjection Stopped");
     }
 
     @Override

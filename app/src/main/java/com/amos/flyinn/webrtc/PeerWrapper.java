@@ -37,7 +37,6 @@ import java.util.ArrayList;
 
 public class PeerWrapper implements  IPeer {
 
-    private ScreenCapturerAndroid mScreenCapture;
 
     private SurfaceViewRenderer activityRender;
     private WebRTCActivity activity;
@@ -68,47 +67,31 @@ public class PeerWrapper implements  IPeer {
         this.emitter = emitter;
     }
 
-
-
     private void initComponents(){
-        mTextureHelper = SurfaceTextureHelper.create("test",this.rootEglBase.getEglBaseContext());
 
-        mScreenCapture = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
+        VideoCapturer videoCapturer = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
             @Override
             public void onStop() {
                 super.onStop();
                 Log.d("MediaProjectionCallback", "onStop: ");
             }
         });
-        mScreenCapture.initialize(mTextureHelper, this.activity.getApplicationContext(), new VideoCapturer.CapturerObserver() {
-            @Override
-            public void onCapturerStarted(boolean b) {
-                Log.d("CaptureObserver","OnCapturerStarted : " + b);
-            }
 
-            @Override
-            public void onCapturerStopped() {
-                Log.d("CaptureObserver", "onCapturerStopped: ");
-            }
 
-            @Override
-            public void onFrameCaptured(VideoFrame videoFrame) {
-                Log.d("CaptureObserver", "onFrameCaptured: ");
-            }
-        });
+
         this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
 
         this.activityRender.setZOrderMediaOverlay(true);
 
 
-        VideoCapturer screenAndroidCapture;
-        screenAndroidCapture = mScreenCapture;
-        if (screenAndroidCapture != null) {
-            videoSource = peerFactory.createVideoSource(screenAndroidCapture);
+        if (videoCapturer != null) {
+            peerFactory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
+
+            videoSource = peerFactory.createVideoSource(videoCapturer);
         }
         localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
-        if (screenAndroidCapture != null) {
-            screenAndroidCapture.startCapture(1024, 720, 30);
+        if (videoCapturer != null) {
+            videoCapturer.startCapture(1024, 720, 30);
         }
 
         this.activityRender.setVisibility(View.VISIBLE);
@@ -118,63 +101,53 @@ public class PeerWrapper implements  IPeer {
         this.addCameraStreamToPeerConnection();
 
 
+//////////////////////////////////////////
 
 
-        /*
-        //this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
-        VideoCapturer videoCapturerAndroid;
-        videoCapturerAndroid = createCameraCapturer(new Camera1Enumerator(false));
+//        this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
+//
+//        SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create("101",this.rootEglBase.getEglBaseContext());
+//        ScreenCapturerAndroid screenCapturerAndroid = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
+//            @Override
+//            public void onStop() {
+//                super.onStop();
+//                Log.d("MediaProjectionCallback", "onStop: ");
+//            }
+//        });
+//
+//        screenCapturerAndroid.initialize(surfaceTextureHelper, activity.getApplicationContext(), new VideoCapturer.CapturerObserver() {
+//            @Override
+//            public void onCapturerStarted(boolean b) {
+//
+//            }
+//
+//            @Override
+//            public void onCapturerStopped() {
+//
+//            }
+//
+//            @Override
+//            public void onFrameCaptured(VideoFrame videoFrame) {
+//
+//            }
+//        });
+//
+//        videoSource = peerFactory.createVideoSource(screenCapturerAndroid);
+//
+//
+//        localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
+//        screenCapturerAndroid.startCapture(1024, 720, 30);
+//        this.activityRender.setVisibility(View.VISIBLE);
+//        localVideoTrack.addSink(this.activityRender);
+//        this.activityRender.setMirror(true);
+//
+//        this.addCameraStreamToPeerConnection();
 
-        if (videoCapturerAndroid != null) {
-            videoSource = peerFactory.createVideoSource(videoCapturerAndroid);
-        }
-        localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
 
-        if (videoCapturerAndroid != null) {
-            videoCapturerAndroid.startCapture(1024, 720, 30);
-        }
-        this.activityRender.setVisibility(View.VISIBLE);
-        localVideoTrack.addSink(this.activityRender);
-        this.activityRender.setMirror(true);
-
-        this.addCameraStreamToPeerConnection();
-        */
 
     }
 
-    private VideoCapturer createCameraCapturer(CameraEnumerator enumerator) {
-        final String[] deviceNames = enumerator.getDeviceNames();
 
-        // First, try to find front facing camera
-        Logging.d("PeerWrapperClient", "Looking for front facing cameras.");
-        for (String deviceName : deviceNames) {
-            if (enumerator.isFrontFacing(deviceName)) {
-                Logging.d("PeerWrapperClient", "Creating front facing camera capturer.");
-                VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
-
-                if (videoCapturer != null) {
-                    return videoCapturer;
-                }
-            }
-        }
-
-
-
-        // Front facing camera not found, try something else
-        Logging.d("PeerWrapperClient", "Looking for other cameras.");
-        for (String deviceName : deviceNames) {
-            if (!enumerator.isFrontFacing(deviceName)) {
-                Logging.d("PeerWrapperClient", "Creating other camera capturer.");
-                VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
-
-                if (videoCapturer != null) {
-                    return videoCapturer;
-                }
-            }
-        }
-
-        return null;
-    }
 
     private void configPeerConnection() {
         this.rootEglBase = EglBase.create();

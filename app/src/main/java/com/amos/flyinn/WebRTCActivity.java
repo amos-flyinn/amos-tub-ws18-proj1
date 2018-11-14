@@ -1,41 +1,30 @@
 package com.amos.flyinn;
 
+import android.Manifest;
 import android.app.Activity;
 
 import java.net.URI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.amos.flyinn.screenRecording.RecordingActivity;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
-import com.amos.flyinn.webrtc.PeerObserver;
 import com.amos.flyinn.webrtc.PeerWrapper;
-import com.amos.flyinn.webrtc.SdpObserver;
-
-import org.webrtc.DefaultVideoDecoderFactory;
-import org.webrtc.DefaultVideoEncoderFactory;
-import org.webrtc.EglBase;
-import org.webrtc.IceCandidate;
-import org.webrtc.MediaConstraints;
 import org.webrtc.PeerConnection;
-import org.webrtc.PeerConnectionFactory;
-import org.webrtc.SessionDescription;
+
 import org.webrtc.SurfaceViewRenderer;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class WebRTCActivity extends Activity {
 
@@ -56,7 +45,7 @@ public class WebRTCActivity extends Activity {
         mProjectionManager = (MediaProjectionManager) getSystemService
                 (Context.MEDIA_PROJECTION_SERVICE);
 
-        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 10);
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 42);
 
         this.buttonInit = (Button) this.findViewById(R.id.webrtc_init);
         this.buttonInit.setOnClickListener(new View.OnClickListener() {
@@ -65,8 +54,44 @@ public class WebRTCActivity extends Activity {
                 initWebRTC();
             }
         });
+
+
+        //not necessary atm
+        requestNeededPermissions();
     }
 
+    private void requestNeededPermissions() {
+        if (ContextCompat.checkSelfPermission(WebRTCActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat
+                .checkSelfPermission(WebRTCActivity.this,
+                        Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale
+                    (WebRTCActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale
+                            (WebRTCActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                Snackbar.make(findViewById(android.R.id.content), "permission",
+                        Snackbar.LENGTH_INDEFINITE).setAction("ENABLE",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ActivityCompat.requestPermissions(WebRTCActivity.this,
+                                        new String[]{Manifest.permission
+                                                .WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
+                                        10);
+                            }
+                        }).show();
+            } else {
+                ActivityCompat.requestPermissions(WebRTCActivity.this,
+                        new String[]{Manifest.permission
+                                .WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
+                        10);
+            }
+        } else {
+            //onToggleScreenShare(v);
+        }
+
+    }
 
 
     private void initWebRTC(){
@@ -86,22 +111,22 @@ public class WebRTCActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IBinder iBinder = data.getExtras().getBinder("android.media.projection.extra.EXTRA_MEDIA_PROJECTION");
-        Log.i("Ibinder Debug", "starts: ");
-        if (iBinder != null) {
-            Log.i("Ibinder Debug", "Existieeeert");
-        }
+//        IBinder iBinder = data.getExtras().getBinder("android.media.projection.extra.EXTRA_MEDIA_PROJECTION");
+//        Log.i("Ibinder Debug", "starts: ");
+//        if (iBinder != null) {
+//            Log.i("Ibinder Debug", "Existieeeert");
+//        }
 
-        if (requestCode != 10) {
-            Log.e(TAG, "Unknown request code: " + requestCode);
-            return;
-        }
-        if (resultCode != RESULT_OK) {
-            Toast.makeText(this,
-                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
-
-            return;
-        }
+//        if (requestCode != 42) {
+//            Log.e(TAG, "Unknown request code: " + requestCode);
+//            return;
+//        }
+//        if (resultCode != RESULT_OK) {
+//            Toast.makeText(this,
+//                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
+//
+//            return;
+//        }
 
         initViews();
         this.peerWrapper = new PeerWrapper(this,data);
