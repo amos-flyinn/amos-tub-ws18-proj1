@@ -1,5 +1,6 @@
 package com.amos.shared;
 
+import android.content.res.Resources;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 
@@ -9,22 +10,25 @@ public class TouchEvent implements Serializable {
     public float x;
     public float y;
     public int action;
-    public long downTime, eventTime;
+    public long downTime;
+    private int max = 1;
 
-    public TouchEvent(float x, float y, int action, long downTime, long eventTime) {
+    public TouchEvent(float x, float y, int action, long downTime) {
         this.x = x;
         this.y = y;
         this.action = action;
         this.downTime = downTime;
-        this.eventTime = eventTime;
     }
 
     public MotionEvent getConstructedMotionEvent() {
-        return MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, x, y, 0);
+        int maxX = Resources.getSystem().getDisplayMetrics().widthPixels;
+        int maxY = Resources.getSystem().getDisplayMetrics().heightPixels;
+
+        return MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, (x / max) * maxX, (y / max) * maxY, 0);
     }
 
     TouchEvent(MotionEvent e) {
-        this(e.getX(), e.getY(), e.getAction(), e.getDownTime(), e.getEventTime());
+        this(e.getX(), e.getY(), e.getAction(), e.getDownTime());
     }
 
     TouchEvent() {
