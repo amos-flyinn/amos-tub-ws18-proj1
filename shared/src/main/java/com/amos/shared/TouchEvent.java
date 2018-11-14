@@ -31,7 +31,7 @@ public class TouchEvent implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("TE: X: %f Y: %f");
+        return String.format("TE: X: %f Y: %f", x, y);
     }
 }
 
