@@ -11,4 +11,5 @@
 /captures
 .externalNativeBuild
 /fakeinput_dist
+app/src/main/res/raw/flyinn_fakeinputlib.jar
 BuildInfo.java

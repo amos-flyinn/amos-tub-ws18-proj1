@@ -3,21 +3,19 @@
     package="com.amos.server">
 
     <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_WIFI_STATE"/>
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.CHANGE_WIFI_STATE"/>
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.INTERNET"/>
-
+        android:name="android.permission.INTERNET"
+        android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -27,13 +25,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".P2PActivityServer">
-        </activity>
-
-        <activity android:name=".WebRTCServerActivity">
-        </activity>
-
+        <activity android:name=".P2PActivityServer"></activity>
+        <activity android:name=".WebRTCServerActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,13 +43,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amos.server.MainActivity" />
         </activity>
-
+        <activity android:name=".EventSenderDemo"></activity>
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar"
             />
-
     </application>
 
 </manifest>

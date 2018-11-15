@@ -12,6 +12,16 @@
         android:title="WebRTCServerActivity">
     </item>
     <item
+        android:id="@+id/event_grab_activity"
+        app:showAsAction="never"
+        android:title="Event Grab Demo">
+    </item>
+    <item
+        android:id="@+id/event_sender_activity"
+        app:showAsAction="never"
+        android:title="Event Sender Demo">
+    </item>
+    <item
         android:id="@+id/build_info_activity"
         app:showAsAction="never"
         android:title="@string/title_activity_build_info">
