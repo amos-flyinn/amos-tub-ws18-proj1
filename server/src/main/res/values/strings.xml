@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">server</string>
     <string name="title_activity_event_grab_demo">EventGrabDemo</string>
+    <string name="thread_button_label">Manually start event server thread</string>
 </resources>

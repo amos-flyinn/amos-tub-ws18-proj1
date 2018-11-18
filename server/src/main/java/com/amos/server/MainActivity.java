@@ -1,8 +1,13 @@
 package com.amos.server;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
 
@@ -12,18 +17,58 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.amos.server.eventsender.EventServer;
+import com.amos.shared.TouchEvent;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class MainActivity extends AppCompatActivity {
+    TextView connectionInfo;
+    Button threadStarter;
+    Thread senderRunner;
+    EventServer eventSender;
+    BlockingQueue<TouchEvent> msgQueue;
+    Handler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        connectionInfo = findViewById(R.id.connectionInfo);
+        // create touch listener components
+        msgQueue = new LinkedBlockingQueue<>();
+        uiHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                connectionInfo.setText((String) msg.obj);
+            }
+        };
+        eventSender = new EventServer(msgQueue, uiHandler);
+        threadStarter = findViewById(R.id.threadStarter);
+        threadStarter.setOnClickListener((View v) -> {
+            if (senderRunner == null) {
+                senderRunner = new Thread(eventSender);
+                senderRunner.start();
+                threadStarter.setText("Stop server");
+            } else {
+                eventSender.close();
+                try {
+                    senderRunner.join();
+                    threadStarter.setText("Start server");
+                    senderRunner = null;
+                } catch (InterruptedException e) {
+                }
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        connectionInfo.setText("Waiting for P2P Wifi connection");
     }
 
     @Override
