@@ -42,6 +42,8 @@ public class WebRTCActivity extends Activity {
     private SurfaceViewRenderer render;
     private MediaProjectionManager mProjectionManager;
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +61,8 @@ public class WebRTCActivity extends Activity {
                 initWebRTC();
             }
         });
+
+
 
 
         //not necessary atm
@@ -116,22 +120,6 @@ public class WebRTCActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        IBinder iBinder = data.getExtras().getBinder("android.media.projection.extra.EXTRA_MEDIA_PROJECTION");
-//        Log.i("Ibinder Debug", "starts: ");
-//        if (iBinder != null) {
-//            Log.i("Ibinder Debug", "Existieeeert");
-//        }
-
-//        if (requestCode != 42) {
-//            Log.e(TAG, "Unknown request code: " + requestCode);
-//            return;
-//        }
-//        if (resultCode != RESULT_OK) {
-//            Toast.makeText(this,
-//                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
-//
-//            return;
-//        }
 
         initViews();
         this.peerWrapper = new PeerWrapper(this,data);
