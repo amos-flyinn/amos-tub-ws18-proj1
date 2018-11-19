@@ -1,20 +1,26 @@
 package com.amos.flyinn;
 
 import android.content.Intent;
-import android.os.StrictMode;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import com.amos.flyinn.screenRecording.RecordingActivity;
+import com.amos.flyinn.summoner.Daemon;
+import com.amos.flyinn.wifimanager.WifiManager;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
+    TextView connectionStatus;
+    Button adbButton;
+    Daemon adbDaemon;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,14 +54,40 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    private Daemon createADBService(String addr) {
+        Point p = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(p);
+        Daemon d = new Daemon(getApplicationContext(), addr, p);
+        try {
+            d.writeFakeInputToFilesystem();
+            d.spawn_adb();
+        } catch (Exception e) {
+        }
+        return d;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        connectionStatus = findViewById(R.id.connectionStatus);
+        adbButton = findViewById(R.id.adb_button);
+        adbButton.setOnClickListener((View v) -> {
+            if (adbDaemon == null) {
+                try {
+                    String addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+                    adbDaemon = createADBService(addr);
+                } catch (Exception e) {
+                    connectionStatus.setText("Error starting ADB service");
+                }
+                adbButton.setText("Stop ADB Daemon");
+            } else {
+                // TODO Stop the adb daemon again
+                adbButton.setText("Start ADB Daemon");
+            }
+        });
     }
 
     /**
