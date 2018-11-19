@@ -26,8 +26,7 @@
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="true" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -36,17 +35,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".WifiP2PActivity"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
-            android:label="Searching Peer">
-        </activity>
-
-        <activity android:name=".WebRTCActivity"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
-            android:label="WEBRTC Example">
-        </activity>
-
+        <activity
+            android:name=".WifiP2PActivity"
+            android:label="Searching Peer"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"></activity>
+        <activity
+            android:name=".WebRTCActivity"
+            android:label="WEBRTC Example"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,7 +54,8 @@
             android:name=".ADBActivity"
             android:label="@string/title_activity_adb"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".screenRecording.RecordingActivity"></activity>
+        <activity android:name=".screenRecording.RecordingActivity" />
+        <activity android:name=".requirementsCheck.RequirementsCheckAvtivity"></activity>
     </application>
 
 </manifest>

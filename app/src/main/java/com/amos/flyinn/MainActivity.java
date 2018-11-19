@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 
+import com.amos.flyinn.requirementsCheck.RequirementsCheckAvtivity;
 import com.amos.flyinn.screenRecording.RecordingActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void toScreenActivityOnClick(View view) {
         Intent intent = new Intent(this, RecordingActivity.class);
+        startActivity(intent);
+    }
+
+    public void toRequirementsActivityOnClick(View view) {
+        Intent intent = new Intent(this, RequirementsCheckAvtivity.class);
         startActivity(intent);
     }
 }
