@@ -3,3 +3,4 @@
 set -euo pipefail
 
 ./gradlew build connectedCheck
+
