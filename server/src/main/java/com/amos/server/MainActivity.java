@@ -12,12 +12,19 @@ import android.widget.TextView;
 import android.content.Intent;
 
 import org.w3c.dom.Text;
+import org.webrtc.PeerConnection;
+import org.webrtc.SurfaceViewRenderer;
+
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.amos.server.eventsender.EventServer;
+import com.amos.server.signaling.Emitter;
+import com.amos.server.signaling.WebServer;
+import com.amos.server.webrtc.IPeer;
+import com.amos.server.webrtc.PeerWrapper;
 import com.amos.shared.TouchEvent;
 
 import java.util.concurrent.BlockingQueue;
@@ -31,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
     EventServer eventSender;
     BlockingQueue<TouchEvent> msgQueue;
     Handler uiHandler;
+
+    private PeerConnection localConnection;
+    private WebServer webSocketServer;
+    private PeerWrapper peerWrapper;
+    private Button buttonInit;
+    private SurfaceViewRenderer remoteRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +76,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //init WebRTC Signaling server
+        this.initViews();
+        this.peerWrapper = new PeerWrapper(this);
+        this.webSocketServer = new WebServer((IPeer) this.peerWrapper);
+        this.peerWrapper.setEmitter((Emitter)this.webSocketServer);
+        this.webSocketServer.start();
+    }
+
+    public SurfaceViewRenderer getRender(){
+        return remoteRender;
+    }
+
+    private void initViews(){
+        remoteRender = findViewById(R.id.surface_remote_viewer);
     }
 
     @Override
@@ -101,4 +129,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

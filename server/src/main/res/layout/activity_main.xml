@@ -60,4 +60,11 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/surface_remote_viewer"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|end"
+        android:layout_height="match_parent" />
+
+
 </android.support.constraint.ConstraintLayout>
