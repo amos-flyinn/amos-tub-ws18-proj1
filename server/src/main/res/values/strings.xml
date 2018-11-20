@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">server</string>
     <string name="title_activity_event_grab_demo">EventGrabDemo</string>
+    <string name="title_activity_build_info">BuildInfoActivity</string>
+
+    <string name="buildinfo_git_tag_name">Git Tag: </string>
+    <string name="buildinfo_git_commit_date">Git Commit: </string>
+    <string name="buildinfo_build_date">Build: </string>
+    <string name="buildinfo_package">Package: </string>
 </resources>

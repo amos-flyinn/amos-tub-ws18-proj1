@@ -59,6 +59,11 @@
             android:label="@string/title_activity_adb"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".screenRecording.RecordingActivity"></activity>
+        <activity
+            android:name=".BuildInfoActivity"
+            android:label="@string/title_activity_build_info"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>

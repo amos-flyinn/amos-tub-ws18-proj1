@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.event_sender_activity:
                 intent = new Intent(MainActivity.this, EventSenderDemo.class);
                 break;
+            case R.id.build_info_activity:
+                intent = new Intent(this, BuildInfoActivity.class);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
