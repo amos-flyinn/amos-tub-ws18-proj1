@@ -19,15 +19,17 @@ public class RequirementsCheckAvtivity extends AppCompatActivity {
     }
 
     private void checkForDebuggingMode() {
-
-        if(Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.ADB_ENABLED, 0) == 1) {
-            
+        if(Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) == 1) {
             Toast.makeText(this, "debugging mode is enabled", Toast.LENGTH_SHORT).show();
         } else {
-
-            //this will open the developer options menu from the settings, needs more testing if the user
-            //needs to click on the build number multiple times or it works without it.
-            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+            try {
+                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                Toast.makeText(this, "Please enable USB debugging.", Toast.LENGTH_SHORT).show();
+            } catch(Exception ex) {
+                Toast.makeText(this, "Please enable first the debugging mode and then there the USB debugging.\n" +
+                        "Mostly it works with tapping multiple times the 'Software Build number' label.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS));
+            }
         }
     }
 }
