@@ -74,10 +74,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
  
-    public void toRequirementsActivityOnClick(View view) {
-        Intent intent = new Intent(this, RequirementsCheckAvtivity.class);
-        startActivity(intent);
-    }
+  
  
     @Override
     public void onResume()
