@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.initViewsWebRTC();
         this.initScreenCapturePermissions();
+        this.initWebRTCScreenCapture();
 
     }
 
