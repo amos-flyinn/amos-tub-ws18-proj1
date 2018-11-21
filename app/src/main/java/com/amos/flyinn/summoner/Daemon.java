@@ -50,9 +50,8 @@ public class Daemon {
     }
 
     public void spawn_adb() throws Exception {
-        Intent i= new Intent(context, ADBService.class);
+        Intent i = new Intent(context, ADBService.class);
         i.putExtra("cmd", execCMD);
         context.startService(i);
     }
-
 }
