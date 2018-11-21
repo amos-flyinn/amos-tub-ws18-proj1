@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     EventServer eventSender;
     BlockingQueue<TouchEvent> msgQueue;
     Handler uiHandler;
+    SurfaceViewRenderer view;
 
     private PeerConnection localConnection;
     private WebServer webSocketServer;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         connectionInfo = findViewById(R.id.connectionInfo);
+        connectionInfo.setVisibility(View.INVISIBLE);
+        view = findViewById(R.id.surface_remote_viewer);
         // create touch listener components
         msgQueue = new LinkedBlockingQueue<>();
         uiHandler = new Handler(Looper.getMainLooper()) {
@@ -61,21 +65,22 @@ public class MainActivity extends AppCompatActivity {
         };
         eventSender = new EventServer(msgQueue, uiHandler);
         threadStarter = findViewById(R.id.threadStarter);
-        threadStarter.setOnClickListener((View v) -> {
-            if (senderRunner == null) {
-                senderRunner = new Thread(eventSender);
-                senderRunner.start();
-                threadStarter.setText("Stop server");
-            } else {
-                eventSender.close();
-                try {
-                    senderRunner.join();
-                    threadStarter.setText("Start server");
-                    senderRunner = null;
-                } catch (InterruptedException e) {
-                }
-            }
-        });
+        threadStarter.setVisibility(View.INVISIBLE);
+        // threadStarter.setOnClickListener((View v) -> {
+        //     if (senderRunner == null) {
+        //         senderRunner = new Thread(eventSender);
+        //         senderRunner.start();
+        //         threadStarter.setText("Stop server");
+        //     } else {
+        //         eventSender.close();
+        //         try {
+        //             senderRunner.join();
+        //             threadStarter.setText("Start server");
+        //             senderRunner = null;
+        //         } catch (InterruptedException e) {
+        //         }
+        //     }
+        // });
 
         //init WebRTC Signaling server
         this.initViews();
@@ -83,6 +88,17 @@ public class MainActivity extends AppCompatActivity {
         this.webSocketServer = new WebServer((IPeer) this.peerWrapper);
         this.peerWrapper.setEmitter((Emitter)this.webSocketServer);
         this.webSocketServer.start();
+
+        senderRunner = new Thread(eventSender);
+        senderRunner.start();
+        view.setOnTouchListener(
+                (View v, MotionEvent e) -> {
+                    e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
+                    TouchEvent te = new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
+                    msgQueue.add(te);
+                    return true;
+                }
+        );
     }
 
     public SurfaceViewRenderer getRender(){
