@@ -20,19 +20,17 @@ import java.net.Socket;
 import java.util.Locale;
 
 public class Daemon {
-    // private final String FAKE_INPUT_SERVER_PATH = Environment.getExternalStorageDirectory() + "/Android/data/flyinn_fakeinputlib.jar";
+    private final String FAKE_INPUT_SERVER_PATH = Environment.getExternalStorageDirectory() + "/Android/data/flyinn_fakeinputlib.jar";
     // NOTE: cant use the FAKE_INPUT_SERVER_PATH as this will lead to permission issues, use "/sdcard/", which is a symlink.
-    // private final String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar nohup app_process / com.amos.fakeinputlib.Main %s %d %d";
-    private final String CMD = "shell:CLASSPATH=%%s nohup app_process / com.amos.fakeinputlib.Main %s %d %d";
+    private final String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar nohup app_process / com.amos.fakeinputlib.Main %s %d %d";
+    //private final String CMD = "shell:CLASSPATH=%%s nohup app_process / com.amos.fakeinputlib.Main %s %d %d";
     private final String execCMD;
     private Context context;
 
     private String binaryPath;
 
     public Daemon(Context context, String addr, Point p) {
-        // execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, addr, p.x, p.y);
-        this.execCMD = String.format(Locale.ENGLISH, CMD, addr, p.x, p.y);
-        // Log.d("AdbDaemon", FAKE_INPUT_SERVER_PATH);
+        execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, addr, p.x, p.y);
         Log.d("AdbDaemon", this.execCMD);
         this.context = context;
     }
@@ -41,7 +39,7 @@ public class Daemon {
         InputStream in = this.context.getResources().openRawResource(R.raw.flyinn_fakeinputlib);
 
 
-        File fpath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "flyinn_fakeinputlib.jar");
+        File fpath = new File(FAKE_INPUT_SERVER_PATH);
         FileOutputStream out = new FileOutputStream(fpath.toString());
 
         byte[] buff = new byte[2048];
@@ -74,9 +72,7 @@ public class Daemon {
         AdbConnection connection = AdbConnection.create(socket, crypto);
         connection.connect();
         try {
-            String fullCmd = String.format(Locale.ENGLISH, execCMD, "/storage/emulated/legacy/Download/flyinn_fakeinputlib.jar");
-            Log.d("AdbDaemon", fullCmd);
-            AdbStream stream = connection.open(fullCmd);
+            AdbStream stream = connection.open(execCMD);
             byte[] bytes = {};
 
             // Hack to flush the connection and wait until execution, read will always throw.
