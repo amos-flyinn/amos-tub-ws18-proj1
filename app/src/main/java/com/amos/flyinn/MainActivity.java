@@ -1,10 +1,14 @@
 package com.amos.flyinn;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.media.projection.MediaProjectionManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
             d.writeFakeInputToFilesystem();
             d.spawn_adb();
         } catch (Exception e) {
+            Log.d("AppDaemon", e.toString());
         }
         return d;
     }
@@ -142,21 +147,31 @@ public class MainActivity extends AppCompatActivity {
 
         // Example of a call to a native method
         connectionStatus = findViewById(R.id.connectionStatus);
-        adbButton = findViewById(R.id.adb_button);
-        adbButton.setOnClickListener((View v) -> {
-            if (adbDaemon == null) {
-                try {
-                    String addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
-                    adbDaemon = createADBService(addr);
-                } catch (Exception e) {
-                    connectionStatus.setText("Error starting ADB service");
-                }
-                adbButton.setText("Stop ADB Daemon");
-            } else {
-                // TODO Stop the adb daemon again
-                adbButton.setText("Start ADB Daemon");
-            }
-        });
+        // adbButton = findViewById(R.id.adb_button);
+        // adbButton.setOnClickListener((View v) -> {
+        //     if (adbDaemon == null) {
+        //         try {
+        //             String addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+        //             adbDaemon = createADBService(addr);
+        //         } catch (Exception e) {
+        //             connectionStatus.setText("Error starting ADB service");
+        //         }
+        //         adbButton.setText("Stop ADB Daemon");
+        //     } else {
+        //         // TODO Stop the adb daemon again
+        //         adbButton.setText("Start ADB Daemon");
+        //     }
+        // });
+        String addr;
+        try {
+            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+        } catch (Exception e) {
+            addr = "192.168.49.1";
+        }
+        while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+        }
+        adbDaemon = createADBService(addr);
 
         this.initViewsWebRTC();
         this.initScreenCapturePermissions();
