@@ -165,13 +165,12 @@ public class MainActivity extends AppCompatActivity {
         String addr;
         try {
             addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+            while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+            adbDaemon = createADBService(addr);
         } catch (Exception e) {
-            addr = "192.168.49.1";
         }
-        while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-        }
-        adbDaemon = createADBService(addr);
 
         this.initViewsWebRTC();
         this.initScreenCapturePermissions();
