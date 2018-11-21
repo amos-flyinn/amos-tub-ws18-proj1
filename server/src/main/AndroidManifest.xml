@@ -48,6 +48,11 @@
                 android:value="com.amos.server.MainActivity" />
         </activity>
         <activity android:name=".EventSenderDemo"></activity>
+        <activity
+            android:name=".BuildInfoActivity"
+            android:label="@string/title_activity_build_info"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>

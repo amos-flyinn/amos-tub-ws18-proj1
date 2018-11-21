@@ -13,6 +13,8 @@ import android.view.View.OnKeyListener;
 import android.view.KeyEvent;
 import android.widget.ScrollView;
 
+import java.util.Locale;
+
 class MockOutput {
     TextView output;
 
@@ -66,7 +68,7 @@ public class EventGrabDemo extends AppCompatActivity {
                     id = e.getPointerId(i);
                     x = e.getX(i);
                     y = e.getY(i);
-                    msg = String.format("Count %d Index %d", count, i);
+                    msg = String.format(Locale.ENGLISH, "Count %d Index %d", count, i);
                     output.write(msg);
                     scroller.dispatchTouchEvent(
                             MotionEvent.obtain(
@@ -87,7 +89,7 @@ public class EventGrabDemo extends AppCompatActivity {
                 int action = e.getAction();
                 int keycode = e.getKeyCode();
                 int meta = e.getMetaState();
-                msg = String.format("Keycode: %d Action: %d Meta: %d", keycode, action, meta);
+                msg = String.format(Locale.ENGLISH, "Keycode: %d Action: %d Meta: %d", keycode, action, meta);
                 output.write(msg);
                 return true;
             }

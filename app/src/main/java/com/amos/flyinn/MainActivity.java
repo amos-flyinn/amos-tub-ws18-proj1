@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.webrtc_activity:
                 intent = new Intent(this, WebRTCActivity.class);
                 break;
+            case R.id.build_info_activity:
+                intent = new Intent(this, BuildInfoActivity.class);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
