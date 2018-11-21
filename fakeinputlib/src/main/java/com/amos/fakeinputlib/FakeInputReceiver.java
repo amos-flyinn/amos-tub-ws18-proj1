@@ -29,7 +29,7 @@ class FakeInputReceiver {
                 e.printStackTrace();
 
                 // Exponential backoff
-                Thread.sleep((int) Math.pow(2.5, i));
+                Thread.sleep((int) Math.pow(2.5, i)*1000);
                 continue;
             }
             break;

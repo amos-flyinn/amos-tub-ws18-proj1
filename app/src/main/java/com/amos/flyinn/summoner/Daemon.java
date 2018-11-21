@@ -1,11 +1,9 @@
 package com.amos.flyinn.summoner;
 
-import android.Manifest;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Environment;
 import android.os.StrictMode;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.amos.flyinn.R;
@@ -33,9 +31,9 @@ public class Daemon {
 
     public Daemon(Context context, String addr, Point p) {
         // execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, addr, p.x, p.y);
-        execCMD = String.format(Locale.ENGLISH, CMD, addr, p.x, p.y);
+        this.execCMD = String.format(Locale.ENGLISH, CMD, addr, p.x, p.y);
         // Log.d("AdbDaemon", FAKE_INPUT_SERVER_PATH);
-        Log.d("AdbDaemon", execCMD);
+        Log.d("AdbDaemon", this.execCMD);
         this.context = context;
     }
 
@@ -76,7 +74,9 @@ public class Daemon {
         AdbConnection connection = AdbConnection.create(socket, crypto);
         connection.connect();
         try {
-            AdbStream stream = connection.open(String.format(Locale.ENGLISH, execCMD, binaryPath));
+            String fullCmd = String.format(Locale.ENGLISH, execCMD, "/storage/emulated/legacy/Download/flyinn_fakeinputlib.jar");
+            Log.d("AdbDaemon", fullCmd);
+            AdbStream stream = connection.open(fullCmd);
             byte[] bytes = {};
 
             // Hack to flush the connection and wait until execution, read will always throw.
