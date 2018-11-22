@@ -1,5 +1,6 @@
 package com.amos.server;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,7 +33,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     TextView connectionInfo;
     Button threadStarter;
     Thread senderRunner;
