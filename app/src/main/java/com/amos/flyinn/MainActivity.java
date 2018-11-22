@@ -1,26 +1,90 @@
 package com.amos.flyinn;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
-import android.os.StrictMode;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
+import android.media.projection.MediaProjectionManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-
-import org.json.JSONException;
+import android.widget.Toast;
 
 import com.amos.flyinn.screenRecording.RecordingActivity;
+import com.amos.flyinn.signaling.ClientSocket;
+import com.amos.flyinn.signaling.Emitter;
+import com.amos.flyinn.summoner.Daemon;
+import com.amos.flyinn.webrtc.PeerWrapper;
+import com.amos.flyinn.wifimanager.WifiManager;
+
+import org.webrtc.PeerConnection;
+import org.webrtc.SurfaceViewRenderer;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    TextView connectionStatus;
+    Button adbButton;
+    Daemon adbDaemon;
+    private MediaProjectionManager mProjectionManager;
+    private PeerConnection localConnection;
+    private ClientSocket clientSocket;
+    private PeerWrapper peerWrapper;
+    private SurfaceViewRenderer render;
+    private Button buttonInit;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+
+    private void initWebRTCScreenCapture(){
+        try {
+            this.clientSocket.connectBlocking(1,TimeUnit.MINUTES);
+            this.peerWrapper.beginTransactionWithOffer();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Log.d("MainActivity", "initWebRTCScreenCapture: " + "Error traying to connect to the server");
+        }
+
+    }
+
+    private void configForWebRTC(Intent permissionsScreenCapture){
+        this.peerWrapper = new PeerWrapper(this,permissionsScreenCapture);
+        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.1:8080"),this.peerWrapper);
+        this.peerWrapper.setEmitter((Emitter) this.clientSocket);
+
+    }
+
+
+    private void initScreenCapturePermissions(){
+        mProjectionManager = (MediaProjectionManager) getSystemService
+                (Context.MEDIA_PROJECTION_SERVICE);
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 42);
+    }
+
+    public SurfaceViewRenderer getRender(){
+        return render;
+    }
+
+    private void initViewsWebRTC(){
+        render = findViewById(R.id.surface_local_viewer);
     }
 
     @Override
@@ -51,14 +115,65 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    private Daemon createADBService(String addr) {
+        Point p = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(p);
+        Daemon d = new Daemon(getApplicationContext(), addr, p);
+        try {
+            d.writeFakeInputToFilesystem();
+            d.spawn_adb();
+        } catch (Exception e) {
+            Log.d("AppDaemon", e.toString());
+        }
+        return d;
+    }
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.buttonInit = (Button) this.findViewById(R.id.webrtc_init);
+        this.buttonInit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initWebRTCScreenCapture();
+            }
+        });
+
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        connectionStatus = findViewById(R.id.connectionStatus);
+        // adbButton = findViewById(R.id.adb_button);
+        // adbButton.setOnClickListener((View v) -> {
+        //     if (adbDaemon == null) {
+        //         try {
+        //             String addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+        //             adbDaemon = createADBService(addr);
+        //         } catch (Exception e) {
+        //             connectionStatus.setText("Error starting ADB service");
+        //         }
+        //         adbButton.setText("Stop ADB Daemon");
+        //     } else {
+        //         // TODO Stop the adb daemon again
+        //         adbButton.setText("Start ADB Daemon");
+        //     }
+        // });
+        String addr;
+        try {
+            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+            while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+            adbDaemon = createADBService(addr);
+        } catch (Exception e) {
+        }
+
+        this.initViewsWebRTC();
+        this.initScreenCapturePermissions();
     }
 
     /**
@@ -70,5 +185,20 @@ public class MainActivity extends AppCompatActivity {
     public void toScreenActivityOnClick(View view) {
         Intent intent = new Intent(this, RecordingActivity.class);
         startActivity(intent);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this,
+                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        this.configForWebRTC(data);
+
+
     }
 }
