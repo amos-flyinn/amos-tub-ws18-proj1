@@ -20,6 +20,9 @@ public class SocketServer {
     }
 
     public void close() throws IOException {
-        this.client.close();
+        if (client != null) {
+            client.close();
+        }
+        socket.close();
     }
 }
