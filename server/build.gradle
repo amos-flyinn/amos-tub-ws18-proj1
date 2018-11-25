@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         applicationId "com.amos.server"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -43,7 +43,7 @@ android {
      flavorDimensions "device"
      productFlavors {
          mobile {
-             minSdkVersion 26
+             minSdkVersion 21
          }
          embedded {
              minSdkVersion 27
