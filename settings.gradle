@@ -1,1 +1,1 @@
-include ':app', ':server', ':fakeinputlib', ':shared', ':testandroidthings'
+include ':app', ':server', ':fakeinputlib', ':shared'
