@@ -3,6 +3,6 @@
 set -euo pipefail
 
 ./gradlew assembleMobileDebug \
-          connectedCheckMobileDebug
+          connectedMobileDebugAndroidTest
 
 
