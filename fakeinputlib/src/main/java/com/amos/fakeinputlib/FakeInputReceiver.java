@@ -9,6 +9,9 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 class FakeInputReceiver {
+
+    private static final String TAG = FakeInputReceiver.class.getName();
+
     private final FakeInput handler;
     private final int maxX;
     private final int maxY;
@@ -47,6 +50,11 @@ class FakeInputReceiver {
 
         TouchEvent e;
         while (true) {
+            Object o = istream.readObject();
+            if (!(o instanceof TouchEvent)) {
+                Log.wtf(TAG, "received unexpected object (instead of TouchEvent): " + o);
+                continue;
+            }
             e = (TouchEvent) istream.readObject();
             Log.d("FakeInput", "Got Event: "+e.toString());
             MotionEvent ev = e.getConstructedMotionEvent(this.maxX, this.maxY);
