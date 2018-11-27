@@ -12,7 +12,6 @@ import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
 
 import java.net.URI;
-import java.security.spec.ECField;
 
 public class ClientSocket extends WebSocketClient implements Emitter {
 

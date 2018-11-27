@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
+import com.amos.server.MainActivity;
 import com.amos.server.WebRTCServerActivity;
 import com.amos.server.signaling.Emitter;
 
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 
 public class PeerWrapper implements IPeer {
 
-    private WebRTCServerActivity activity;
+    private MainActivity activity;
     private Emitter emitter;
     private Context appContext;
     private PeerConnection connection;
@@ -37,7 +38,7 @@ public class PeerWrapper implements IPeer {
     public PeerWrapper(Activity app) {
 
         this.appContext = app.getApplicationContext();
-        this.activity = (WebRTCServerActivity) app;
+        this.activity = (MainActivity) app;
 
         this.configPeerConnection();
         this.createPeer();

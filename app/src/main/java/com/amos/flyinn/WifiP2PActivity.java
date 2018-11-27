@@ -5,7 +5,6 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -14,17 +13,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.amos.flyinn.wifimanager.WifiReceiverP2P;
+import com.amos.flyinn.wifimanager.WifiManager;
 
-import java.lang.reflect.Array;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,6 +146,7 @@ public class WifiP2PActivity extends ListActivity {
     public void onResume() {
         super.onResume();
         receiver = new WifiReceiverP2P(mManager, mChannel, this);
+        WifiManager.getInstance().setWifiReceiverP2P(receiver);
         registerReceiver(receiver, intentFilter);
     }
 

@@ -2,9 +2,14 @@ package com.amos.flyinn.webrtc;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.media.projection.MediaProjection;
+import android.os.IBinder;
 import android.util.Log;
+import android.view.Surface;
 import android.view.View;
 
+import com.amos.flyinn.MainActivity;
 import com.amos.flyinn.WebRTCActivity;
 import com.amos.flyinn.signaling.Emitter;
 
@@ -21,10 +26,13 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
+import org.webrtc.SurfaceTextureHelper;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
+import org.webrtc.VideoFrame;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
+import org.webrtc.ScreenCapturerAndroid;
 
 import java.util.ArrayList;
 
@@ -32,7 +40,9 @@ public class PeerWrapper implements  IPeer {
 
 
     private SurfaceViewRenderer activityRender;
-    private WebRTCActivity activity;
+    private MainActivity activity;
+    private SurfaceTextureHelper mTextureHelper;
+    private Intent intentWithThing;
     private DataChannel localChannel;
     private VideoTrack localVideoTrack;
     private Emitter emitter;
@@ -43,10 +53,11 @@ public class PeerWrapper implements  IPeer {
     private EglBase rootEglBase;
     private VideoSource videoSource;
 
-    public PeerWrapper(Activity app) {
+    public PeerWrapper(Activity app,Intent intent) {
 
+        this.intentWithThing = intent;
         this.appContext = app.getApplicationContext();
-        this.activity = (WebRTCActivity)app;
+        this.activity = (MainActivity) app;
         this.configPeerConnection();
         this.createPeer();
         this.activityRender = this.activity.getRender();
@@ -57,61 +68,38 @@ public class PeerWrapper implements  IPeer {
         this.emitter = emitter;
     }
 
-
     private void initComponents(){
-        this.activityRender.setZOrderMediaOverlay(true);
-        this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
-        VideoCapturer videoCapturerAndroid;
-        videoCapturerAndroid = createCameraCapturer(new Camera1Enumerator(false));
 
-        if (videoCapturerAndroid != null) {
-            videoSource = peerFactory.createVideoSource(videoCapturerAndroid);
-        }
+        VideoCapturer videoCapturer = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
+            @Override
+            public void onStop() {
+                super.onStop();
+                Log.d("MediaProjectionCallback", "onStop: ");
+            }
+        });
+
+        this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
+
+        this.activityRender.setZOrderMediaOverlay(true);
+
+        peerFactory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
+
+        videoSource = peerFactory.createVideoSource(videoCapturer);
+
         localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
 
-        if (videoCapturerAndroid != null) {
-            videoCapturerAndroid.startCapture(1024, 720, 30);
-        }
-        this.activityRender.setVisibility(View.VISIBLE);
+        videoCapturer.startCapture(1024, 720, 30);
+
+        this.activityRender.setVisibility(View.GONE);
         localVideoTrack.addSink(this.activityRender);
-        this.activityRender.setMirror(true);
+        //this.activityRender.setMirror(true);
 
         this.addCameraStreamToPeerConnection();
+
+
     }
 
-    private VideoCapturer createCameraCapturer(CameraEnumerator enumerator) {
-        final String[] deviceNames = enumerator.getDeviceNames();
 
-        // First, try to find front facing camera
-        Logging.d("PeerWrapperClient", "Looking for front facing cameras.");
-        for (String deviceName : deviceNames) {
-            if (enumerator.isFrontFacing(deviceName)) {
-                Logging.d("PeerWrapperClient", "Creating front facing camera capturer.");
-                VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
-
-                if (videoCapturer != null) {
-                    return videoCapturer;
-                }
-            }
-        }
-
-
-
-        // Front facing camera not found, try something else
-        Logging.d("PeerWrapperClient", "Looking for other cameras.");
-        for (String deviceName : deviceNames) {
-            if (!enumerator.isFrontFacing(deviceName)) {
-                Logging.d("PeerWrapperClient", "Creating other camera capturer.");
-                VideoCapturer videoCapturer = enumerator.createCapturer(deviceName, null);
-
-                if (videoCapturer != null) {
-                    return videoCapturer;
-                }
-            }
-        }
-
-        return null;
-    }
 
     private void configPeerConnection() {
         this.rootEglBase = EglBase.create();
