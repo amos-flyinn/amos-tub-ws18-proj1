@@ -18,16 +18,15 @@ import org.robolectric.RobolectricTestRunner;
 public class DaemonTest {
 
     private Context context = ApplicationProvider.getApplicationContext();
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void spawn_adbHappypathTest() throws Exception {
+    public void spawn_adbHappypathTest() {
         Daemon d = new Daemon(context, "127.0.0.1", new Point(0, 0));
         d.spawn_adb();
     }
 
     @Test(expected = NullPointerException.class)
-    public void spawn_adbNoContextTest() throws Exception {
+    public void spawn_adbNoContextTest() {
         Daemon d = new Daemon(null, "127.0.0.1", new Point(0, 0));
         d.spawn_adb();
     }

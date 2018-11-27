@@ -75,7 +75,7 @@ public class Daemon {
      * keep fakeinputlib alive even when the application itself is closed.
      * @throws Exception
      */
-    public void spawn_adb() throws Exception {
+    public void spawn_adb() {
         Intent i = new Intent(context, ADBService.class);
         i.putExtra("cmd", execCMD);
         context.startService(i);
