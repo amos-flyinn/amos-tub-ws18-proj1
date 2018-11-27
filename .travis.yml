@@ -14,7 +14,7 @@ cache:
     - "$HOME/.android/build-cache"
 env:
   global:
-	# Global variables to get things easier to change
+  #	Global variables to get things easier to change
     - ANDROID_API_LEVEL_TARGET=28
     - ANDROID_API_LEVEL_EMULATOR=21
     - ANDROID_BUILD_TOOLS_VERSION=28.0.3
