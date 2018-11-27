@@ -12,6 +12,9 @@ import com.tananaev.adblib.AdbStream;
 
 import java.net.Socket;
 
+/**
+ * Background service controlling the start of fakeinputlib via an adb shell.
+ */
 public class ADBService extends IntentService {
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -26,6 +29,10 @@ public class ADBService extends IntentService {
         super("ADBService");
     }
 
+    /**
+     * Start the adb shell process.
+     * @param workIntent
+     */
     @Override
     protected void onHandleIntent(Intent workIntent) {
         try {
