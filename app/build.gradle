@@ -16,6 +16,9 @@ android {
         warningsAsErrors false
     }
 
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 
     compileSdkVersion 28
 

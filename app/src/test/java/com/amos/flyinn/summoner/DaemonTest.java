@@ -1,17 +1,18 @@
 package com.amos.flyinn.summoner;
 
+import android.content.Context;
+import android.graphics.Point;
+
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import androidx.test.core.app.ApplicationProvider;
 
 public class DaemonTest {
 
-    @Test
-    public void writeFakeInputToFilesystem() {
-
-    }
+    private Context context = ApplicationProvider.getApplicationContext();
 
     @Test
     public void spawn_adb() {
+        Daemon d = new Daemon(context, "127.0.0.1", new Point());
     }
 }
