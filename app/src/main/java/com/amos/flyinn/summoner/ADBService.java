@@ -36,7 +36,7 @@ public class ADBService extends IntentService {
      * @throws IOException
      *          All errors resulting in us not being able to connect to ADB over network.
      */
-    private AdbConnection connectNetworkADB() throws IOException {
+    protected AdbConnection connectNetworkADB() throws IOException {
         AdbConnection connection;
         try {
             Socket socket = new Socket("127.0.0.1", 5555);
@@ -66,14 +66,19 @@ public class ADBService extends IntentService {
      *          Custom command to run
      * @throws IOException
      *          Issues in running the command correctly.
-     * @throws InterruptedException
-     *          Issues in running the command correctly.
      */
-    private void spawnApp(AdbConnection connection, String command) throws IOException, InterruptedException {
+    protected void spawnApp(AdbConnection connection, String command) throws IOException {
+        if (connection == null) {
+            throw new IOException("Connection is null");
+        }
         Log.d("AppDaemon", "Spawning the app");
-        AdbStream stream = connection.open(command);
-        while (true)
-            stream.read();
+        try {
+            AdbStream stream = connection.open(command);
+            while (true)
+                stream.read();
+        } catch (InterruptedException err) {
+            // Do nothing on interrupts for now
+        }
     }
 
     /**
