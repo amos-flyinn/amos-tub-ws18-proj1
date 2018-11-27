@@ -45,5 +45,4 @@ public class WebRTCServerActivity extends Activity {
         remoteRender = findViewById(R.id.surface_remote_viewer);
     }
 
-
 }

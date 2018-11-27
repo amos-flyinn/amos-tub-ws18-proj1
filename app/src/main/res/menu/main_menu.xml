@@ -6,7 +6,6 @@
         app:showAsAction="never"
         android:title="WIFIP2PActivity">
     </item>
-
     <item
         android:id="@+id/webrtc_activity"
         app:showAsAction="never"
@@ -16,4 +15,9 @@
         android:id="@+id/adb_activity"
         android:title="ADB"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/build_info_activity"
+        app:showAsAction="never"
+        android:title="@string/title_activity_build_info">
+    </item>
 </menu>

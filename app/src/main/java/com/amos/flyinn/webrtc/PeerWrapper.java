@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.View;
 
+import com.amos.flyinn.MainActivity;
 import com.amos.flyinn.WebRTCActivity;
 import com.amos.flyinn.signaling.Emitter;
 
@@ -39,7 +40,7 @@ public class PeerWrapper implements  IPeer {
 
 
     private SurfaceViewRenderer activityRender;
-    private WebRTCActivity activity;
+    private MainActivity activity;
     private SurfaceTextureHelper mTextureHelper;
     private Intent intentWithThing;
     private DataChannel localChannel;
@@ -56,7 +57,7 @@ public class PeerWrapper implements  IPeer {
 
         this.intentWithThing = intent;
         this.appContext = app.getApplicationContext();
-        this.activity = (WebRTCActivity)app;
+        this.activity = (MainActivity) app;
         this.configPeerConnection();
         this.createPeer();
         this.activityRender = this.activity.getRender();
@@ -77,72 +78,23 @@ public class PeerWrapper implements  IPeer {
             }
         });
 
-
-
         this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
 
         this.activityRender.setZOrderMediaOverlay(true);
 
+        peerFactory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
 
-        if (videoCapturer != null) {
-            peerFactory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
+        videoSource = peerFactory.createVideoSource(videoCapturer);
 
-            videoSource = peerFactory.createVideoSource(videoCapturer);
-        }
         localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
-        if (videoCapturer != null) {
-            videoCapturer.startCapture(1024, 720, 30);
-        }
 
-        this.activityRender.setVisibility(View.VISIBLE);
+        videoCapturer.startCapture(1024, 720, 30);
+
+        this.activityRender.setVisibility(View.GONE);
         localVideoTrack.addSink(this.activityRender);
         //this.activityRender.setMirror(true);
 
         this.addCameraStreamToPeerConnection();
-
-
-//////////////////////////////////////////
-
-
-//        this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
-//
-//        SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create("101",this.rootEglBase.getEglBaseContext());
-//        ScreenCapturerAndroid screenCapturerAndroid = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
-//            @Override
-//            public void onStop() {
-//                super.onStop();
-//                Log.d("MediaProjectionCallback", "onStop: ");
-//            }
-//        });
-//
-//        screenCapturerAndroid.initialize(surfaceTextureHelper, activity.getApplicationContext(), new VideoCapturer.CapturerObserver() {
-//            @Override
-//            public void onCapturerStarted(boolean b) {
-//
-//            }
-//
-//            @Override
-//            public void onCapturerStopped() {
-//
-//            }
-//
-//            @Override
-//            public void onFrameCaptured(VideoFrame videoFrame) {
-//
-//            }
-//        });
-//
-//        videoSource = peerFactory.createVideoSource(screenCapturerAndroid);
-//
-//
-//        localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
-//        screenCapturerAndroid.startCapture(1024, 720, 30);
-//        this.activityRender.setVisibility(View.VISIBLE);
-//        localVideoTrack.addSink(this.activityRender);
-//        this.activityRender.setMirror(true);
-//
-//        this.addCameraStreamToPeerConnection();
-
 
 
     }

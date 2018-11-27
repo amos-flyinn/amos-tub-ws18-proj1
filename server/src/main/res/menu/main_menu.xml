@@ -6,7 +6,6 @@
         app:showAsAction="never"
         android:title="P2PServerActivity">
     </item>
-
     <item
         android:id="@+id/webrtc_server_activity"
         app:showAsAction="never"
@@ -21,5 +20,10 @@
         android:id="@+id/event_sender_activity"
         app:showAsAction="never"
         android:title="Event Sender Demo">
+    </item>
+    <item
+        android:id="@+id/build_info_activity"
+        app:showAsAction="never"
+        android:title="@string/title_activity_build_info">
     </item>
 </menu>

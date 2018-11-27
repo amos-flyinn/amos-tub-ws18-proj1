@@ -1,11 +1,13 @@
 package com.amos.server.wifimanager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amos.server.MainActivity;
 import com.amos.server.P2PActivityServer;
 
 import java.net.InetAddress;
@@ -52,6 +54,7 @@ public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListe
         } catch (SocketException e) {
             e.printStackTrace();
         }
-
+        Intent intentToWebRTC = new Intent(activity,MainActivity.class);
+        activity.startActivity(intentToWebRTC);
     }
 }
