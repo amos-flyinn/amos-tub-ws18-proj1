@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #Giving permissions to travis for gradle
 chmod +x gradlew
 
