@@ -9,18 +9,22 @@ before_cache:
 
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.android/build-cache
-
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+    - "$HOME/.android/build-cache"
 env:
- global:
-    # Global variables to get things easier to change
+  global:
+	# Global variables to get things easier to change
     - ANDROID_API_LEVEL_TARGET=28
     - ANDROID_API_LEVEL_EMULATOR=21
     - ANDROID_BUILD_TOOLS_VERSION=28.0.3
     - CMAKE_VERSION=3.6.4111459
     - LLDB_VERSION=3.0
+#    - secure: r5z0kVZpHO+PTxqzY9LCE3X9Ov6uDTh5GEy+6afENbETsZtw8VocsllXdMqzBF2geJNQZw9fvdWmGLWN71k33i1Jx4vhzdIB59SFpZiWQvg8YztUgCqcfkp32a42Cg7Vv+TAdZDH5zinfhx0iGsHB81HcMCyssgoBoZVvZ34iyNeyV1cAHiJe92yBY1ocWKun9ob1x4WDRxhLlRvp9Vdwr4haqzXBIPFJOiG6hCzTlBrKQoUukMvpekBNfpx1QxuBZWQgANm8DuSRDQWW0Ff4sh0mlLh0OtpGT4zxrCof+jxZ87X713pfGcr1YBC1IeOKh4InOTtCL2aasuHk6Apwog399C0QrR0MBObH+VZFMfkGx7kT2CPyAVcg7lYp5Q/1x+RDF1bXOkxYpLD6wAALKcc+krqtQNA2/YFsZUM9u2rTJuoo0dOhhjzkDgCxx+1e86Lx7nhWL//B+djGAXzecYoBc1OwAatMWQVBZCUTRAQiNsyOS3I2X3XBjGgjHcrFdk5NJ6SZXvZ7zOTzEWlvFWaSnoB8h5ao2/AAYIzgG4R1yDmjsUlIwx7Sg7OoVaG42ey9YykM0Y/ueA07Ct7g96RapY/IJ6aow2gF3cpiMQQjiY1IvBnpToj4lhWhuJakl4JhAH+wAP1TBvnmXJOc79Q3zIeKkpn8BZIG/11vZ0=
+#    - secure: T5eF+B+09qF61pHoqJkfZJc+vYdp6IbDEgjrNldDal/Jujbnr+2YmlRdLb8/ZZr/K+HQogruDHXgtgYYLcnBOPiDL5Cj6LJ9ORO6OvP5GDVc5X4EDR8srfeOvE5+qGvhCgvLQxmnWAmJZDYZJPecJDPaF82aBZdzaC9R0dZVKPp3HOmqmlb4ZkX5wsBHq7xjeckXVwj1RjB8udMG2FVn6DXMGwcFjYc1W9JOJcbwtAqvtHNlXONaYD19P2T29JmtKgpNv/hVySSyGESw2r4+u2gaf++RM1UxvgaRqswXLunjNC7rOzDS7QOuFafpPQrZfKnbfMC6ElY2hCSzRGgZ4TRHp2BYs+CuVw0wm6x+SX17Z+1MCd6fFvGErM/AETJNaVXkChzQ/QcUfQhfV63RTi470Ve6yMs1zWKIAuhAP9XDMoPVY0OmvcZI6odbhE5MEQjGnlxUCr8DHqv7E00MoIx8tcaAqmQR1oy0YZ//NzKysJ/GKesCdcUsKiSrKV6KGnyAqTa6NiMKyOT6aPXxh9k3ZNENdm7N2Odfuy6el/6wrJIgM5CRUFiSshkIhAPw4jfldXSiC8aiFEJGeCouv8L49i15LJ/HvvY0ZMt2yfpXgK2FN6nWsgZshMMdjpLLfWZMO+1Hmiklp4h0HAOU7G+S9obNECLdjOivSmZh/nw=
+
+#before_install:
+#  - openssl aes-256-cbc -K $encrypted_cf4480f630ba_key -iv $encrypted_cf4480f630ba_iv -in flyinn-keystore.jks.enc -out flyinn-keystore.jks -d
 
 install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -54,3 +58,31 @@ before_script:
 script:
   - bash update_fakeinput_jar_asset.sh
   - bash build_operations.sh
+
+#before_deploy:
+#  - cp $TRAVIS_BUILD_DIR/.keystore $HOME
+#
+#  - cd app/build/outputs/apk/release
+#  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/flyinn-keystore.jks
+#    -storepass $storepass -keypass $keypass app-release-unsigned.apk flyinn-keystore
+#  - jarsigner -verify app-release-unsigned.apk
+#  - "${ANDROID_HOME}/build-tools/24.0.2/zipalign -v 4 app-release-unsigned.apk flyinn-client.apk"
+#
+#  - cd server/build/outputs/apk/release
+#  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/flyinn-keystore.jks
+#    -storepass $storepass -keypass $keypass server-release-unsigned.apk flyinn-keystore
+#  - jarsigner -verify server-release-unsigned.apk
+#  - "${ANDROID_HOME}/build-tools/24.0.2/zipalign -v 4 server-release-unsigned.apk flyinn-server.apk"
+
+deploy:
+  provider: releases
+  prerelease: true
+  api_key:
+    secure: "PGnRRC15p1A1FEjfChFZ8DDUBHyCrBcR5l+6swb9kct6AI/rlKSqnDKS/BZRx7ZouW9LDQwHFohEZeNKgDedTfQkAUcEsNi6wLzAmLYy4zljJhkXqoMpioNG+u4fLEsyP6aQtvgUf3ljK5JsroFlUNJYES5ws7B9HQbG3A1RCVa9dHNAtNNw8cu2ziIrnRvlmr1PYJwCf6leC725OL9G8EtANSQ/LdH/v1TEGIOkWR4XIf63TyLE2JpHEguXpI0z3Ne1L20mNdi2DHJLXLr/REKCIUmK9vWx1VFSXB41FckFAfJ/GaqLvdfPJ11Al6xL3Hx5xyKlWRbsUw/HCCYTOhtFCKjevRYAinxeIPh0wQ3OMy5sj3IQ5Wm91RqmA62P7rJLW8eLqJzHqQ+Mxw4By75CNKDcG8DYC4jwzd1yVDYvT5PBk3WekZkyBN2cFTwjntmUmzrdOAVTbRhIWiZeaKePgK1kL182wGMC0ekcnX/lBdQ7aoPr4Kf0gMadpXZheCk4MgrxzxLV2UAyw69+vPkKIQiw3+fquUCjsxRqlyTOYgaUu88CGKpmXGGoWpwf5V95fLqsavSsUSxhKh5Df7zwlezwLbZzLmg1XNtyX/sso+H5/Az5AlkjMqoWZfIFzzvrMmygu1Yr54oM4hkA5PZNEy5eO5ZlV68WA6VqYys="
+  file:
+    - app-release-unsigned.apk
+    - server-release-unsigned.apk
+  skip_cleanup: true
+  on:
+    repo: amos-flyinn/amos-tub-ws18-proj1
+    tags: true
