@@ -6,7 +6,10 @@ import static org.junit.Assert.*;
 
 public class ADBServiceTest {
 
+    private ADBService service = new ADBService();
+
     @Test
-    public void onHandleIntent() {
+    public void onHandleIntentNull() {
+        service.onHandleIntent(null);
     }
 }
