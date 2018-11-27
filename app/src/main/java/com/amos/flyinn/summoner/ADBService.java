@@ -2,7 +2,6 @@ package com.amos.flyinn.summoner;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.StrictMode;
 import android.util.Log;
 
 import com.tananaev.adblib.AdbBase64;
@@ -10,7 +9,9 @@ import com.tananaev.adblib.AdbConnection;
 import com.tananaev.adblib.AdbCrypto;
 import com.tananaev.adblib.AdbStream;
 
+import java.io.IOException;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Background service controlling the start of fakeinputlib via an adb shell.
@@ -30,31 +31,60 @@ public class ADBService extends IntentService {
     }
 
     /**
-     * Start the adb shell process.
-     * @param workIntent
+     * Create a socket connection to use adb over network with the local phone.
+     * @return
+     * @throws IOException
+     *          All errors resulting in us not being able to connect to ADB over network.
      */
-    @Override
-    protected void onHandleIntent(Intent workIntent) {
+    private AdbConnection connectNetworkADB() throws IOException {
+        AdbConnection connection;
         try {
-            // TODO(lbb): remfactor in new Thread.
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-
-            Log.d("AppDaemon", "Spawning the app");
-
             Socket socket = new Socket("127.0.0.1", 5555);
-
             AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(new AdbBase64() {
                 @Override
                 public String encodeToString(byte[] data) {
                     return android.util.Base64.encodeToString(data, 16);
                 }
             });
-            AdbConnection connection = AdbConnection.create(socket, crypto);
+            connection = AdbConnection.create(socket, crypto);
             connection.connect();
-            AdbStream stream = connection.open(workIntent.getStringExtra("cmd"));
-            while (true)
-                stream.read();
+        } catch (NoSuchAlgorithmException err) {
+            throw new IOException("Could not start fakeinputlib");
+        } catch (IOException err) {
+            throw new IOException("Could not start fakeinputlib");
+        } catch (InterruptedException err) {
+            throw new IOException("Could not start fakeinputlib");
+        }
+        return connection;
+    }
+
+    /**
+     * Run a command using adb shell.
+     * @param connection
+     *          ADB connection used to spawn command on.
+     * @param command
+     *          Custom command to run
+     * @throws IOException
+     *          Issues in running the command correctly.
+     * @throws InterruptedException
+     *          Issues in running the command correctly.
+     */
+    private void spawnApp(AdbConnection connection, String command) throws IOException, InterruptedException {
+        Log.d("AppDaemon", "Spawning the app");
+        AdbStream stream = connection.open(command);
+        while (true)
+            stream.read();
+    }
+
+    /**
+     * Start the adb shell process.
+     * @param workIntent
+     */
+    @Override
+    protected void onHandleIntent(Intent workIntent) {
+        try {
+            AdbConnection connection = connectNetworkADB();
+            spawnApp(connection, workIntent.getStringExtra("cmd"));
         } catch (Exception e) {}
     }
 }
