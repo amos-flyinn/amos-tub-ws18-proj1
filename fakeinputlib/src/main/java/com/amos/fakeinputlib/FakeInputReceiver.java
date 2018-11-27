@@ -55,9 +55,10 @@ class FakeInputReceiver {
                 Log.wtf(TAG, "received unexpected object (instead of TouchEvent): " + o);
                 continue;
             }
-            e = (TouchEvent) istream.readObject();
+            e = (TouchEvent) o;
             Log.d("FakeInput", "Got Event: "+e.toString());
             MotionEvent ev = e.getConstructedMotionEvent(this.maxX, this.maxY);
+
             Log.d("FakeInput", String.format("Event: (%f, %f, %f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));
             handler.sendMotionEvent(ev);
         }
