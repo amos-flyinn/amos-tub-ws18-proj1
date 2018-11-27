@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.internal.matchers.Null;
 import org.robolectric.RobolectricTestRunner;
 
+import java.io.IOException;
+
 
 @RunWith(RobolectricTestRunner.class)
 public class DaemonTest {
@@ -31,8 +33,9 @@ public class DaemonTest {
         d.spawn_adb();
     }
 
-    @Test
-    public void writeFakeInputToFilesystem() {
+    @Test(expected = IOException.class)
+    public void writeFakeInputToFilesystem() throws IOException {
         Daemon d = new Daemon(context, "127.0.0.1", new Point(0, 0));
+        d.writeFakeInputToFilesystem();
     }
 }
