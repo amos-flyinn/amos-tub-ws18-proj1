@@ -8,7 +8,9 @@ import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Test;
 import org.junit.Assert;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.Null;
 import org.robolectric.RobolectricTestRunner;
 
 
@@ -16,28 +18,22 @@ import org.robolectric.RobolectricTestRunner;
 public class DaemonTest {
 
     private Context context = ApplicationProvider.getApplicationContext();
+    public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void spawn_adbHappypathTest() {
+    public void spawn_adbHappypathTest() throws Exception {
         Daemon d = new Daemon(context, "127.0.0.1", new Point(0, 0));
-        boolean exception = false;
-        try {
-            d.spawn_adb();
-        } catch (Exception e) {
-            exception = true;
-        }
-        Assert.assertFalse(exception);
+        d.spawn_adb();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void spawn_adbNoContextTest() throws Exception {
+        Daemon d = new Daemon(null, "127.0.0.1", new Point(0, 0));
+        d.spawn_adb();
     }
 
     @Test
-    public void spawn_adbNoContextTest() {
-        Daemon d = new Daemon(null, "127.0.0.1", new Point(0, 0));
-        boolean exception = false;
-        try {
-            d.spawn_adb();
-        } catch (Exception e) {
-            exception = true;
-        }
-        Assert.assertTrue(exception);
+    public void writeFakeInputToFilesystem() {
+        Daemon d = new Daemon(context, "127.0.0.1", new Point(0, 0));
     }
 }
