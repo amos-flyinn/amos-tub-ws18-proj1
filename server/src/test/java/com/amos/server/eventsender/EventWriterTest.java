@@ -32,6 +32,13 @@ public class EventWriterTest {
             100, SystemClock.uptimeMillis(),
             MotionEvent.ACTION_DOWN, 100, 100, 0);
 
+    /**
+     * Test that two events are equal in important parameters.
+     *
+     * This function should be changed to reflect new requirements to MotionEvent accuracy.
+     * @param e1
+     * @param e2
+     */
     private void assertEventEquals(MotionEvent e1, MotionEvent e2) {
         assertEquals(e1.getX(), e2.getX(), 0.001);
         assertEquals(e1.getY(), e2.getY(), 0.001);
@@ -39,12 +46,26 @@ public class EventWriterTest {
         assertEquals(e1.getEventTime(), e2.getEventTime());
     }
 
+    /**
+     * Get motionevent from our bytestream back for checking.
+     *
+     * Motionevents will be automatically rescaled to screen size.
+     * @return
+     * @throws IOException
+     */
     private MotionEvent obtainOutput() throws IOException {
         return obtainOutput(size);
     }
 
+    /**
+     * Get motionevent and rescale by size.
+     * @param size
+     * @return
+     * @throws IOException
+     */
     private MotionEvent obtainOutput(Point size) throws IOException {
         MotionEvent me;
+        // we need to read back from our mock output to check if written output is correct
         ObjectInputStream objs = new ObjectInputStream(new ByteArrayInputStream(output.toByteArray()));
         try {
             TouchEvent te = (TouchEvent) objs.readObject();
@@ -53,13 +74,21 @@ public class EventWriterTest {
         return me;
     }
 
+    /**
+     * Create TouchEvent from MotionEvent rescaled to screen size
+     * @param m
+     * @return
+     */
     private TouchEvent serializeEvent(MotionEvent m) {
         return new TouchEvent(m, size);
     }
 
+    /**
+     * Create output streams and event writer for testing
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
-        // output = new ByteArrayOutputStream();
         output = new ByteArrayOutputStream();
         ew = new EventWriter(output);
     }
