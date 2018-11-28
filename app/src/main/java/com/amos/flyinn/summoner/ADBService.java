@@ -48,11 +48,7 @@ public class ADBService extends IntentService {
             });
             connection = AdbConnection.create(socket, crypto);
             connection.connect();
-        } catch (NoSuchAlgorithmException err) {
-            throw new IOException("Could not start fakeinputlib");
-        } catch (IOException err) {
-            throw new IOException("Could not start fakeinputlib");
-        } catch (InterruptedException err) {
+        } catch (Exception err) {
             throw new IOException("Could not start fakeinputlib");
         }
         return connection;
