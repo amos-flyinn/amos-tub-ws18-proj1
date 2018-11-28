@@ -1,6 +1,8 @@
 package com.amos.shared;
 
+import android.graphics.Point;
 import android.os.SystemClock;
+import android.text.method.Touch;
 import android.view.MotionEvent;
 
 import java.io.Serializable;
@@ -40,6 +42,18 @@ public class TouchEvent implements Serializable {
     public TouchEvent(MotionEvent m) {
         this.x = m.getX();
         this.y = m.getY();
+        this.action = m.getAction();
+        this.downTime = m.getDownTime();
+    }
+
+    /**
+     * Rescale x and y with given screensize before assignment
+     * @param m
+     * @param screenSize
+     */
+    public TouchEvent(MotionEvent m, Point screenSize) {
+        this.x = m.getX() / screenSize.x;
+        this.y = m.getY() / screenSize.y;
         this.action = m.getAction();
         this.downTime = m.getDownTime();
     }
