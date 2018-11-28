@@ -52,6 +52,10 @@ public class EventServer implements Runnable{
      * This is meant for debugging purposes.
      */
     public void accept() {
+        if (server == null) {
+            Log.d("EventServer", "Server is null.");
+            return;
+        }
         Log.d("EventServer", "Waiting for connection");
         try {
             writer = new EventWriter(server.getStream());
