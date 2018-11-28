@@ -1,4 +1,4 @@
-package com.amos.flyinn;
+package com.amos.flyinn.webrtc;
 
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.webrtc.IPeer;

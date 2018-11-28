@@ -1,4 +1,4 @@
-package com.amos.server;
+package com.amos.server.webrtc;
 
 import com.amos.server.signaling.WebServer;
 import com.amos.server.webrtc.IPeer;
