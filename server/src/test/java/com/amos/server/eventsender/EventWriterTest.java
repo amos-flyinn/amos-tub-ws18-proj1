@@ -2,9 +2,9 @@ package com.amos.server.eventsender;
 
 import android.graphics.Point;
 import android.os.SystemClock;
-import android.text.method.Touch;
 import android.view.MotionEvent;
 
+import static org.junit.Assert.*;
 import com.amos.shared.TouchEvent;
 
 import org.junit.Before;
@@ -16,9 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 public class EventWriterTest {
