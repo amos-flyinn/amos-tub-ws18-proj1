@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    private Daemon createADBService(String addr) {
+    protected Daemon createADBService(String addr) {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
         Daemon d = new Daemon(getApplicationContext(), addr, p);
