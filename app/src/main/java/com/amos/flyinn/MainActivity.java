@@ -1,5 +1,8 @@
 package com.amos.flyinn;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.provider.Settings;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.amos.flyinn.screenRecording.RecordingActivity;
 import com.amos.flyinn.signaling.ClientSocket;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+
         return true;
     }
 
@@ -176,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
         this.initScreenCapturePermissions();
     }
 
+
+
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
@@ -185,6 +192,38 @@ public class MainActivity extends AppCompatActivity {
     public void toScreenActivityOnClick(View view) {
         Intent intent = new Intent(this, RecordingActivity.class);
         startActivity(intent);
+    }
+
+
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        checkForDebuggingMode();
+    }
+
+    private void checkForDebuggingMode() {
+        if(Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) != 1) {
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("Missing settings");
+            alertDialog.setMessage("To use FlyInn please enable the debugging mode and USB debugging.\n" +
+                    "Mostly enabling the debugging mode works with tapping multiple times the 'Software Build number' label.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                            Toast.makeText(MainActivity.this, "To use FlyInn please enable USB debugging.", Toast.LENGTH_SHORT).show();
+                        } catch(Exception ex) {
+                            startActivity(new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS));
+                        }
+
+                        dialog.dismiss();
+                    }
+                    });
+            alertDialog.show();
+        }
     }
 
 
@@ -198,7 +237,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.configForWebRTC(data);
-
 
     }
 }
