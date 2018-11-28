@@ -14,7 +14,7 @@ cache:
     - "$HOME/.android/build-cache"
 env:
   global:
-  #	Global variables to get things easier to change
+    # Global variables to get things easier to change
     - ANDROID_API_LEVEL_TARGET=28
     - ANDROID_API_LEVEL_EMULATOR=21
     - ANDROID_BUILD_TOOLS_VERSION=28.0.3
@@ -74,15 +74,15 @@ script:
 #  - jarsigner -verify server-release-unsigned.apk
 #  - "${ANDROID_HOME}/build-tools/24.0.2/zipalign -v 4 server-release-unsigned.apk flyinn-server.apk"
 
-deploy:
-  provider: releases
-  prerelease: true
-  api_key:
-    secure: "PGnRRC15p1A1FEjfChFZ8DDUBHyCrBcR5l+6swb9kct6AI/rlKSqnDKS/BZRx7ZouW9LDQwHFohEZeNKgDedTfQkAUcEsNi6wLzAmLYy4zljJhkXqoMpioNG+u4fLEsyP6aQtvgUf3ljK5JsroFlUNJYES5ws7B9HQbG3A1RCVa9dHNAtNNw8cu2ziIrnRvlmr1PYJwCf6leC725OL9G8EtANSQ/LdH/v1TEGIOkWR4XIf63TyLE2JpHEguXpI0z3Ne1L20mNdi2DHJLXLr/REKCIUmK9vWx1VFSXB41FckFAfJ/GaqLvdfPJ11Al6xL3Hx5xyKlWRbsUw/HCCYTOhtFCKjevRYAinxeIPh0wQ3OMy5sj3IQ5Wm91RqmA62P7rJLW8eLqJzHqQ+Mxw4By75CNKDcG8DYC4jwzd1yVDYvT5PBk3WekZkyBN2cFTwjntmUmzrdOAVTbRhIWiZeaKePgK1kL182wGMC0ekcnX/lBdQ7aoPr4Kf0gMadpXZheCk4MgrxzxLV2UAyw69+vPkKIQiw3+fquUCjsxRqlyTOYgaUu88CGKpmXGGoWpwf5V95fLqsavSsUSxhKh5Df7zwlezwLbZzLmg1XNtyX/sso+H5/Az5AlkjMqoWZfIFzzvrMmygu1Yr54oM4hkA5PZNEy5eO5ZlV68WA6VqYys="
-  file:
-    - app-release-unsigned.apk
-    - server-release-unsigned.apk
-  skip_cleanup: true
-  on:
-    repo: amos-flyinn/amos-tub-ws18-proj1
-    tags: true
+#deploy:
+#  provider: releases
+#  prerelease: true
+#  api_key:
+#    secure: "PGnRRC15p1A1FEjfChFZ8DDUBHyCrBcR5l+6swb9kct6AI/rlKSqnDKS/BZRx7ZouW9LDQwHFohEZeNKgDedTfQkAUcEsNi6wLzAmLYy4zljJhkXqoMpioNG+u4fLEsyP6aQtvgUf3ljK5JsroFlUNJYES5ws7B9HQbG3A1RCVa9dHNAtNNw8cu2ziIrnRvlmr1PYJwCf6leC725OL9G8EtANSQ/LdH/v1TEGIOkWR4XIf63TyLE2JpHEguXpI0z3Ne1L20mNdi2DHJLXLr/REKCIUmK9vWx1VFSXB41FckFAfJ/GaqLvdfPJ11Al6xL3Hx5xyKlWRbsUw/HCCYTOhtFCKjevRYAinxeIPh0wQ3OMy5sj3IQ5Wm91RqmA62P7rJLW8eLqJzHqQ+Mxw4By75CNKDcG8DYC4jwzd1yVDYvT5PBk3WekZkyBN2cFTwjntmUmzrdOAVTbRhIWiZeaKePgK1kL182wGMC0ekcnX/lBdQ7aoPr4Kf0gMadpXZheCk4MgrxzxLV2UAyw69+vPkKIQiw3+fquUCjsxRqlyTOYgaUu88CGKpmXGGoWpwf5V95fLqsavSsUSxhKh5Df7zwlezwLbZzLmg1XNtyX/sso+H5/Az5AlkjMqoWZfIFzzvrMmygu1Yr54oM4hkA5PZNEy5eO5ZlV68WA6VqYys="
+#  file:
+#    - app-release-unsigned.apk
+#    - server-release-unsigned.apk
+#  skip_cleanup: true
+#  on:
+#    repo: amos-flyinn/amos-tub-ws18-proj1
+#    tags: true
