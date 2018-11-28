@@ -12,6 +12,14 @@ import com.amos.shared.TouchEvent;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Pushes MotionEvents to EventWriter writing to a StreamSocket server.
+ *
+ * This is meant to be run in an independent thread in order to run networking
+ * components in the main thread.
+ *
+ * Events will be processed from the BlockingQueue, which can be filled from another thread.
+ */
 public class EventServer implements Runnable{
     SocketServer server;
     EventWriter writer;
@@ -20,16 +28,34 @@ public class EventServer implements Runnable{
     BlockingQueue<TouchEvent> queue;
     Boolean accepting = true;
 
+    /**
+     * Create EventServer with a given input queue.
+     * @param mq
+     */
     public EventServer(BlockingQueue<TouchEvent> mq) {
         queue = mq;
     }
 
+    /**
+     * Create EventServer with given input queua as well as UI handler to pass
+     * back messages to the UI thread.
+     * @param mq
+     * @param ui
+     */
     public EventServer(BlockingQueue<TouchEvent> mq, Handler ui) {
         queue = mq;
         uiHandler = ui;
     }
 
+    /**
+     * Accept a connection and send back one single event.
+     * This is meant for debugging purposes.
+     */
     public void accept() {
+        if (server == null) {
+            Log.d("EventServer", "Server is null.");
+            return;
+        }
         Log.d("EventServer", "Waiting for connection");
         try {
             writer = new EventWriter(server.getStream());
@@ -43,17 +69,30 @@ public class EventServer implements Runnable{
         }
     }
 
+    /**
+     * Close server.
+     */
     public void close() {
         try {
             if (server != null) {
                 server.close();
+                server = null;
             }
         } catch (IOException e) {
             Log.d("EventServer", "Error closing writer or server.");
         }
     }
 
+    /**
+     * Accept connection and send messages from queue.
+     *
+     * Connection will be kept alive, even if no items are in the input queue.
+     */
     public void acceptQueue() {
+        if (server == null) {
+            Log.d("EventServer", "Server is null.");
+            return;
+        }
         while (accepting) {
             try {
                 Log.d("EventServer", "Waiting for connection");
@@ -81,6 +120,10 @@ public class EventServer implements Runnable{
         }
     }
 
+    /**
+     * Send a message to the thread on the other side of the handler.
+     * @param msg
+     */
     private void sendMessage(String msg) {
         if (uiHandler != null) {
             Message m = uiHandler.obtainMessage(0, msg);
@@ -88,6 +131,9 @@ public class EventServer implements Runnable{
         }
     }
 
+    /**
+     * Run the SocketServer and wait for connections.
+     */
     @Override
     public void run() {
         sendMessage("Starting server");
