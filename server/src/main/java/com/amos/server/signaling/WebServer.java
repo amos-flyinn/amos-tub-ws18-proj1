@@ -75,37 +75,56 @@ public class WebServer extends WebSocketServer implements Emitter {
 
     }
 
-    @Override
-    public void shareSessionDescription(SessionDescription session) {
-        Log.d("WebServer","Sending session answer : " + session);
-        try {
-            Log.d("WebServer", "sending session description = [" + session + "]");
+
+    public JSONObject serializeDescription(SessionDescription session){
+        try{
             JSONObject sessionObject = new JSONObject();
             sessionObject.put("type-message","answerServer");
             sessionObject.put("type", session.type.canonicalForm());
             sessionObject.put("sdp", session.description);
             Log.d("WebServer","simulating the description message sending answer : " + sessionObject);
-            this.broadcast(sessionObject.toString());
-        } catch (JSONException e) {
+            return sessionObject;
+        }catch (Exception e)
+        {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     @Override
-    public void shareIceCandidate(IceCandidate candidate) {
-        Log.d("WebServer","I am sharing this candidate : " + candidate);
+    public void shareSessionDescription(SessionDescription session) {
+        Log.d("WebServer","Sending session answer : " + session);
+        JSONObject sessionObject = this.serializeDescription(session);
+        Log.d("WebServer","simulating the description message sending answer : " + sessionObject);
+        this.broadcast(sessionObject.toString());
+    }
+
+
+    public JSONObject serializeIceCandidate(IceCandidate candidate){
         try{
-            Log.d("WebServer","Sending icecandidate! -- " + candidate);
             JSONObject jsonIceCandidate = new JSONObject();
             jsonIceCandidate.put("type-message","candidate-server");
             jsonIceCandidate.put("type", "candidate");
             jsonIceCandidate.put("label", candidate.sdpMLineIndex);
             jsonIceCandidate.put("id", candidate.sdpMid);
             jsonIceCandidate.put("candidate", candidate.sdp);
-            this.broadcast(jsonIceCandidate.toString());
-            Log.d("WebServer","simulating the icecandidate message sending : " + jsonIceCandidate);
-        }catch (Exception e) {
+            return jsonIceCandidate;
+        }catch(Exception e)
+        {
             e.printStackTrace();
         }
+
+        return null;
     }
-}
+
+    @Override
+    public void shareIceCandidate(IceCandidate candidate) {
+        Log.d("WebServer","I am sharing this candidate : " + candidate);
+        Log.d("WebServer","Sending icecandidate! -- " + candidate);
+        JSONObject jsonIceCandidate = this.serializeIceCandidate(candidate);
+        Log.d("WebServer","simulating the icecandidate message sending : " + jsonIceCandidate);
+        this.broadcast(jsonIceCandidate.toString());
+        }
+    }
+
