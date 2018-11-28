@@ -28,14 +28,14 @@ public class ClientSocket extends WebSocketClient implements Emitter {
 
     }
 
+
+
     @Override
     public void onMessage(String message) {
         Log.d("ClientSocket","OnMessage -- Received : " + message);
         try{
             JSONObject receiveObject = new JSONObject(message);
-
             String typeMessage = receiveObject.getString("type-message");
-
             if (typeMessage.equals("answerServer")) {
                 String sdp = receiveObject.getString("sdp");
                 SessionDescription answerDescriptionServer = new SessionDescription(SessionDescription.Type.ANSWER, sdp);
@@ -66,36 +66,53 @@ public class ClientSocket extends WebSocketClient implements Emitter {
     }
 
 
-    @Override
-    public void shareIceCandidate(IceCandidate candidate) {
+    public JSONObject serializeIceCandidate(IceCandidate candidate){
         try{
-            Log.d("ClientSocket","Sending icecandidate! -- " + candidate);
             JSONObject jsonIceCandidate = new JSONObject();
             jsonIceCandidate.put("type-message","candidate-client");
             jsonIceCandidate.put("type", "candidate");
             jsonIceCandidate.put("label", candidate.sdpMLineIndex);
             jsonIceCandidate.put("id", candidate.sdpMid);
             jsonIceCandidate.put("candidate", candidate.sdp);
-            this.send(jsonIceCandidate.toString());
-            Log.d("ClientSocket","simulating the icecandidate message sending : " + jsonIceCandidate);
-        }catch (Exception e) {
+            return jsonIceCandidate;
+        }catch (Exception e){
             e.printStackTrace();
         }
 
+        return null;
     }
 
     @Override
-    public void shareSessionDescription(SessionDescription session) {
-        try {
-            Log.d("ClientSocket", "sending session description = [" + session + "]");
+    public void shareIceCandidate(IceCandidate candidate) {
+            Log.d("ClientSocket","Sending icecandidate! -- " + candidate);
+            JSONObject jsonIceCandidate = this.serializeIceCandidate(candidate);
+            this.send(jsonIceCandidate.toString());
+    }
+
+    public JSONObject serializeSessionDescription(SessionDescription session)
+    {
+        try{
             JSONObject sessionObject = new JSONObject();
             sessionObject.put("type-message","offerClient");
             sessionObject.put("type", session.type.canonicalForm());
             sessionObject.put("sdp", session.description);
-            Log.d("ClientSocket","simulating the description message sending : " + sessionObject);
-            this.send(sessionObject.toString());
-        } catch (JSONException e) {
+            return sessionObject;
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
+
+        return null;
+    }
+
+
+    @Override
+    public void shareSessionDescription(SessionDescription session) {
+
+            Log.d("ClientSocket", "sending session description = [" + session + "]");
+            JSONObject sessionObject = this.serializeSessionDescription(session);
+            this.send(sessionObject.toString());
+
     }
 }
