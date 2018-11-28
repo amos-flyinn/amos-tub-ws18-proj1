@@ -7,10 +7,7 @@ import android.graphics.Point;
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Test;
-import org.junit.Assert;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.Null;
 import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
