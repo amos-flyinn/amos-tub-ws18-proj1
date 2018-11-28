@@ -72,6 +72,7 @@ public class EventServer implements Runnable{
         try {
             if (server != null) {
                 server.close();
+                server = null;
             }
         } catch (IOException e) {
             Log.d("EventServer", "Error closing writer or server.");
@@ -84,6 +85,10 @@ public class EventServer implements Runnable{
      * Connection will be kept alive, even if no items are in the input queue.
      */
     public void acceptQueue() {
+        if (server == null) {
+            Log.d("EventServer", "Server is null.");
+            return;
+        }
         while (accepting) {
             try {
                 Log.d("EventServer", "Waiting for connection");
