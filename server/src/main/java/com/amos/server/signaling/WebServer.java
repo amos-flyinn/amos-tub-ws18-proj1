@@ -124,6 +124,7 @@ public class WebServer extends WebSocketServer implements Emitter {
         Log.d("WebServer","Sending icecandidate! -- " + candidate);
         JSONObject jsonIceCandidate = this.serializeIceCandidate(candidate);
         Log.d("WebServer","simulating the icecandidate message sending : " + jsonIceCandidate);
+        this.broadcast(jsonIceCandidate.toString());
         }
     }
 
