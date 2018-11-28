@@ -3,13 +3,18 @@ package com.amos.fakeinputlib;
 import android.annotation.SuppressLint;
 import android.hardware.input.InputManager;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.MotionEvent;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class FakeInput {
+
+    private static final String TAG = FakeInput.class.getName();
+
     private final Method injectInputEventMethod;
     private final InputManager im;
 
@@ -28,9 +33,23 @@ public class FakeInput {
         injectInputEventMethod = InputManager.class.getMethod(methodName, InputEvent.class, Integer.TYPE);
     }
 
-    public void sendMotionEvent(MotionEvent e) throws Exception {
+    public boolean sendMotionEvent(MotionEvent e) {
         e.setSource(InputDevice.SOURCE_TOUCHSCREEN);
-        injectInputEventMethod.invoke(im, e, 0);
+
+        try {
+            injectInputEventMethod.invoke(im, e, 0);
+        } catch (IllegalAccessException e1) {
+            Log.wtf(TAG, "failed to invoke motion event", e1);
+            return false;
+        } catch (IllegalArgumentException e1) {
+            Log.wtf(TAG, "failed to invoke motion event", e1);
+            return false;
+        } catch (InvocationTargetException e1) {
+            Log.e(TAG, "failed to invoke motion event", e1.getCause());
+            return false;
+        }
+
+        return true;
     }
 
     void sendTap(int x, int y) throws Exception {

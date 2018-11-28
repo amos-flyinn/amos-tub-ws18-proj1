@@ -63,7 +63,8 @@
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <service android:name=".summoner.ADBService" />
     </application>
 

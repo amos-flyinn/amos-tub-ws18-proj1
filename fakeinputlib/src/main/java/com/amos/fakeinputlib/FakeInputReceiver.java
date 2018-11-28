@@ -5,10 +5,14 @@ import android.view.MotionEvent;
 
 import com.amos.shared.TouchEvent;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
 class FakeInputReceiver {
+
+    private static final String TAG = FakeInputReceiver.class.getName();
+
     private final FakeInput handler;
     private final int maxX;
     private final int maxY;
@@ -41,15 +45,28 @@ class FakeInputReceiver {
         runEvalLoop(handler, fd);
     }
 
-    private void runEvalLoop(FakeInput handler, Socket connection) throws Exception {
+    private void runEvalLoop(FakeInput handler, Socket connection) throws IOException {
         Log.d("FakeInput", "Starting fakeInputEvalLoop");
         ObjectInputStream istream = new ObjectInputStream(connection.getInputStream());
 
-        TouchEvent e;
         while (true) {
-            e = (TouchEvent) istream.readObject();
+            TouchEvent e;
+            try {
+                e = (TouchEvent) istream.readObject();
+            } catch (IOException e1) {
+                Log.e(TAG, "failed to receive object", e1);
+                continue;
+            } catch (ClassNotFoundException e1) {
+                Log.wtf(TAG, "received object of unknown type", e1);
+                continue;
+            } catch (ClassCastException e1) {
+                Log.wtf(TAG, "received object of unexpected type", e1);
+                continue;
+            }
+
             Log.d("FakeInput", "Got Event: "+e.toString());
             MotionEvent ev = e.getConstructedMotionEvent(this.maxX, this.maxY);
+
             Log.d("FakeInput", String.format("Event: (%f, %f, %f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));
             handler.sendMotionEvent(ev);
         }
