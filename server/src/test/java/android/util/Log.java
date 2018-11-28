@@ -1,8 +1,10 @@
 package android.util;
 
+
 /**
  * Mock of log for testing purposes
  */
+
 public class Log {
     public static int d(String tag, String msg) {
         System.out.println("DEBUG: " + tag + ": " + msg);
@@ -24,7 +26,6 @@ public class Log {
         return 0;
     }
 
+
 }
-
-
 
