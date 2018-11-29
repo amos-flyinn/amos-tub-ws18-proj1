@@ -2,6 +2,7 @@ package com.amos.flyinn;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.Manifest;
 import android.content.Context;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 
 import com.amos.flyinn.screenRecording.RecordingActivity;
+import com.amos.flyinn.settingsCheck.settingsCheck;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
@@ -204,7 +206,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForDebuggingMode() {
-        if(Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) != 1) {
+
+        settingsCheck settingsCheck=new settingsCheck(this);
+        settingsCheck.GetMissingSettings();
+
+        /*if(Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) != 1) {
             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
             alertDialog.setTitle("Missing settings");
             alertDialog.setMessage("To use FlyInn please enable the debugging mode and USB debugging.\n" +
@@ -223,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     });
             alertDialog.show();
-        }
+        }*/
     }
 
 
