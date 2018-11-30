@@ -197,42 +197,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        checkForDebuggingMode();
-    }
-
-    private void checkForDebuggingMode() {
-
-        settingsCheck settingsCheck=new settingsCheck(this);
-        settingsCheck.GetMissingSettings();
-
-        /*if(Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) != 1) {
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("Missing settings");
-            alertDialog.setMessage("To use FlyInn please enable the debugging mode and USB debugging.\n" +
-                    "Mostly enabling the debugging mode works with tapping multiple times the 'Software Build number' label.");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-                            Toast.makeText(MainActivity.this, "To use FlyInn please enable USB debugging.", Toast.LENGTH_SHORT).show();
-                        } catch(Exception ex) {
-                            startActivity(new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS));
-                        }
-
-                        dialog.dismiss();
-                    }
-                    });
-            alertDialog.show();
-        }*/
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 

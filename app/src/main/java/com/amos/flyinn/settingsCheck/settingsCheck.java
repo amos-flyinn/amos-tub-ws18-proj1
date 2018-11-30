@@ -31,7 +31,6 @@ public class settingsCheck {
     private Context context;
     private ADBService service = new ADBService();
     public settingsCheck(Context context) {
-
         this.context=context;
     }
 
@@ -56,28 +55,44 @@ public class settingsCheck {
         }
 
         // ADBperNetwork settings
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        try {
-            AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(new AdbBase64() {
-                @Override
-                public String encodeToString(byte[] data) {
-                    return android.util.Base64.encodeToString(data, 16);
+        Thread t = new Thread(new Runnable() { // Use own thread because of ThreadPolicy
+            @Override
+            public void run() {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                // Test a connection
+                try {
+                    AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(new AdbBase64() {
+                        @Override
+                        public String encodeToString(byte[] data) {
+                            return android.util.Base64.encodeToString(data, 16);
+                        }
+                    });
+                    AdbConnection connection = AdbConnection.create(new Socket("127.0.0.1", 5555), crypto);
+                    connection.connect();
+                    connection.close();
+                } catch (Exception err) {
+                    //err.printStackTrace();
+                    missingSettings.add(SettingsType.ADBperNetwork);
                 }
-            });
-            AdbConnection connection = AdbConnection.create(new Socket("127.0.0.1", 5555), crypto);
-            connection.connect();
-            connection.close();
-        } catch (Exception err) {
-            //err.printStackTrace();
-            missingSettings.add(SettingsType.ADBperNetwork);
+            }});
+
+        t.start(); // spawn thread
+
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Log.d("GetMissingSettings!!!!", e.toString());
+            if(missingSettings.contains(SettingsType.ADBperNetwork)==false) missingSettings.add(SettingsType.ADBperNetwork);
         }
+
 
         /*// DEBUG
         Toast.makeText(context,
                 missingSettings.toString(), Toast.LENGTH_LONG).show();
         Log.d("GetMissingSettings", missingSettings.toString());*/
-        
+
         return missingSettings;
     }
 
