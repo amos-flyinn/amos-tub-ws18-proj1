@@ -13,7 +13,7 @@ import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.amos.server.wifimanager.WifiServiceManager;
+import com.amos.server.wifimanager.WifiBradcasterSingelton;
 
 public class P2PActivityServer extends Activity {
 
@@ -21,7 +21,6 @@ public class P2PActivityServer extends Activity {
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
-    private WifiServiceManager receiver;
     private static final int COARSE_LOCATION = 1001;
 
 
@@ -80,14 +79,14 @@ public class P2PActivityServer extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        receiver = new WifiServiceManager(mManager, mChannel, this);
-        registerReceiver(receiver, intentFilter);
+        WifiBradcasterSingelton.getInstance().setInstance(mManager, mChannel, this);
+        registerReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster(), intentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(receiver);
+        unregisterReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster());
     }
 
     @Override

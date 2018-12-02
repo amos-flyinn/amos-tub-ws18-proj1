@@ -11,9 +11,6 @@ public class WifiReceiverSingelton {
         return ourInstance;
     }
 
-    private WifiReceiverSingelton() {
-    }
-
     public WifiReceiverP2P getWifiReceiverP2P() {
         return this.receiver;
     }

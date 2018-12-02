@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.amos.flyinn.summoner.Demo;
 import com.amos.flyinn.wifimanager.WifiReceiverSingelton;
@@ -16,20 +15,17 @@ public class ADBActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adb);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Point p = new Point();
-                    getWindowManager().getDefaultDisplay().getRealSize(p);
-                    Demo.start(getApplicationContext(), WifiReceiverSingelton.getInstance().getWifiReceiverP2P().getHostAddr(), p);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            try {
+                Point p = new Point();
+                getWindowManager().getDefaultDisplay().getRealSize(p);
+                Demo.start(getApplicationContext(), WifiReceiverSingelton.getInstance().getWifiReceiverP2P().getHostAddr(), p);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

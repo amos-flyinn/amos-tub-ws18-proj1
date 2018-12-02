@@ -15,13 +15,12 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
-
+class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
     private P2PActivityServer activity;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
 
-    public WifiConnectionService(Activity activity,WifiP2pManager manager,WifiP2pManager.Channel channel) {
+    WifiConnectionService(Activity activity, WifiP2pManager manager, WifiP2pManager.Channel channel) {
        this.activity = (P2PActivityServer)activity;
        this.mChannel = channel;
        this.mManager = manager;

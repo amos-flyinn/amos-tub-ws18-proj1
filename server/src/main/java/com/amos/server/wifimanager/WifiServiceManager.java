@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.amos.server.P2PActivityServer;
 
-public class WifiServiceManager extends BroadcastReceiver {
+class WifiServiceManager extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private P2PActivityServer activity;
