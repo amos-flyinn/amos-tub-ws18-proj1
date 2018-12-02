@@ -173,16 +173,17 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 23 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 24 warnings</span>
       <div class="mdl-layout-spacer"></div>
       <nav class="mdl-navigation mdl-layout--large-screen-only">
-Check performed at Sun Dec 02 16:06:11 CET 2018      </nav>
+Check performed at Sun Dec 02 16:30:36 CET 2018      </nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Issue Types</span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="#overview"><i class="material-icons">dashboard</i>Overview</a>
+      <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (1)</a>
       <a class="mdl-navigation__link" href="#GradleDynamicVersion"><i class="material-icons warning-icon">warning</i>Gradle Dynamic Version (1)</a>
       <a class="mdl-navigation__link" href="#SpUsage"><i class="material-icons warning-icon">warning</i>Using <code>dp</code> instead of <code>sp</code> for text sizes (1)</a>
       <a class="mdl-navigation__link" href="#AllowBackup"><i class="material-icons warning-icon">warning</i>AllowBackup/FullBackupContent Problems (1)</a>
@@ -204,6 +205,9 @@ Check performed at Sun Dec 02 16:06:11 CET 2018      </nav>
 <table class="overview">
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Correctness">Correctness</a>
 </td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<a href="#GradleDependency">GradleDependency</a>: Obsolete Gradle Dependency</td></tr>
 <tr>
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#GradleDynamicVersion">GradleDynamicVersion</a>: Gradle Dynamic Version</td></tr>
@@ -242,7 +246,53 @@ Dismiss</button>            </div>
             </div>
           </section>
 <a name="Correctness"></a>
-<a name="GradleDynamicVersion"></a>
+<a name="GradleDependency"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="GradleDependencyCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Obsolete Gradle Dependency</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="build.gradle">C:\Projects\amos\amos-tub-ws18-proj1\server\build.gradle</a>:73</span>: <span class="message">A newer version of org.webrtc:google-webrtc than 1.0.22672 is available: 1.0.25331</span><br /><pre class="errorlines">
+<span class="lineno"> 70 </span>    androidTestImplementation <span class="string">'androidx.test:runner:1.1.0'</span>
+<span class="lineno"> 71 </span>    androidTestImplementation <span class="string">'androidx.test:rules:1.1.0'</span>
+<span class="lineno"> 72 </span>
+<span class="caretline"><span class="lineno"> 73 </span>    <span class="warning">implementation <span class="string">'org.webrtc:google-webrtc:1.0.22672'</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 74 </span>    implementation <span class="string">"org.java-websocket:Java-WebSocket:1.3.9"</span>
+<span class="lineno"> 75 </span>
+<span class="lineno"> 76 </span>    embeddedCompileOnly <span class="string">'com.google.android.things:androidthings:+'</span>
+</pre>
+
+</div>
+<div class="metadata"><div class="explanation" id="explanationGradleDependency" style="display: none;">
+This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find.<br/>Note: This issue has an associated quickfix operation in Android Studio and IntelliJ IDEA.<br>
+To suppress this error, use the issue id "GradleDependency" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">GradleDependency</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Correctness</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Warning</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 4/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationGradleDependencyLink" onclick="reveal('explanationGradleDependency');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="GradleDependencyCardLink" onclick="hideid('GradleDependencyCard');">
+Dismiss</button>            </div>
+            </div>
+          </section><a name="GradleDynamicVersion"></a>
 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="GradleDynamicVersionCard" style="display: block;">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
   <div class="mdl-card__title">
@@ -251,7 +301,7 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="build.gradle">C:\AMOS\amos-tub-ws18-proj1\server\build.gradle</a>:76</span>: <span class="message">Avoid using + in version numbers; can lead to unpredictable and unrepeatable builds (com.google.android.things:androidthings:+)</span><br /><pre class="errorlines">
+<span class="location"><a href="build.gradle">C:\Projects\amos\amos-tub-ws18-proj1\server\build.gradle</a>:76</span>: <span class="message">Avoid using + in version numbers; can lead to unpredictable and unrepeatable builds (com.google.android.things:androidthings:+)</span><br /><pre class="errorlines">
 <span class="lineno"> 73 </span>    implementation <span class="string">'org.webrtc:google-webrtc:1.0.22672'</span>
 <span class="lineno"> 74 </span>    implementation <span class="string">"org.java-websocket:Java-WebSocket:1.3.9"</span>
 <span class="lineno"> 75 </span>
@@ -297,7 +347,7 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/res/layout/activity_connection_setup.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\layout\activity_connection_setup.xml</a>:33</span>: <span class="message">Should use "<code>sp</code>" instead of "<code>dp</code>" for text sizes</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/layout/activity_connection_setup.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\layout\activity_connection_setup.xml</a>:33</span>: <span class="message">Should use "<code>sp</code>" instead of "<code>dp</code>" for text sizes</span><br /><pre class="errorlines">
 <span class="lineno"> 30 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
 <span class="lineno"> 31 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginEnd</span>=<span class="value">"8dp"</span>
 <span class="lineno"> 32 </span>        <span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"TextView"</span>
@@ -348,7 +398,7 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/AndroidManifest.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\AndroidManifest.xml</a>:19</span>: <span class="message">On SDK version 23 and up, your app data will be automatically backed up and restored on app install. Consider adding the attribute <code>android:fullBackupContent</code> to specify an <code>@xml</code> resource which configures which files to backup. More info: <a href="https://developer.android.com/training/backup/autosyncapi.html">https://developer.android.com/training/backup/autosyncapi.html</a></span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/AndroidManifest.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\AndroidManifest.xml</a>:19</span>: <span class="message">On SDK version 23 and up, your app data will be automatically backed up and restored on app install. Consider adding the attribute <code>android:fullBackupContent</code> to specify an <code>@xml</code> resource which configures which files to backup. More info: <a href="https://developer.android.com/training/backup/autosyncapi.html">https://developer.android.com/training/backup/autosyncapi.html</a></span><br /><pre class="errorlines">
 <span class="lineno"> 16 </span>    <span class="tag">&lt;uses-permission</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.permission.CAMERA"</span> />
 <span class="lineno"> 17 </span>    <span class="tag">&lt;uses-permission</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.permission.RECORD_AUDIO"</span> />
 <span class="lineno"> 18 </span>    <span class="tag">&lt;uses-permission</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.permission.ACCESS_NETWORK_STATE"</span> />
@@ -408,7 +458,7 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/AndroidManifest.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\AndroidManifest.xml</a>:19</span>: <span class="message">App is not indexable by Google Search; consider adding at least one Activity with an ACTION-VIEW intent filter. See issue explanation for more details.</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/AndroidManifest.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\AndroidManifest.xml</a>:19</span>: <span class="message">App is not indexable by Google Search; consider adding at least one Activity with an ACTION-VIEW intent filter. See issue explanation for more details.</span><br /><pre class="errorlines">
 <span class="lineno"> 16 </span>    <span class="tag">&lt;uses-permission</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.permission.CAMERA"</span> />
 <span class="lineno"> 17 </span>    <span class="tag">&lt;uses-permission</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.permission.RECORD_AUDIO"</span> />
 <span class="lineno"> 18 </span>    <span class="tag">&lt;uses-permission</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.permission.ACCESS_NETWORK_STATE"</span> />
@@ -457,27 +507,27 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:84</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
-<span class="lineno">  81 </span>
-<span class="lineno">  82 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
-<span class="lineno">  83 </span>  senderRunner.start();
-<span class="caretline"><span class="lineno">  84 </span>  <span class="warning">view.setOnTouchListener(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  85 </span>          (View v, MotionEvent e) -> {
-<span class="lineno">  86 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
-<span class="lineno">  87 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:87</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
+<span class="lineno">  84 </span>
+<span class="lineno">  85 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
+<span class="lineno">  86 </span>  senderRunner.start();
+<span class="caretline"><span class="lineno">  87 </span>  <span class="warning">view.setOnTouchListener(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  88 </span>          (View v, MotionEvent e) -> {
+<span class="lineno">  89 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
+<span class="lineno">  90 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:85</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
-<span class="lineno">  82 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
-<span class="lineno">  83 </span>  senderRunner.start();
-<span class="lineno">  84 </span>  view.setOnTouchListener(
-<span class="caretline"><span class="lineno">  85 </span>          <span class="warning">(View v, MotionEvent e) -> {</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  86 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
-<span class="lineno">  87 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
-<span class="lineno">  88 </span>              msgQueue.add(te);
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:88</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
+<span class="lineno">  85 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
+<span class="lineno">  86 </span>  senderRunner.start();
+<span class="lineno">  87 </span>  view.setOnTouchListener(
+<span class="caretline"><span class="lineno">  88 </span>          <span class="warning">(View v, MotionEvent e) -> {</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  89 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
+<span class="lineno">  90 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
+<span class="lineno">  91 </span>              msgQueue.add(te);
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/EventGrabDemo.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\EventGrabDemo.java</a>:60</span>: <span class="message"><code>onTouch</code> should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/java/com/amos/server/EventGrabDemo.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\EventGrabDemo.java</a>:60</span>: <span class="message"><code>onTouch</code> should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
 <span class="lineno">  57 </span>        tracker = findViewById(R.id.inputgrab);
 <span class="lineno">  58 </span>        tracker.setOnTouchListener(<span class="keyword">new</span> OnTouchListener(){
 <span class="lineno">  59 </span>            <span class="annotation">@Override</span>
@@ -487,7 +537,7 @@ Dismiss</button>            </div>
 <span class="lineno">  63 </span>                <span class="keyword">int</span> action = e.getActionMasked();
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/EventSenderDemo.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\EventSenderDemo.java</a>:83</span>: <span class="message"><code>onTouch</code> should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/java/com/amos/server/EventSenderDemo.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\EventSenderDemo.java</a>:83</span>: <span class="message"><code>onTouch</code> should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
 <span class="lineno"> 80 </span>  base.setOnTouchListener(
 <span class="lineno"> 81 </span>          <span class="keyword">new</span> OnTouchListener() {
 <span class="lineno"> 82 </span>              <span class="annotation">@Override</span>
@@ -497,7 +547,7 @@ Dismiss</button>            </div>
 <span class="lineno"> 86 </span>                  mq.add(te);
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\MainActivity.java</a>:81</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\MainActivity.java</a>:81</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
 <span class="lineno">  78 </span>
 <span class="lineno">  79 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
 <span class="lineno">  80 </span>  senderRunner.start();
@@ -507,7 +557,7 @@ Dismiss</button>            </div>
 <span class="lineno">  84 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\MainActivity.java</a>:82</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\MainActivity.java</a>:82</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
 <span class="lineno">  79 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
 <span class="lineno">  80 </span>  senderRunner.start();
 <span class="lineno">  81 </span>  view.setOnTouchListener(
@@ -554,67 +604,67 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:143</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 140 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 141 </span>
-<span class="lineno"> 142 </span>            <span class="keyword">case</span> SetupStates.ASKING_PERMISSIONS:
-<span class="caretline"><span class="lineno"> 143 </span>                progressText.setText(<span class="warning"><span class="string">"Asking permissions for screen capture"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 144 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 145 </span>
-<span class="lineno"> 146 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:146</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 143 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 144 </span>
+<span class="lineno"> 145 </span>            <span class="keyword">case</span> SetupStates.ASKING_PERMISSIONS:
+<span class="caretline"><span class="lineno"> 146 </span>                progressText.setText(<span class="warning"><span class="string">"Asking permissions for screen capture"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 147 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 148 </span>
+<span class="lineno"> 149 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:147</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 144 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 145 </span>
-<span class="lineno"> 146 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
-<span class="caretline"><span class="lineno"> 147 </span>                progressText.setText(<span class="warning"><span class="string">"Setup screen share connection with server"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 148 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 149 </span>
-<span class="lineno"> 150 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:150</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 147 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 148 </span>
+<span class="lineno"> 149 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
+<span class="caretline"><span class="lineno"> 150 </span>                progressText.setText(<span class="warning"><span class="string">"Setup screen share connection with server"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 151 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 152 </span>
+<span class="lineno"> 153 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:151</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 148 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 149 </span>
-<span class="lineno"> 150 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
-<span class="caretline"><span class="lineno"> 151 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 152 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 153 </span>
-<span class="lineno"> 154 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:154</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 151 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 152 </span>
+<span class="lineno"> 153 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
+<span class="caretline"><span class="lineno"> 154 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 155 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 156 </span>
+<span class="lineno"> 157 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:155</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 152 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 153 </span>
-<span class="lineno"> 154 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
-<span class="caretline"><span class="lineno"> 155 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 156 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 157 </span>
-<span class="lineno"> 158 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:158</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 155 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 156 </span>
+<span class="lineno"> 157 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
+<span class="caretline"><span class="lineno"> 158 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 159 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 160 </span>
+<span class="lineno"> 161 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:159</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 156 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 157 </span>
-<span class="lineno"> 158 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
-<span class="caretline"><span class="lineno"> 159 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 160 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 161 </span>
-<span class="lineno"> 162 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:162</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 159 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 160 </span>
+<span class="lineno"> 161 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
+<span class="caretline"><span class="lineno"> 162 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 163 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 164 </span>
+<span class="lineno"> 165 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:163</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 160 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 161 </span>
-<span class="lineno"> 162 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
-<span class="caretline"><span class="lineno"> 163 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 164 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 165 </span>
-<span class="lineno"> 166 </span>            <span class="keyword">case</span> SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
+<span class="location"><a href="src/main/java/com/amos/server/ConnectionSetupServerActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\ConnectionSetupServerActivity.java</a>:166</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 163 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 164 </span>
+<span class="lineno"> 165 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
+<span class="caretline"><span class="lineno"> 166 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 167 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 168 </span>
+<span class="lineno"> 169 </span>            <span class="keyword">case</span> SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">C:\AMOS\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\MainActivity.java</a>:102</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\java\com\amos\server\MainActivity.java</a>:102</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
 <span class="lineno">  99 </span>    <span class="annotation">@Override</span>
 <span class="lineno"> 100 </span>    <span class="keyword">protected</span> <span class="keyword">void</span> onStart() {
 <span class="lineno"> 101 </span>        <span class="keyword">super</span>.onStart();
@@ -662,7 +712,7 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/res/layout/activity_connection_setup.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\layout\activity_connection_setup.xml</a>:32</span>: <span class="message">Hardcoded string "TextView", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/layout/activity_connection_setup.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\layout\activity_connection_setup.xml</a>:32</span>: <span class="message">Hardcoded string "TextView", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 29 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginStart</span>=<span class="value">"8dp"</span>
 <span class="lineno"> 30 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
 <span class="lineno"> 31 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginEnd</span>=<span class="value">"8dp"</span>
@@ -672,7 +722,7 @@ Dismiss</button>            </div>
 <span class="lineno"> 35 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintStart_toStartOf</span>=<span class="value">"parent"</span>
 </pre>
 
-<span class="location"><a href="src/main/res/layout/content_event_grab_demo.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\layout\content_event_grab_demo.xml</a>:52</span>: <span class="message">Hardcoded string "TextView", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/layout/content_event_grab_demo.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\layout\content_event_grab_demo.xml</a>:52</span>: <span class="message">Hardcoded string "TextView", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 49 </span><span class="attribute">                </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/debug"</span>
 <span class="lineno"> 50 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
 <span class="lineno"> 51 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
@@ -682,7 +732,7 @@ Dismiss</button>            </div>
 <span class="lineno"> 55 </span>
 </pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:7</span>: <span class="message">Hardcoded string "P2PServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:7</span>: <span class="message">Hardcoded string "P2PServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno">  4 </span>    <span class="tag">&lt;item</span><span class="attribute">
 </span><span class="lineno">  5 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/p2pserver_activity"</span>
 <span class="lineno">  6 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
@@ -692,7 +742,7 @@ Dismiss</button>            </div>
 </span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_server_activity"</span>
 </pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:12</span>: <span class="message">Hardcoded string "WebRTCServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:12</span>: <span class="message">Hardcoded string "WebRTCServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
 </span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_server_activity"</span>
 <span class="lineno"> 11 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
@@ -702,7 +752,7 @@ Dismiss</button>            </div>
 </span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_grab_activity"</span>
 </pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:17</span>: <span class="message">Hardcoded string "Event Grab Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:17</span>: <span class="message">Hardcoded string "Event Grab Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 14 </span>    <span class="tag">&lt;item</span><span class="attribute">
 </span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_grab_activity"</span>
 <span class="lineno"> 16 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
@@ -712,7 +762,7 @@ Dismiss</button>            </div>
 </span><span class="lineno"> 20 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_sender_activity"</span>
 </pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\AMOS\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:22</span>: <span class="message">Hardcoded string "Event Sender Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">C:\Projects\amos\amos-tub-ws18-proj1\server\src\main\res\menu\main_menu.xml</a>:22</span>: <span class="message">Hardcoded string "Event Sender Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 19 </span>    <span class="tag">&lt;item</span><span class="attribute">
 </span><span class="lineno"> 20 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_sender_activity"</span>
 <span class="lineno"> 21 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>

@@ -55,6 +55,10 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connection_setup);
         infiniteBar = (ProgressBar) findViewById(R.id.infiniteBar);
         progressText = (TextView) findViewById(R.id.progressText);
+        view = findViewById(R.id.surface_remote_viewer);
+        connectionInfo = (TextView) findViewById(R.id.connectionInfo);
+        connectionInfo.setVisibility(View.INVISIBLE);
+
 
         // create touch listener components
         msgQueue = new LinkedBlockingQueue<>();
@@ -66,8 +70,7 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
             }
         };
         eventSender = new EventServer(msgQueue, uiHandler);
-        threadStarter = findViewById(R.id.threadStarter);
-        threadStarter.setVisibility(View.INVISIBLE);
+
 
 
 
