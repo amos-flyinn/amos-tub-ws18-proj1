@@ -13,17 +13,14 @@ import com.amos.server.P2PActivityServer;
 class WifiServiceManager extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private P2PActivityServer activity;
     private WifiConnectionService connectionService;
-    public WifiServiceManager(WifiP2pManager manager, WifiP2pManager.Channel channel , Activity activity)
-    {
+
+    public WifiServiceManager(WifiP2pManager manager, WifiP2pManager.Channel channel, Activity activity) {
         this.mManager = manager;
         this.mChannel = channel;
-        this.activity = (P2PActivityServer)activity;
-        this.connectionService = new WifiConnectionService(this.activity,mManager,mChannel);
+        P2PActivityServer activity1 = (P2PActivityServer) activity;
+        this.connectionService = new WifiConnectionService(activity1, mManager, mChannel);
     }
-
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -32,38 +29,21 @@ class WifiServiceManager extends BroadcastReceiver {
             // Determine if Wifi P2P mode is enabled or not, alert
             // the Activity.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                activity.setEnableWifi(true);
-            } else {
-                activity.setEnableWifi(false);
-            }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
             // The peer list has changed! We should probably do something about
             // that.
-
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-
             // Connection state changed! We should probably do something about
             // that.
-
-            if(mManager != null)
-            {
+            if (mManager != null) {
                 NetworkInfo infoNet = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-
-                if(infoNet.isConnected())
-                {
-                    mManager.requestConnectionInfo(mChannel,this.connectionService);
+                if (infoNet.isConnected()) {
+                    mManager.requestConnectionInfo(mChannel, this.connectionService);
                 }
             }
-
-            Log.d("WifiReceiverP2P","Connection Changed Action");
-
+            Log.d("WifiReceiverP2P", "Connection Changed Action");
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-
-            Log.d("WifiReceiverP2P","This Device Changed Action");
+            Log.d("WifiReceiverP2P", "This Device Changed Action");
         }
     }
-
-
 }

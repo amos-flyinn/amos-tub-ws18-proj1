@@ -176,7 +176,7 @@ document.getElementById(id).style.display = 'none';
       <span class="mdl-layout-title">Lint Report: 17 warnings</span>
       <div class="mdl-layout-spacer"></div>
       <nav class="mdl-navigation mdl-layout--large-screen-only">
-Check performed at Sun Dec 02 11:53:45 CET 2018      </nav>
+Check performed at Sun Dec 02 13:04:12 CET 2018      </nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -517,14 +517,14 @@ Dismiss</button>            </div>
 <span class="lineno">  63 </span>                <span class="keyword">int</span> action = e.getActionMasked();
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/EventSenderDemo.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/EventSenderDemo.java</a>:83</span>: <span class="message"><code>onTouch</code> should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
-<span class="lineno"> 80 </span>  base.setOnTouchListener(
-<span class="lineno"> 81 </span>          <span class="keyword">new</span> OnTouchListener() {
-<span class="lineno"> 82 </span>              <span class="annotation">@Override</span>
-<span class="caretline"><span class="lineno"> 83 </span>              <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="warning">onTouch</span>(View v, MotionEvent event) {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 84 </span>                  event.setLocation(event.getX() / base.getWidth(), event.getY() / base.getHeight());
-<span class="lineno"> 85 </span>                  TouchEvent te = <span class="keyword">new</span> TouchEvent(event.getX(), event.getY(), event.getAction(), event.getDownTime());
-<span class="lineno"> 86 </span>                  mq.add(te);
+<span class="location"><a href="src/main/java/com/amos/server/EventSenderDemo.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/EventSenderDemo.java</a>:71</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
+<span class="lineno"> 68 </span>  <span class="keyword">super</span>.onStart();
+<span class="lineno"> 69 </span>  <span class="keyword">new</span> Thread(<span class="keyword">new</span> EventServer(mq)).start();
+<span class="lineno"> 70 </span>  base.setOnTouchListener(
+<span class="caretline"><span class="lineno"> 71 </span>          <span class="warning">(v, event) -> {</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 72 </span>              event.setLocation(event.getX() / base.getWidth(), event.getY() / base.getHeight());
+<span class="lineno"> 73 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(event.getX(), event.getY(), event.getAction(), event.getDownTime());
+<span class="lineno"> 74 </span>              mq.add(te);
 </pre>
 
 <span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:95</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
