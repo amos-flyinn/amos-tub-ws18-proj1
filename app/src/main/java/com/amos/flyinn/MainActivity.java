@@ -29,7 +29,7 @@ import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
-import com.amos.flyinn.wifimanager.WifiReceiverSingelton;
+import com.amos.flyinn.wificonnector.WifiReceiverSingelton;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
@@ -95,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.wifip2p_activity:
-                intent = new Intent(this,WifiP2PActivity.class);
-                break;
             case R.id.adb_activity:
                 intent = new Intent(this,ADBActivity.class);
                 break;

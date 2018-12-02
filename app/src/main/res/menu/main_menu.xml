@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/wifip2p_activity"
-        app:showAsAction="never"
-        android:title="WIFIP2PActivity">
-    </item>
-    <item
         android:id="@+id/webrtc_activity"
         app:showAsAction="never"
         android:title="WEBRTCExample">

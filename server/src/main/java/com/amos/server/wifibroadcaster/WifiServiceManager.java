@@ -1,4 +1,4 @@
-package com.amos.server.wifimanager;
+package com.amos.server.wifibroadcaster;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

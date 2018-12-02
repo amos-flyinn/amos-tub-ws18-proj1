@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.amos.flyinn.summoner.Demo;
-import com.amos.flyinn.wifimanager.WifiReceiverSingelton;
+import com.amos.flyinn.wificonnector.WifiReceiverSingelton;
 
 public class ADBActivity extends AppCompatActivity {
 

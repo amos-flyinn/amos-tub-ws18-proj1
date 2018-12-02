@@ -13,7 +13,7 @@ import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.amos.server.wifimanager.WifiBradcasterSingelton;
+import com.amos.server.wifibroadcaster.WifiBradcasterSingelton;
 
 import java.lang.reflect.Method;
 

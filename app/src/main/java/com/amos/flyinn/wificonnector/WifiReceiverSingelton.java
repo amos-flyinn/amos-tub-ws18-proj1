@@ -1,4 +1,4 @@
-package com.amos.flyinn.wifimanager;
+package com.amos.flyinn.wificonnector;
 
 import android.app.Activity;
 import android.net.wifi.p2p.WifiP2pManager;
