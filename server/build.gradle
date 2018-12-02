@@ -38,6 +38,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            buildConfigField "boolean", "SKIP_P2P", "true"
+        }
     }
 
     testOptions {

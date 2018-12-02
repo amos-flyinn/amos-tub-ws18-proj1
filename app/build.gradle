@@ -46,6 +46,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField "boolean", "SKIP_P2P", "true"
+            buildConfigField "String", "SERVER_ADDR", "\"10.0.2.2\""
+        }
     }
     externalNativeBuild {
         cmake {

@@ -36,6 +36,7 @@ import org.webrtc.SurfaceViewRenderer;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private PeerWrapper peerWrapper;
     private SurfaceViewRenderer render;
     private Button buttonInit;
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,10 +70,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private String getServerAddr() throws Exception {
+        String addr;
+        if (BuildConfig.SKIP_P2P) {
+            addr = BuildConfig.SERVER_ADDR;
+        } else {
+            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+        }
+        return addr;
+    }
+
+    private String fmtUri(String protocol, String addr, int port) {
+        return String.format(Locale.ROOT, "%s://%s:%d", protocol, addr, port);
+    }
+
     private void configForWebRTC(Intent permissionsScreenCapture){
-        this.peerWrapper = new PeerWrapper(this,permissionsScreenCapture);
-        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.1:8080"),this.peerWrapper);
-        this.peerWrapper.setEmitter((Emitter) this.clientSocket);
+        try {
+            this.peerWrapper = new PeerWrapper(this,permissionsScreenCapture);
+            this.clientSocket = new ClientSocket(URI.create(fmtUri("ws", getServerAddr(), 8080)),this.peerWrapper);
+            this.peerWrapper.setEmitter((Emitter) this.clientSocket);
+        } catch (Exception err) {
+        }
 
     }
 
@@ -167,13 +184,11 @@ public class MainActivity extends AppCompatActivity {
         //         adbButton.setText("Start ADB Daemon");
         //     }
         // });
-        String addr;
         try {
-            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }
-            adbDaemon = createADBService(addr);
+            adbDaemon = createADBService(getServerAddr());
         } catch (Exception e) {
         }
 

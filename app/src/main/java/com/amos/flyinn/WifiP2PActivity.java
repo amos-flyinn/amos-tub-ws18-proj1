@@ -3,6 +3,7 @@ package com.amos.flyinn;
 import android.Manifest;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -37,6 +38,12 @@ public class WifiP2PActivity extends ListActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.SKIP_P2P) {
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
+            return;
+        }
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(this,"Requesting permission for peers",Toast.LENGTH_SHORT).show();

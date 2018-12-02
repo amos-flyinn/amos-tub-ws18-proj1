@@ -3,6 +3,7 @@ package com.amos.server;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -28,6 +29,13 @@ public class P2PActivityServer extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Skip Wifi P2P if we are in a debug build with SKIP_P2P set to true
+        if (BuildConfig.SKIP_P2P) {
+            Intent intentToWebRTC = new Intent(this, MainActivity.class);
+            startActivity(intentToWebRTC);
+            return;
+        }
 
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
