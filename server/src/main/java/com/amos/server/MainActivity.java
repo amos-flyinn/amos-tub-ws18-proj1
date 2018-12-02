@@ -55,6 +55,7 @@ public class MainActivity extends Activity {
         connectionInfo = findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
         view = findViewById(R.id.surface_remote_viewer);
+
         // create touch listener components
         msgQueue = new LinkedBlockingQueue<>();
         uiHandler = new Handler(Looper.getMainLooper()) {
@@ -67,21 +68,6 @@ public class MainActivity extends Activity {
         eventSender = new EventServer(msgQueue, uiHandler);
         threadStarter = findViewById(R.id.threadStarter);
         threadStarter.setVisibility(View.INVISIBLE);
-        // threadStarter.setOnClickListener((View v) -> {
-        //     if (senderRunner == null) {
-        //         senderRunner = new Thread(eventSender);
-        //         senderRunner.start();
-        //         threadStarter.setText("Stop server");
-        //     } else {
-        //         eventSender.close();
-        //         try {
-        //             senderRunner.join();
-        //             threadStarter.setText("Start server");
-        //             senderRunner = null;
-        //         } catch (InterruptedException e) {
-        //         }
-        //     }
-        // });
 
         //init WebRTC Signaling server
         this.initViews();
