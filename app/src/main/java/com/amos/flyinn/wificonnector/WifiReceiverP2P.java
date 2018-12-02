@@ -1,6 +1,5 @@
 package com.amos.flyinn.wificonnector;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,10 +13,10 @@ public class WifiReceiverP2P extends BroadcastReceiver {
     private PeersListenerService servicePeers;
     private WifiConnectionService connectionService;
 
-    protected WifiReceiverP2P(WifiP2pManager manager, WifiP2pManager.Channel channel, Activity activity) {
+    protected WifiReceiverP2P(WifiP2pManager manager, WifiP2pManager.Channel channel, Wifibase activity) {
         this.mManager = manager;
         this.mChannel = channel;
-        this.servicePeers = new PeersListenerService();
+        this.servicePeers = new PeersListenerService(activity);
         this.connectionService = new WifiConnectionService(activity, this.mManager, this.mChannel);
     }
 

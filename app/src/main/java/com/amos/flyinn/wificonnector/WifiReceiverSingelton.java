@@ -1,6 +1,5 @@
 package com.amos.flyinn.wificonnector;
 
-import android.app.Activity;
 import android.net.wifi.p2p.WifiP2pManager;
 
 public class WifiReceiverSingelton {
@@ -15,7 +14,7 @@ public class WifiReceiverSingelton {
         return this.receiver;
     }
 
-    public void setWifiReceiverP2P(WifiP2pManager manager, WifiP2pManager.Channel channel, Activity activity) {
+    public void setWifiReceiverP2P(WifiP2pManager manager, WifiP2pManager.Channel channel, Wifibase activity) {
         this.receiver = new WifiReceiverP2P(manager, channel, activity);
     }
 }

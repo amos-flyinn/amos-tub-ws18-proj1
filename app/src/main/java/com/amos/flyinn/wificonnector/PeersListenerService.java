@@ -10,8 +10,10 @@ import java.util.List;
 
 class PeersListenerService implements WifiP2pManager.PeerListListener {
     private List<WifiP2pDevice> listOfPeers = new ArrayList<>();
+   private Wifibase base;
 
-    PeersListenerService() {
+    PeersListenerService(Wifibase activity) {
+        base = activity;
     }
 
     @Override
@@ -21,9 +23,6 @@ class PeersListenerService implements WifiP2pManager.PeerListListener {
             listOfPeers.clear();
             listOfPeers.addAll(collectionDevices);
         }
-    }
-
-    public List<WifiP2pDevice> getDevice(String code) {
-        return listOfPeers;
+        this.base.setPeers(this.listOfPeers);
     }
 }

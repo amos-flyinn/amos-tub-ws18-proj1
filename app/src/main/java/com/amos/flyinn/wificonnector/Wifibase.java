@@ -9,15 +9,12 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Wifibase  extends Activity {
+public abstract class Wifibase extends Activity {
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
-    private List<String> nameOfPeers = new ArrayList<String>();
-    private List<WifiP2pDevice> listOfPeers = new ArrayList<WifiP2pDevice>();
 
     protected void createWifiManager() {
         // Indicates a change in the Wi-Fi P2P status.
@@ -36,32 +33,31 @@ public abstract class Wifibase  extends Activity {
         this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(Wifibase.this,"Listening to Peers", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Wifibase.this, "Listening to Peers", Toast.LENGTH_SHORT).show();
 
             }
+
             @Override
             public void onFailure(int i) {
-                Toast.makeText(Wifibase.this,"Error listening to Peers", Toast.LENGTH_SHORT).show();
-                Log.d("WifiP2PActivity" , "Error listening to peers : " + i );
+                Toast.makeText(Wifibase.this, "Error listening to Peers", Toast.LENGTH_SHORT).show();
+                Log.d("WifiP2PActivity", "Error listening to peers : " + i);
             }
         });
     }
 
-    protected void connectToPeer(WifiP2pDevice deviceToConnect, final int position){
+    protected void connectToPeer(WifiP2pDevice deviceToConnect) {
         WifiP2pConfig newConfigWifi = new WifiP2pConfig();
         newConfigWifi.deviceAddress = deviceToConnect.deviceAddress;
 
         this.mManager.connect(mChannel, newConfigWifi, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(Wifibase.this,"Connection Successfull", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Wifibase.this, "Connection Successfull", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int i) {
-                Toast.makeText(Wifibase.this,"Error connecting to device!", Toast.LENGTH_SHORT).show();
-                listOfPeers.remove(position);
-                nameOfPeers.remove(position);
+                Toast.makeText(Wifibase.this, "Error connecting to device!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -80,6 +76,7 @@ public abstract class Wifibase  extends Activity {
     }
 
 
+    abstract public void setPeers(List<WifiP2pDevice> listOfPeers);
 
 //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
