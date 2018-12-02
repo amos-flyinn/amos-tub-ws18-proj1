@@ -7,6 +7,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.MainActivity;
 import com.amos.flyinn.WifiP2PActivity;
 
@@ -62,7 +63,7 @@ public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListe
             e.printStackTrace();
         }
 
-        Intent intentToWebRTC = new Intent(activity,MainActivity.class);
+        Intent intentToWebRTC = new Intent(activity,ConnectionSetupActivity.class);
         activity.startActivity(intentToWebRTC);
     }
 }

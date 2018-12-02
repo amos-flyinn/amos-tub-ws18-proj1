@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.View;
 
+import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.MainActivity;
 import com.amos.flyinn.WebRTCActivity;
 import com.amos.flyinn.signaling.Emitter;
@@ -36,11 +37,11 @@ import org.webrtc.ScreenCapturerAndroid;
 
 import java.util.ArrayList;
 
-public class PeerWrapper implements  IPeer {
+public class PeerWrapper implements IPeer {
 
 
     private SurfaceViewRenderer activityRender;
-    private MainActivity activity;
+    private ConnectionSetupActivity activity;
     private SurfaceTextureHelper mTextureHelper;
     private Intent intentWithThing;
     private DataChannel localChannel;
@@ -53,11 +54,11 @@ public class PeerWrapper implements  IPeer {
     private EglBase rootEglBase;
     private VideoSource videoSource;
 
-    public PeerWrapper(Activity app,Intent intent) {
+    public PeerWrapper(Activity app, Intent intent) {
 
         this.intentWithThing = intent;
         this.appContext = app.getApplicationContext();
-        this.activity = (MainActivity) app;
+        this.activity = (ConnectionSetupActivity) app;
         this.configPeerConnection();
         this.createPeer();
         this.activityRender = this.activity.getRender();
@@ -68,7 +69,7 @@ public class PeerWrapper implements  IPeer {
         this.emitter = emitter;
     }
 
-    private void initComponents(){
+    private void initComponents() {
 
         VideoCapturer videoCapturer = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
             @Override
@@ -78,7 +79,7 @@ public class PeerWrapper implements  IPeer {
             }
         });
 
-        this.activityRender.init(this.rootEglBase.getEglBaseContext(),null);
+        this.activityRender.init(this.rootEglBase.getEglBaseContext(), null);
 
         this.activityRender.setZOrderMediaOverlay(true);
 
@@ -86,7 +87,7 @@ public class PeerWrapper implements  IPeer {
 
         videoSource = peerFactory.createVideoSource(videoCapturer);
 
-        localVideoTrack = peerFactory.createVideoTrack("101",videoSource);
+        localVideoTrack = peerFactory.createVideoTrack("101", videoSource);
 
         videoCapturer.startCapture(1024, 720, 30);
 
@@ -98,7 +99,6 @@ public class PeerWrapper implements  IPeer {
 
 
     }
-
 
 
     private void configPeerConnection() {
@@ -113,7 +113,7 @@ public class PeerWrapper implements  IPeer {
         DefaultVideoEncoderFactory defaultVideoEncoderFactory = new DefaultVideoEncoderFactory(
                 rootEglBase.getEglBaseContext(),  /* enableIntelVp8Encoder */true,  /* enableH264HighProfile */true);
         DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(rootEglBase.getEglBaseContext());
-        peerFactory = new PeerConnectionFactory(options,defaultVideoEncoderFactory,defaultVideoDecoderFactory);
+        peerFactory = new PeerConnectionFactory(options, defaultVideoEncoderFactory, defaultVideoDecoderFactory);
 
 
     }
@@ -121,21 +121,19 @@ public class PeerWrapper implements  IPeer {
     private void createPeer() {
 
 
-
         this.connection = peerFactory.createPeerConnection(new ArrayList<>(), new PeerObserver() {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
-                Log.d("PeerWrapper","Here is the ice Candidate : " + iceCandidate);
+                Log.d("PeerWrapper", "Here is the ice Candidate : " + iceCandidate);
                 onIceCandidateReceived(iceCandidate);
             }
         });
 
 
-
     }
 
-    private void addCameraStreamToPeerConnection(){
+    private void addCameraStreamToPeerConnection() {
         MediaStream stream = peerFactory.createLocalMediaStream("102");
         stream.addTrack(localVideoTrack);
         this.connection.addStream(stream);
@@ -152,11 +150,11 @@ public class PeerWrapper implements  IPeer {
         sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair(
                 "OfferToReceiveVideo", "true"));
 
-        this.connection.createOffer(new SdpObserver() {
+        this.connection.createOffer(new SdpObserver("LocalDescriptor", activity, SdpObserver.LOCAL_SDP) {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
-                connection.setLocalDescription(new SdpObserver(), sessionDescription);
+                connection.setLocalDescription(new SdpObserver("LocalDescriptor", activity, SdpObserver.LOCAL_SDP), sessionDescription);
                 emitter.shareSessionDescription(sessionDescription);
             }
         }, sdpConstraints);
@@ -170,7 +168,7 @@ public class PeerWrapper implements  IPeer {
 
     @Override
     public void setRemoteDescriptorPeer(SessionDescription descriptorPeer) {
-        this.connection.setRemoteDescription(new SdpObserver(),descriptorPeer);
+        this.connection.setRemoteDescription(new SdpObserver("RemoteDescriptor", activity, SdpObserver.REMOTE_SDP), descriptorPeer);
     }
 
     @Override
