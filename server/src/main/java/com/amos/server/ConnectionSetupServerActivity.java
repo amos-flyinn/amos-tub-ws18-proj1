@@ -59,7 +59,7 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
         connectionInfo = (TextView) findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
 
-
+        //setStateText(SetupStates.LOCAL_DESCRIPTOR_CREATE);
         // create touch listener components
         msgQueue = new LinkedBlockingQueue<>();
         uiHandler = new Handler(Looper.getMainLooper()) {
