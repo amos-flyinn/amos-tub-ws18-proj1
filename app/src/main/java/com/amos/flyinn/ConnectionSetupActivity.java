@@ -1,14 +1,19 @@
 package com.amos.flyinn;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +27,7 @@ import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
+import com.amos.flyinn.wifimanager.WifiManager;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
@@ -51,9 +57,24 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connection_setup);
         infiniteBar = (ProgressBar) findViewById(R.id.infiniteBar);
         progressText = (TextView) findViewById(R.id.progressText);
+
+        String addr;
+        try {
+            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+            while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+            adbDaemon = createADBService(addr);
+        } catch (Exception e) {
+        }
+
+
         this.initViewsWebRTC();
         this.initScreenCapturePermissions();
     }
+
+
+
 
 
     @Override
@@ -125,6 +146,21 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
+
+    protected Daemon createADBService(String addr) {
+        Point p = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(p);
+        Daemon d = new Daemon(getApplicationContext(), addr, p);
+        try {
+            d.writeFakeInputToFilesystem();
+            d.spawn_adb();
+        } catch (Exception e) {
+            Log.d("AppDaemon", e.toString());
+        }
+        return d;
+    }
+
+
 
     public void setStateText(int state) {
 
