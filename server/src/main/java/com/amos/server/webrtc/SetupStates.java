@@ -1,4 +1,4 @@
-package com.amos.flyinn.webrtc;
+package com.amos.server.webrtc;
 
 public class SetupStates {
     public final static int
