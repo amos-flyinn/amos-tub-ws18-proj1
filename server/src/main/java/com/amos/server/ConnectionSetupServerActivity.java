@@ -164,6 +164,9 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
 
             case SetupStates.REMOTE_DESCRIPTOR_SETTED:
                 progressText.setText("Remote descriptor setted Successfully");
+                progressText.setVisibility(View.INVISIBLE);
+                remoteRender.setVisibility(View.VISIBLE);
+
                 break;
 
             case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
