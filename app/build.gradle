@@ -77,7 +77,8 @@ dependencies {
 
     testImplementation 'androidx.test:core:1.0.0'
     testImplementation 'org.mockito:mockito-core:1.10.19'
-    testImplementation 'org.json:json:20160810' // org.json is included with Android, but Android.jar can not be used from unit tests
+    testImplementation 'org.json:json:20160810'
+    // org.json is included with Android, but Android.jar can not be used from unit tests
 }
 
 task prePreBuild {
