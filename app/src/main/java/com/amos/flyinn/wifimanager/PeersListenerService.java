@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class PeersListenerService implements WifiP2pManager.PeerListListener {
+class PeersListenerService implements WifiP2pManager.PeerListListener {
     private List<WifiP2pDevice> listOfPeers = new ArrayList<>();
     private WifiP2PActivity activity;
+
     public PeersListenerService(Activity activity) {
-        this.activity = (WifiP2PActivity)activity;
+        this.activity = (WifiP2PActivity) activity;
     }
 
     @Override

@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.amos.flyinn.WifiP2PActivity;
 
-public class WifiReceiverP2P extends BroadcastReceiver {
+class WifiReceiverP2P extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;

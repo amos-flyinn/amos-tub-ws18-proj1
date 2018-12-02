@@ -18,8 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.amos.flyinn.wifimanager.WifiReceiverP2P;
-import com.amos.flyinn.wifimanager.WifiManager;
+import com.amos.flyinn.wifimanager.WifiReceiverSingelton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,6 @@ public class WifiP2PActivity extends ListActivity {
     private boolean enableWifi;
     private List<String> nameOfPeers = new ArrayList<String>();
     private List<WifiP2pDevice> listOfPeers = new ArrayList<WifiP2pDevice>();
-    private WifiReceiverP2P receiver;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,15 +143,14 @@ public class WifiP2PActivity extends ListActivity {
     @Override
     public void onResume() {
         super.onResume();
-        receiver = new WifiReceiverP2P(mManager, mChannel, this);
-        WifiManager.getInstance().setWifiReceiverP2P(receiver);
-        registerReceiver(receiver, intentFilter);
+        WifiReceiverSingelton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
+        registerReceiver(WifiReceiverSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(receiver);
+        unregisterReceiver(WifiReceiverSingelton.getInstance().getWifiReceiverP2P());
     }
 
     @Override

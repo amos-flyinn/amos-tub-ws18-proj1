@@ -29,12 +29,11 @@ import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
-import com.amos.flyinn.wifimanager.WifiManager;
+import com.amos.flyinn.wifimanager.WifiReceiverSingelton;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -152,24 +151,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Example of a call to a native method
         connectionStatus = findViewById(R.id.connectionStatus);
-        // adbButton = findViewById(R.id.adb_button);
-        // adbButton.setOnClickListener((View v) -> {
-        //     if (adbDaemon == null) {
-        //         try {
-        //             String addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
-        //             adbDaemon = createADBService(addr);
-        //         } catch (Exception e) {
-        //             connectionStatus.setText("Error starting ADB service");
-        //         }
-        //         adbButton.setText("Stop ADB Daemon");
-        //     } else {
-        //         // TODO Stop the adb daemon again
-        //         adbButton.setText("Start ADB Daemon");
-        //     }
-        // });
         String addr;
         try {
-            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+            addr = WifiReceiverSingelton.getInstance().getWifiReceiverP2P().getHostAddr();
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }

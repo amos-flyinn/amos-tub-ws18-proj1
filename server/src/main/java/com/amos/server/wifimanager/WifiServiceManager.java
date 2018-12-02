@@ -15,14 +15,12 @@ public class WifiServiceManager extends BroadcastReceiver {
     private WifiP2pManager.Channel mChannel;
     private P2PActivityServer activity;
     private WifiConnectionService connectionService;
-    private PeersListenerService servicePeers;
     public WifiServiceManager(WifiP2pManager manager, WifiP2pManager.Channel channel , Activity activity)
     {
         this.mManager = manager;
         this.mChannel = channel;
         this.activity = (P2PActivityServer)activity;
         this.connectionService = new WifiConnectionService(this.activity,mManager,mChannel);
-        this.servicePeers = new PeersListenerService(this.activity);
     }
 
 

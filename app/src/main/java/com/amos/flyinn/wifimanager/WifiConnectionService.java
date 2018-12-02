@@ -15,7 +15,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
+class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
     private WifiP2PActivity activity;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
