@@ -74,6 +74,7 @@ case "$1" in
 		redir_server 5554 "tcp:1337:1337"
 		echo "Redirecting 8080 for webrtc"
 		redir_server 5554 "tcp:8080:8080"
+		redir_server 5554 "udp:8080:8080"
 		get_redirections 5554 "tcp:1337:1337"
 		;;
 	*)
