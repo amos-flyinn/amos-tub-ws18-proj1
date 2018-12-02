@@ -24,7 +24,10 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         <activity android:name=".P2PActivityServer">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".WebRTCServerActivity"></activity>
         <activity android:name=".MainActivity">
@@ -47,10 +50,7 @@
         <activity android:name=".ConnectionSetupServerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
     </application>
