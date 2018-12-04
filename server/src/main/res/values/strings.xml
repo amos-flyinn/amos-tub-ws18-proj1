@@ -17,4 +17,5 @@
     <string name="buildinfo_git_commit_date">Git Commit: </string>
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
+    <string name="title_activity_nearby_server">NearbyServerActivity</string>
 </resources>

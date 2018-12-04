@@ -253,29 +253,28 @@ public class NearbyConnectionActivity extends ListActivity {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
 
-        startDiscovering();
+        if (serverID == null || serverID.isEmpty()) {
+            startDiscovering();
+        }
     }
 
     /**
-     * Stops all connection discovery and connections from this client before calling super.onStop()
+     * Stops all connection discovery and connections from this client
+     * before calling super.onDestroy()
      */
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
+        clearServerData();
         connectionsClient.stopDiscovery();
         connectionsClient.stopAllEndpoints();
-        super.onStop();
+        super.onDestroy();
     }
 
     /**
      * Clears all servers map data as well as serverName/serverID and starts discovery
      */
     private void startDiscovering() {
-        servers.clear();
-        ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
-        serverIDsToNames.clear();
-        serverNamesToIDs.clear();
-        serverID = null;
-        serverName = null;
+        clearServerData();
 
         DiscoveryOptions discoveryOptions =
                 new DiscoveryOptions.Builder().setStrategy(STRATEGY).build();
@@ -318,6 +317,12 @@ public class NearbyConnectionActivity extends ListActivity {
             Log.i(NEARBY_TAG, "User disconnected from " + serverID);
             Toast.makeText(NearbyConnectionActivity.this,
                     R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Log.e(NEARBY_TAG, "InterruptedException after closing connection to "
+                        + serverID);
+            }
             finish();
             return;
         }
@@ -341,6 +346,18 @@ public class NearbyConnectionActivity extends ListActivity {
                     Toast.makeText(this, R.string.nearby_connection_error,
                             Toast.LENGTH_LONG).show();
                 });
+    }
+
+    /**
+     * Clears serverName/serverID and all server data maps as well as the servers list
+     */
+    private void clearServerData() {
+        servers.clear();
+        ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
+        serverIDsToNames.clear();
+        serverNamesToIDs.clear();
+        serverID = null;
+        serverName = null;
     }
 
     /**
