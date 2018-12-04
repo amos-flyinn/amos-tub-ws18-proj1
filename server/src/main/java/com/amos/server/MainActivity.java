@@ -14,15 +14,12 @@ import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.TextView;
-import android.content.Intent;
 
-import org.w3c.dom.Text;
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
 
@@ -44,6 +41,7 @@ import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
+import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
@@ -51,7 +49,6 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import java.security.SecureRandom;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MainActivity extends Activity {
@@ -86,12 +83,112 @@ public class MainActivity extends Activity {
     /** Connection manager for the connection to FlyInn clients.*/
     protected ConnectionsClient connectionsClient;
 
-    private final String serverName = generateName();
+    private final String serverName = generateName(5);
     private String clientID;
     private String clientName;
 
     /** Tag for logging purposes. */
     private static final String NEARBY_TAG = "ServerNearbyConnection";
+
+
+    /**
+     * Obtain data from clientID/clientName and data transfer information via this handle.
+     */
+    private final PayloadCallback payloadCallback =
+            new PayloadCallback() {
+                @Override
+                public void onPayloadReceived(String endpointId, Payload payload) {
+                    // TODO
+                }
+
+                @Override
+                public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
+                    // TODO
+                }
+            };
+
+    /**
+     * Callbacks for connections to other devices.
+     * Includes token authentication and connection handling.
+     */
+    private final ConnectionLifecycleCallback connectionLifecycleCallback =
+            new ConnectionLifecycleCallback() {
+                @Override
+                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+                    Log.i(NEARBY_TAG, "Connection initiated by " + endpointId);
+                    clientName = connectionInfo.getEndpointName();
+
+                    // authentication via tokens
+                    // TODO replace token authentication with QR code/manual code input
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Accept connection to " + clientName + "?")
+                            .setMessage("Confirm the code matches on both devices: " +
+                                    connectionInfo.getAuthenticationToken())
+                            .setPositiveButton(android.R.string.yes,
+                                    (DialogInterface dialog, int which) ->
+                                            // accept the connection
+                                            connectionsClient.acceptConnection(endpointId,
+                                                    payloadCallback))
+                            .setNegativeButton(android.R.string.cancel,
+                                    (DialogInterface dialog, int which) ->
+                                            // reject the connection
+                                            connectionsClient.rejectConnection(endpointId))
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+
+                @Override
+                public void onConnectionResult(String endpointId, ConnectionResolution result) {
+                    switch (result.getStatus().getStatusCode()) {
+
+                        case ConnectionsStatusCodes.STATUS_OK:
+                            // successful connection with client
+                            Log.i(NEARBY_TAG, "Connected with " + endpointId);
+                            Toast.makeText(MainActivity.this,
+                                    R.string.nearby_connection_success, Toast.LENGTH_SHORT).show();
+                            connectionsClient.stopAdvertising();
+                            clientID = endpointId;
+                            break;
+
+                        case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
+                            // connection was rejected by one side (or both)
+                            Log.i(NEARBY_TAG, "Connection rejected with " + endpointId);
+                            Toast.makeText(MainActivity.this,
+                                    R.string.nearby_connection_rejected, Toast.LENGTH_LONG).show();
+                            clientName = null;
+                            clientID = null;
+                            break;
+
+                        case ConnectionsStatusCodes.STATUS_ERROR:
+                            // connection was lost
+                            Log.w(NEARBY_TAG, "Connection lost: " + endpointId);
+                            Toast.makeText(MainActivity.this,
+                                    R.string.nearby_connection_lost, Toast.LENGTH_LONG).show();
+                            clientName = null;
+                            clientID = null;
+                            break;
+
+                        default:
+                            // unknown status code. we shouldn't be here
+                            Log.e(NEARBY_TAG, "Unknown error when attempting to connect with "
+                                    + endpointId);
+                            Toast.makeText(MainActivity.this,
+                                    R.string.nearby_connection_lost, Toast.LENGTH_LONG).show();
+                            clientName = null;
+                            clientID = null;
+                    }
+                }
+
+                @Override
+                public void onDisconnected(String endpointId) {
+                    // disconnect from client
+                    Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
+                    Toast.makeText(MainActivity.this,
+                            R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
+                    startAdvertising();
+                }
+            };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,14 +247,6 @@ public class MainActivity extends Activity {
         );
     }
 
-    public SurfaceViewRenderer getRender(){
-        return remoteRender;
-    }
-
-    private void initViews(){
-        remoteRender = findViewById(R.id.surface_remote_viewer);
-    }
-
     /**
      * Checks whether the app has the required permissions to establish connections,
      * and then starts advertising to search for clients.
@@ -167,11 +256,22 @@ public class MainActivity extends Activity {
         super.onStart();
         connectionInfo.setText("Waiting for P2P Wifi connection");
 
-        if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
+        if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        } else {
+            Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
 
         startAdvertising();
+    }
+
+    public SurfaceViewRenderer getRender(){
+        return remoteRender;
+    }
+
+    private void initViews(){
+        remoteRender = findViewById(R.id.surface_remote_viewer);
     }
 
     @Override
@@ -211,7 +311,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Stops all nearby advertising and connections from this server before calling super.onStop().
+     * Stops all advertising and connections from this server before calling super.onStop().
      */
     @Override
     protected void onStop() {
@@ -230,93 +330,23 @@ public class MainActivity extends Activity {
 
         AdvertisingOptions advertisingOptions =
                 new AdvertisingOptions.Builder().setStrategy(STRATEGY).build();
+
         connectionsClient.startAdvertising(serverName, "com.amos.flyinn",
                 connectionLifecycleCallback, advertisingOptions)
-                .addOnSuccessListener(
-                        (Void unused) -> {
-                            // started advertising successfully
-                            Log.i(NEARBY_TAG, "Started advertising " + serverName);
-                            Toast.makeText(this, R.string.success_advertising,
-                                    Toast.LENGTH_SHORT).show();
-                        })
-                .addOnFailureListener(
-                        (Exception e) -> {
-                            // unable to advertise
-                            Log.e(NEARBY_TAG, "Unable to start advertising " + serverName);
-                            Toast.makeText(this, R.string.error_advertising,
-                                    Toast.LENGTH_LONG).show();
-                            finish();
-                        });
+                .addOnSuccessListener( (Void unused) -> {
+                    // started advertising successfully
+                    Log.i(NEARBY_TAG, "Started advertising " + serverName);
+                    Toast.makeText(this, R.string.nearby_advertising_success,
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener( (Exception e) -> {
+                    // unable to advertise
+                    Log.e(NEARBY_TAG, "Unable to start advertising " + serverName);
+                    Toast.makeText(this, R.string.nearby_advertising_error,
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                });
     }
-
-    /**
-     * Obtain data from clientID/clientName via this handle.
-     */
-    private final PayloadCallback payloadCallback =
-            new PayloadCallback() {
-                @Override
-                public void onPayloadReceived(String endpointId, Payload payload) {
-                    // TODO
-                }
-
-                @Override
-                public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
-                    // TODO
-                }
-            };
-
-    /**
-     * Callbacks for connections to other devices.
-     * Includes token authentication and connection handling.
-     */
-    private final ConnectionLifecycleCallback connectionLifecycleCallback =
-            new ConnectionLifecycleCallback() {
-                @Override
-                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                    Log.i(NEARBY_TAG, "Connection initiated by " + endpointId);
-                    clientName = connectionInfo.getEndpointName();
-
-                    // authentication via tokens
-                    // TODO replace token authentication with QR code/manual code input
-                    new AlertDialog.Builder(getApplicationContext())
-                            .setTitle("Accept connection to " + connectionInfo.getEndpointName())
-                            .setMessage("Confirm the code matches on both devices: " +
-                                    connectionInfo.getAuthenticationToken())
-                            .setPositiveButton("Accept",
-                                    (DialogInterface dialog, int which) ->
-                                            // accept the connection
-                                            connectionsClient.acceptConnection(endpointId,
-                                                    payloadCallback))
-                            .setNegativeButton(
-                                    android.R.string.cancel,
-                                    (DialogInterface dialog, int which) ->
-                                            // reject the connection
-                                            connectionsClient.rejectConnection(endpointId))
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-                }
-
-                @Override
-                public void onConnectionResult(String endpointId, ConnectionResolution result) {
-                    if (result.getStatus().isSuccess()) {
-                        Log.i(NEARBY_TAG, "Connected with " + endpointId);
-
-                        connectionsClient.stopAdvertising();
-
-                        clientID = endpointId;
-                    } else {
-                        Log.i(NEARBY_TAG, "Failure connecting with " + endpointId);
-                        clientName = null;
-                        clientID = null;
-                    }
-                }
-
-                @Override
-                public void onDisconnected(String endpointId) {
-                    Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
-                    startAdvertising();
-                }
-            };
 
     /**
      * Determines whether the FlyInn server app has the necessary permissions to run nearby.
@@ -352,9 +382,8 @@ public class MainActivity extends Activity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.w(NEARBY_TAG, "Permissions necessary for " +
-                        "Nearby Connection were not granted.");
-                Toast.makeText(this, R.string.error_missing_permissions,
+                Log.w(NEARBY_TAG, "Permissions necessary for connections were not granted.");
+                Toast.makeText(this, R.string.nearby_missing_permissions,
                         Toast.LENGTH_LONG).show();
                 finish();
                 return;
@@ -365,15 +394,15 @@ public class MainActivity extends Activity {
 
     /**
      * Generates a name for the server.
-     * @return The server name, consisting of a random string appended to the build model
+     * @return The server name, consisting of the build model + a random string
      */
     // TODO Define better name system?
-    private String generateName(){
+    private String generateName(int appendixLength){
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
-        StringBuilder sb = new StringBuilder(5);
-        for (int i = 0; i < 5; i++) {
+        StringBuilder sb = new StringBuilder(appendixLength);
+        for (int i = 0; i < appendixLength; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
         return Build.MODEL + "_" + sb.toString();
