@@ -66,6 +66,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             }
             adbDaemon = createADBService(addr);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
