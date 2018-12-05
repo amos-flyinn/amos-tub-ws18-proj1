@@ -49,6 +49,7 @@ public class NearbyConnectionActivity extends ListActivity {
             };
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
+    private boolean permissionsGranted = true;
 
     /** 1-to-1 since a device will be connected to only one other device at most. */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
@@ -253,6 +254,11 @@ public class NearbyConnectionActivity extends ListActivity {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
 
+        if (!permissionsGranted) {
+            finish();
+            return;
+        }
+
         if (serverID == null || serverID.isEmpty()) {
             startDiscovering();
         }
@@ -317,13 +323,18 @@ public class NearbyConnectionActivity extends ListActivity {
             Log.i(NEARBY_TAG, "User disconnected from " + serverID);
             Toast.makeText(NearbyConnectionActivity.this,
                     R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                Log.e(NEARBY_TAG, "InterruptedException after closing connection to "
-                        + serverID);
-            }
-            finish();
+            new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        // display close connection toast for 2s
+                        Thread.sleep(2000);
+                        finish();
+                    } catch (Exception e) {
+                        Log.e(NEARBY_TAG, "Thread error after disconnect.");
+                    }
+                }
+            }.start();
             return;
         }
 
@@ -370,7 +381,7 @@ public class NearbyConnectionActivity extends ListActivity {
         connectionsClient.stopDiscovery();
 
         //add close connection button
-        servers.add(getResources().getString(R.string.nearby_close_connection) + serverName);
+        servers.add(getResources().getString(R.string.nearby_close_connection) + " " + serverName);
         ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
     }
 
@@ -412,6 +423,7 @@ public class NearbyConnectionActivity extends ListActivity {
                         "Nearby Connection were not granted.");
                 Toast.makeText(this, R.string.nearby_missing_permissions,
                         Toast.LENGTH_LONG).show();
+                permissionsGranted = false;
                 finish();
                 return;
             }

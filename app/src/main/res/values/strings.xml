@@ -4,7 +4,7 @@
     <string name="title_activity_build_info">BuildInfoActivity</string>
 
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
-    <string name="nearby_close_connection">Close connection to </string>
+    <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_error">Could not start searching for connections.</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>
     <string name="nearby_connection_success">Connection established.</string>

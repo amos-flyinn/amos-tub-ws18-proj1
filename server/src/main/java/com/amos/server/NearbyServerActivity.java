@@ -40,6 +40,7 @@ public class NearbyServerActivity extends Activity {
             };
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
+    private boolean permissionsGranted = true;
 
     /** 1-to-1 since a device will be connected to only one other device at most. */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
@@ -146,13 +147,18 @@ public class NearbyServerActivity extends Activity {
                     Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
                     Toast.makeText(NearbyServerActivity.this,
                             R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        Log.e(NEARBY_TAG, "InterruptedException after closing connection to "
-                                + clientID);
-                    }
-                    startAdvertising();
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                // display disconnect toast for 2s
+                                Thread.sleep(2000);
+                                startAdvertising();
+                            } catch (Exception e) {
+                                Log.e(NEARBY_TAG, "Thread error after disconnect.");
+                            }
+                        }
+                    }.start();
                 }
             };
 
@@ -180,6 +186,12 @@ public class NearbyServerActivity extends Activity {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
 
+        if (!permissionsGranted) {
+            finish();
+            return;
+        }
+
+        // check whether we are connected to a device
         if (clientID == null || clientID.isEmpty()) {
             startAdvertising();
         }
@@ -270,6 +282,7 @@ public class NearbyServerActivity extends Activity {
                 Log.w(NEARBY_TAG, "Permissions necessary for connections were not granted.");
                 Toast.makeText(this, R.string.nearby_missing_permissions,
                         Toast.LENGTH_LONG).show();
+                permissionsGranted = false;
                 finish();
                 return;
             }
