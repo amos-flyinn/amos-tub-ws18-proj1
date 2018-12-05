@@ -64,6 +64,11 @@ if [ -z "$1" ]; then
 	exit
 fi
 
+if ! command -v telnet; then
+	echo "telnet needs to be installed"
+	exit
+fi
+
 case "$1" in
 	test)
 		test_redir 5554
