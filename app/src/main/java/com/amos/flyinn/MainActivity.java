@@ -2,6 +2,7 @@ package com.amos.flyinn;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.Manifest;
 import android.content.Context;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 
 import com.amos.flyinn.screenRecording.RecordingActivity;
+import com.amos.flyinn.settingsCheck.settingsCheck;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
@@ -192,38 +194,6 @@ public class MainActivity extends AppCompatActivity {
     public void toScreenActivityOnClick(View view) {
         Intent intent = new Intent(this, RecordingActivity.class);
         startActivity(intent);
-    }
-
-
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        checkForDebuggingMode();
-    }
-
-    private void checkForDebuggingMode() {
-        if(Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) != 1) {
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("Missing settings");
-            alertDialog.setMessage("To use FlyInn please enable the debugging mode and USB debugging.\n" +
-                    "Mostly enabling the debugging mode works with tapping multiple times the 'Software Build number' label.");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-                            Toast.makeText(MainActivity.this, "To use FlyInn please enable USB debugging.", Toast.LENGTH_SHORT).show();
-                        } catch(Exception ex) {
-                            startActivity(new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS));
-                        }
-
-                        dialog.dismiss();
-                    }
-                    });
-            alertDialog.show();
-        }
     }
 
 
