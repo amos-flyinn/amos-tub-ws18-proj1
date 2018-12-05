@@ -1,5 +1,11 @@
 package com.amos.flyinn.webrtc;
 
+/**
+ * <h1>SetupStates class</h1>
+ * <p>This class contains all the constants that are going to be used to describe
+ * the behavior of the WebRTC stream protocol and the ADB connection</p>
+ */
+
 public class SetupStates {
     public final static int
             ERROR_CONNECTING_SERVER = -7,

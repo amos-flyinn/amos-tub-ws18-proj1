@@ -36,6 +36,17 @@ import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * <h1>ConnectionSetup</h1>
+ * <p>
+ * The ConnectionSetup Activity is responsible to Setup the connection between the Client and the Server app.
+ * This class is also responsible to inform the user about possible problems that could happen in the WebRTC stream negotiation
+ * or in the ADB server connection.
+ * It also tries to handle all possible error states giving the user some options to proceed in failure cases.
+ * </p>
+ *
+ */
+
 public class ConnectionSetupActivity extends AppCompatActivity {
 
     private ProgressBar infiniteBar;
@@ -63,6 +74,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         switchToHomeScreenButton = (Button) findViewById(R.id.switch_home_screen);
         connectedMessage = (TextView) findViewById(R.id.connected_message);
 
+        //Giving callback to the close connection button
         closeConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,6 +82,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             }
         });
 
+        //Giving callback to the switch to home button
         switchToHomeScreenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +90,9 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             }
         });
 
+
         String addr;
+        //Preparing and initializing the ADB service to listen for incoming connections.
         try {
             addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -88,13 +103,16 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        //Init components for WebRTC and ask permissions for Screen capture functionalities.
         this.initViewsWebRTC();
         this.initScreenCapturePermissions();
     }
 
 
-
+    /**
+     * Method to minimize the app and go to the home screen
+     *
+     */
     public void swtichToHomeScreen(){
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
@@ -103,7 +121,14 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * This method is going to be called after the screen capture permission is asked.
+     * It gives the permissions necessary for the WebRTC screen capture to work
+     *
+     * @param requestCode the permission code for the Android permission
+     * @param resultCode the result of the operation
+     * @param data information about the screen capture permissions
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
@@ -141,6 +166,12 @@ public class ConnectionSetupActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *This method returns the SurfaceViewRender instance that
+     * the client is using for the screen capture streaming
+     *
+     * @return SurfaceViewRenderer return instance of SurfaceView component
+     */
     public SurfaceViewRenderer getRender() {
         return render;
     }
@@ -174,6 +205,11 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    /**
+     * This method is to create an ADB service
+     * @param addr the address where the ADB service is going to listen for connections
+     * @return returns Daemon service to work with the ADB service
+     */
     protected Daemon createADBService(String addr) {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
@@ -187,13 +223,23 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         return d;
     }
 
-    public void closeConnection(){
+
+    private void closeConnection(){
         peerWrapper.closeConnection();
         this.render.clearImage();
     }
 
 
-
+    /**
+     * This method should be use to update the TextView description state.
+     * It will write a description about the current state of the WebRTC stream.
+     * This method is going to handle all possible error states that the App could reach.
+     *
+     * Please see {@link com.amos.flyinn.webrtc.SetupStates} for the states list.
+     *
+     * @param state the identification number to identify correct or error states.
+     *
+     */
     public void setStateText(int state) {
 
         AlertDialog.Builder builder;

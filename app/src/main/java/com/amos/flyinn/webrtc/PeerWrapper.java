@@ -37,6 +37,15 @@ import org.webrtc.ScreenCapturerAndroid;
 
 import java.util.ArrayList;
 
+
+/**
+ * <h1>PeerWrapper Class</h1>
+ *
+ * <p>This class is responsible to handle the live cycle of the WebRTC connection protocol.
+ * It begins the connection between the signaling server and the located peer.
+ * </p>
+ */
+
 public class PeerWrapper implements IPeer {
 
 
@@ -55,6 +64,7 @@ public class PeerWrapper implements IPeer {
     private VideoSource videoSource;
     private VideoCapturer videoCapturer;
 
+
     public PeerWrapper(Activity app, Intent intent) {
 
         this.intentWithThing = intent;
@@ -66,6 +76,12 @@ public class PeerWrapper implements IPeer {
         this.initComponents();
     }
 
+
+    /**
+     * This methos set a emitter object to the PeerWrapper class.
+     *
+     * @param emitter the emitter that is going to send all the required information to the signaling server.
+     */
     public void setEmitter(Emitter emitter) {
         this.emitter = emitter;
     }
@@ -119,6 +135,11 @@ public class PeerWrapper implements IPeer {
 
     }
 
+    /**
+     * This method close the established connection between the Peers.
+     * It is also responsible to stop the screen recording
+     *
+     */
 
     public void closeConnection(){
         try {
@@ -152,6 +173,15 @@ public class PeerWrapper implements IPeer {
     }
 
 
+    /**
+     * This method begins the communication between the Peer and the signaling server.
+     * It creates the local session descriptor with the needed information to Receive an
+     * audio and video stream.
+     *
+     * This method is responsible to begin the first state of the WebRTC stream.
+     *
+     */
+
     public void beginTransactionWithOffer() {
 
         MediaConstraints sdpConstraints = new MediaConstraints();
@@ -178,11 +208,19 @@ public class PeerWrapper implements IPeer {
     }
 
 
+    /**
+     * This method set the new remote sessions descriptor with the information needed to the peer
+     * @param descriptorPeer remote session descriptor that was sent over the signaling server.
+     */
     @Override
     public void setRemoteDescriptorPeer(SessionDescription descriptorPeer) {
         this.connection.setRemoteDescription(new SdpObserver("RemoteDescriptor", activity, SdpObserver.REMOTE_SDP), descriptorPeer);
     }
-
+    /**
+     * This method set the new remote ice candidate with the information needed to the peer.
+     * The candidate gives the position and the instructions to connect with the other peer
+     * @param candidate the remote ice candidate that was sent over the signaling server.
+     */
     @Override
     public void setRemoteIceCandidate(IceCandidate candidate) {
         this.connection.addIceCandidate(candidate);

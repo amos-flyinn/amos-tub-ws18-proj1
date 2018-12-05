@@ -26,6 +26,13 @@ import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
 
+/**
+ * <h1>PeerWrapper Class</h1>
+ *
+ * <p>This class is responsible to handle the live cycle of the WebRTC connection protocol.
+ * It begins the connection between the signaling server and the located peer.
+ * </p>
+ */
 public class PeerWrapper implements IPeer {
 
     private ConnectionSetupServerActivity activity;
@@ -80,8 +87,6 @@ public class PeerWrapper implements IPeer {
     private void createPeer() {
 
 
-
-
         this.connection = peerFactory.createPeerConnection(new ArrayList<>(), new PeerObserver() {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
@@ -102,6 +107,8 @@ public class PeerWrapper implements IPeer {
         );
 
     }
+
+
 
     public void setRemoteStream(MediaStream stream) {
         VideoTrack trackRemoteCamera = stream.videoTracks.get(0);
