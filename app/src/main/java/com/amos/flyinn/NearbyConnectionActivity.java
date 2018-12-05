@@ -49,7 +49,6 @@ public class NearbyConnectionActivity extends ListActivity {
             };
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
-    private boolean permissionsGranted = true;
 
     /** 1-to-1 since a device will be connected to only one other device at most. */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
@@ -219,7 +218,7 @@ public class NearbyConnectionActivity extends ListActivity {
                     Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
                     Toast.makeText(NearbyConnectionActivity.this,
                             R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
-
+                    clearServerData();
                     finish();
                 }
             };
@@ -252,11 +251,6 @@ public class NearbyConnectionActivity extends ListActivity {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
-        }
-
-        if (!permissionsGranted) {
-            finish();
-            return;
         }
 
         if (serverID == null || serverID.isEmpty()) {
@@ -322,7 +316,7 @@ public class NearbyConnectionActivity extends ListActivity {
             connectionsClient.stopAllEndpoints();
             Log.i(NEARBY_TAG, "User disconnected from " + serverID);
             Toast.makeText(NearbyConnectionActivity.this,
-                    R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
+                    R.string.nearby_disconnected, Toast.LENGTH_SHORT).show();
             new Thread(){
                 @Override
                 public void run() {
@@ -423,7 +417,6 @@ public class NearbyConnectionActivity extends ListActivity {
                         "Nearby Connection were not granted.");
                 Toast.makeText(this, R.string.nearby_missing_permissions,
                         Toast.LENGTH_LONG).show();
-                permissionsGranted = false;
                 finish();
                 return;
             }
