@@ -46,15 +46,15 @@ android {
         }
     }
 
-     flavorDimensions "device"
-     productFlavors {
-         mobile {
-             minSdkVersion 21
-         }
-         embedded {
-             minSdkVersion 27
-         }
-     }
+    flavorDimensions "device"
+    productFlavors {
+        mobile {
+            minSdkVersion 21
+        }
+        embedded {
+            minSdkVersion 27
+        }
+    }
 }
 
 dependencies {
@@ -69,16 +69,20 @@ dependencies {
     androidTestImplementation 'androidx.test:core:1.0.0'
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test:rules:1.1.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
 
     implementation 'org.webrtc:google-webrtc:1.0.22672'
     implementation "org.java-websocket:Java-WebSocket:1.3.9"
 
-    embeddedCompileOnly 'com.google.android.things:androidthings:+'
+    implementation 'com.google.android.gms:play-services-nearby:16.0.0'
+
+    embeddedCompileOnly 'com.google.android.things:androidthings:1.0'
 
     testImplementation 'androidx.test:core:1.0.0'
     testImplementation 'org.mockito:mockito-core:1.10.19'
-    testImplementation 'org.json:json:20160810' // org.json is included with Android, but Android.jar can not be used from unit tests
-
+    testImplementation 'org.json:json:20160810'
+    // org.json is included with Android, but Android.jar can not be used from unit tests
 }
 
 task prePreBuild {

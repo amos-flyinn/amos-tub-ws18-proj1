@@ -34,7 +34,6 @@ import com.amos.flyinn.wifimanager.WifiManager;
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -96,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.wifip2p_activity:
-                intent = new Intent(this,WifiP2PActivity.class);
+            case R.id.search_connections:
+                // intent = new Intent(this,WifiP2PActivity.class);
+                intent = new Intent(this, NearbyConnectionActivity.class);
                 break;
             case R.id.adb_activity:
                 intent = new Intent(this,ADBActivity.class);
