@@ -1,56 +1,73 @@
 package com.amos.flyinn.settingsCheck;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.amos.flyinn.MainActivity;
 import com.amos.flyinn.summoner.ADBService;
 import com.tananaev.adblib.AdbBase64;
 import com.tananaev.adblib.AdbConnection;
 import com.tananaev.adblib.AdbCrypto;
 
-import java.io.Console;
-import java.io.IOException;
 import java.net.Socket;
 import java.util.HashSet;
-import java.util.List;
 
-import static android.support.v4.content.ContextCompat.startActivity;
 
-public class settingsCheck {
+/**
+ * Checks the software settings which are necessary
+ */
+public class SettingsChecker {
 
+    /**
+     * Different types of settings
+     */
     public enum SettingsType {
-        Developer, ADBperUSB, ADBperNetwork
+        /**
+         * Developer settings
+         */
+        Developer,
+        /**
+         * ADB/USB debugging
+         */
+        ADBperUSB,
+        /**
+         * ADB per network debugging
+         */
+        ADBperNetwork
     }
 
     private Context context;
     private ADBService service = new ADBService();
-    public settingsCheck(Context context) {
-        this.context=context;
+
+    /**
+     * Constructor sets context
+     *
+     * @param context The context where the settings should be checked
+     */
+    public SettingsChecker(Context context) {
+        this.context = context;
     }
 
     /**
      * Collect all disabled settings which are necessary to be enabled
      * for this app in a list
+     *
      * @return List<Settings> List of disabled settings.
      */
     public HashSet<SettingsType> GetMissingSettings() {
-        HashSet<SettingsType> missingSettings=new HashSet<SettingsType>();
+        HashSet<SettingsType> missingSettings = new HashSet<SettingsType>();
 
         // Developer settings
-        if(android.provider.Settings.Secure.getInt(context.getContentResolver(),
-                android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0) != 1) {
+        if (android.provider.Settings.Secure.getInt(context.getContentResolver(),
+                android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 1) {
             missingSettings.add(SettingsType.Developer);
         }
 
         // ADBperUSB settings
-        if(android.provider.Settings.Secure.getInt(context.getContentResolver(),
-                android.provider.Settings.Global.ADB_ENABLED , 0) != 1) {
+        if (android.provider.Settings.Secure.getInt(context.getContentResolver(),
+                android.provider.Settings.Global.ADB_ENABLED, 0) != 1) {
             missingSettings.add(SettingsType.ADBperUSB);
         }
 
@@ -58,8 +75,6 @@ public class settingsCheck {
         Thread t = new Thread(new Runnable() { // Use own thread because of ThreadPolicy
             @Override
             public void run() {
-                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                StrictMode.setThreadPolicy(policy);
                 // Test a connection
                 try {
                     AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(new AdbBase64() {
@@ -72,19 +87,18 @@ public class settingsCheck {
                     connection.connect();
                     connection.close();
                 } catch (Exception err) {
-                    //err.printStackTrace();
                     missingSettings.add(SettingsType.ADBperNetwork);
                 }
-            }});
+            }
+        });
 
-        t.start(); // spawn thread
+        t.start();
 
         try {
             t.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            Log.d("GetMissingSettings!!!!", e.toString());
-            if(missingSettings.contains(SettingsType.ADBperNetwork)==false) missingSettings.add(SettingsType.ADBperNetwork);
+            if (missingSettings.contains(SettingsType.ADBperNetwork) == false)
+                missingSettings.add(SettingsType.ADBperNetwork);
         }
 
 
