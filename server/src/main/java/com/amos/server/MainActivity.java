@@ -61,27 +61,12 @@ public class MainActivity extends Activity {
         eventSender = new EventServer(msgQueue, uiHandler);
         threadStarter = findViewById(R.id.threadStarter);
         threadStarter.setVisibility(View.INVISIBLE);
-        // threadStarter.setOnClickListener((View v) -> {
-        //     if (senderRunner == null) {
-        //         senderRunner = new Thread(eventSender);
-        //         senderRunner.start();
-        //         threadStarter.setText("Stop server");
-        //     } else {
-        //         eventSender.close();
-        //         try {
-        //             senderRunner.join();
-        //             threadStarter.setText("Start server");
-        //             senderRunner = null;
-        //         } catch (InterruptedException e) {
-        //         }
-        //     }
-        // });
 
         //init WebRTC Signaling server
         this.initViews();
         this.peerWrapper = new PeerWrapper(this);
         this.webSocketServer = new WebServer((IPeer) this.peerWrapper);
-        this.peerWrapper.setEmitter((Emitter)this.webSocketServer);
+        this.peerWrapper.setEmitter((Emitter) this.webSocketServer);
         this.webSocketServer.start();
 
         senderRunner = new Thread(eventSender);
@@ -96,11 +81,11 @@ public class MainActivity extends Activity {
         );
     }
 
-    public SurfaceViewRenderer getRender(){
+    public SurfaceViewRenderer getRender() {
         return remoteRender;
     }
 
-    private void initViews(){
+    private void initViews() {
         remoteRender = findViewById(R.id.surface_remote_viewer);
     }
 
@@ -115,11 +100,8 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.p2pserver_activity:
-                intent = new Intent(this,P2PActivityServer.class);
-                break;
             case R.id.webrtc_server_activity:
-                intent = new Intent(this,WebRTCServerActivity.class);
+                intent = new Intent(this, WebRTCServerActivity.class);
                 break;
             case R.id.event_grab_activity:
                 intent = new Intent(MainActivity.this, EventGrabDemo.class);
