@@ -157,7 +157,30 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             boolean connected = this.clientSocket.connectBlocking(1, TimeUnit.MINUTES);
             if(!connected)
             {
-                this.setStateText(SetupStates.ERROR_CONNECTING_SERVER);
+                boolean retry = true;
+                int counter = 0;
+                while(retry)
+                {
+                    boolean retryReconnect = this.clientSocket.reconnectBlocking();
+                    if(retryReconnect)
+                    {
+                        retry = false;
+                    }
+
+
+                    if(counter == 4)
+                    {
+                        retry = false;
+                        break;
+                    }
+
+                    counter++;
+                }
+
+                if(counter == 4)
+                {
+                    this.setStateText(SetupStates.ERROR_CONNECTING_SERVER);
+                }
             }
             else
             {
