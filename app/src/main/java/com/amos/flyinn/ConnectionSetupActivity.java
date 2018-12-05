@@ -40,7 +40,9 @@ public class ConnectionSetupActivity extends AppCompatActivity {
 
     private ProgressBar infiniteBar;
     private TextView progressText;
-
+    private Button switchToHomeScreenButton;
+    private Button closeConnectionButton;
+    private TextView connectedMessage;
     TextView connectionStatus;
     Button adbButton;
     Daemon adbDaemon;
@@ -57,6 +59,23 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connection_setup);
         infiniteBar = (ProgressBar) findViewById(R.id.infiniteBar);
         progressText = (TextView) findViewById(R.id.progressText);
+        closeConnectionButton = (Button) findViewById(R.id.close_connection);
+        switchToHomeScreenButton = (Button) findViewById(R.id.switch_home_screen);
+        connectedMessage = (TextView) findViewById(R.id.connected_message);
+
+        closeConnectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeConnection();
+            }
+        });
+
+        switchToHomeScreenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                swtichToHomeScreen();
+            }
+        });
 
         String addr;
         try {
@@ -75,6 +94,13 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     }
 
 
+
+    public void swtichToHomeScreen(){
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
 
 
 
@@ -161,6 +187,11 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         return d;
     }
 
+    public void closeConnection(){
+        peerWrapper.closeConnection();
+        this.render.clearImage();
+    }
+
 
 
     public void setStateText(int state) {
@@ -213,6 +244,11 @@ public class ConnectionSetupActivity extends AppCompatActivity {
 
             case SetupStates.REMOTE_DESCRIPTOR_SETTED:
                 progressText.setText("Remote descriptor setted Successfully");
+                progressText.setVisibility(View.INVISIBLE);
+                infiniteBar.setVisibility(View.INVISIBLE);
+                connectedMessage.setVisibility(View.VISIBLE);
+                switchToHomeScreenButton.setVisibility(View.VISIBLE);
+                closeConnectionButton.setVisibility(View.VISIBLE);
                 break;
 
             case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:

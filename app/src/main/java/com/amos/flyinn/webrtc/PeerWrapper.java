@@ -53,6 +53,7 @@ public class PeerWrapper implements IPeer {
     private PeerConnectionFactory.InitializationOptions webRTCConfig;
     private EglBase rootEglBase;
     private VideoSource videoSource;
+    private VideoCapturer videoCapturer;
 
     public PeerWrapper(Activity app, Intent intent) {
 
@@ -71,7 +72,7 @@ public class PeerWrapper implements IPeer {
 
     private void initComponents() {
 
-        VideoCapturer videoCapturer = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
+        videoCapturer = new ScreenCapturerAndroid(this.intentWithThing, new MediaProjection.Callback() {
             @Override
             public void onStop() {
                 super.onStop();
@@ -115,6 +116,17 @@ public class PeerWrapper implements IPeer {
         DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(rootEglBase.getEglBaseContext());
         peerFactory = new PeerConnectionFactory(options, defaultVideoEncoderFactory, defaultVideoDecoderFactory);
 
+
+    }
+
+
+    public void closeConnection(){
+        try {
+            this.videoCapturer.stopCapture();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.connection.close();
 
     }
 
