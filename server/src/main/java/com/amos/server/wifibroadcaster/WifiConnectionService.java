@@ -1,51 +1,36 @@
-package com.amos.flyinn.wifimanager;
+package com.amos.server.wifibroadcaster;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.amos.flyinn.ConnectionSetupActivity;
-import com.amos.flyinn.MainActivity;
-import com.amos.flyinn.WifiP2PActivity;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
-    private WifiP2PActivity activity;
+class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
+    private Activity activity;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
-    private InetAddress address;
 
     WifiConnectionService(Activity activity, WifiP2pManager manager, WifiP2pManager.Channel channel) {
-        this.activity = (WifiP2PActivity) activity;
+        this.activity = activity;
         this.mChannel = channel;
         this.mManager = manager;
     }
 
-    public String getServerAddress() throws Exception {
-        if (address != null) {
-            return address.getHostAddress();
-        }
-        throw new Exception("Host not ready");
-    }
-
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-        this.address = wifiP2pInfo.groupOwnerAddress;
-        Log.d("P2P", "Connected to the address : " + address.getHostAddress());
-        Log.d("P2P", "Closing discovery mode for peers");
-
+        InetAddress address = wifiP2pInfo.groupOwnerAddress;
+        Toast.makeText(activity, "Connected to the address : " + address.getHostAddress(), Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, "Closing discovery mode for peers" + address.getHostAddress(), Toast.LENGTH_LONG).show();
         mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(activity, "Discovery mode closed Succeessfully", Toast.LENGTH_LONG).show();
-                activity.cleanPeers();
             }
 
             @Override
@@ -62,8 +47,6 @@ public class WifiConnectionService implements WifiP2pManager.ConnectionInfoListe
         } catch (SocketException e) {
             e.printStackTrace();
         }
-
-        Intent intentToWebRTC = new Intent(activity,ConnectionSetupActivity.class);
-        activity.startActivity(intentToWebRTC);
+        // TODO(ich): Handle staring connection
     }
 }

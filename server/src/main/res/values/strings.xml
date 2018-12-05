@@ -5,8 +5,17 @@
 
     <string name="thread_button_label">Manually start event server thread</string>
 
+    <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
+    <string name="nearby_advertising_error">Could not start broadcasting connection.</string>
+    <string name="nearby_advertising_success">Started broadcasting connection.</string>
+    <string name="nearby_connection_success">Connection established.</string>
+    <string name="nearby_connection_rejected">Connection was rejected.</string>
+    <string name="nearby_connection_lost">Failed to establish connection.</string>
+    <string name="nearby_disconnected">Connection closed.</string>
+
     <string name="buildinfo_git_tag_name">Git Tag: </string>
     <string name="buildinfo_git_commit_date">Git Commit: </string>
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
+    <string name="title_activity_nearby_server">NearbyServerActivity</string>
 </resources>
