@@ -140,7 +140,6 @@ public class PeerWrapper implements IPeer {
      * It is also responsible to stop the screen recording
      *
      */
-
     public void closeConnection(){
         try {
             this.videoCapturer.stopCapture();
@@ -150,6 +149,7 @@ public class PeerWrapper implements IPeer {
         this.connection.close();
 
     }
+
 
     private void createPeer() {
 

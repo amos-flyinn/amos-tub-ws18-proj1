@@ -84,6 +84,7 @@ public class PeerWrapper implements IPeer {
     }
 
 
+
     private void createPeer() {
 
 
@@ -140,12 +141,22 @@ public class PeerWrapper implements IPeer {
     }
 
 
+
+    /**
+     * This method set the new remote sessions descriptor with the information needed to the peer
+     * @param descriptorPeer remote session descriptor that was sent over the signaling server.
+     */
     @Override
     public void setRemoteDescriptorPeer(SessionDescription descriptorPeer) {
         this.connection.setRemoteDescription(new SdpObserver("RemoteDescriptor", activity, SdpObserver.REMOTE_SDP), descriptorPeer);
         this.beginTransactionWithAnswer();
     }
 
+    /**
+     * This method set the new remote ice candidate with the information needed to the peer.
+     * The candidate gives the position and the instructions to connect with the other peer
+     * @param candidate the remote ice candidate that was sent over the signaling server.
+     */
     @Override
     public void setRemoteIceCandidate(IceCandidate candidate) {
         this.connection.addIceCandidate(candidate);

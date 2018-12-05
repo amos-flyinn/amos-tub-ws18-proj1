@@ -176,7 +176,7 @@ document.getElementById(id).style.display = 'none';
       <span class="mdl-layout-title">Lint Report: 26 warnings</span>
       <div class="mdl-layout-spacer"></div>
       <nav class="mdl-navigation mdl-layout--large-screen-only">
-Check performed at Wed Dec 05 15:10:27 CET 2018      </nav>
+Check performed at Wed Dec 05 21:36:33 CET 2018      </nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -323,7 +323,7 @@ Dismiss</button>            </div>
 <span class="lineno"> 29 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginStart</span>=<span class="value">"8dp"</span>
 <span class="lineno"> 30 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
 <span class="lineno"> 31 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginEnd</span>=<span class="value">"8dp"</span>
-<span class="caretline"><span class="lineno"> 32 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"22dp"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="caretline"><span class="lineno"> 32 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"17dp"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno"> 33 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintEnd_toEndOf</span>=<span class="value">"parent"</span>
 <span class="lineno"> 34 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintStart_toStartOf</span>=<span class="value">"parent"</span>
 <span class="lineno"> 35 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintTop_toBottomOf</span>=<span class="value">"@+id/infiniteBar"</span> />
@@ -673,64 +673,64 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:226</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 223 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 224 </span>
-<span class="lineno"> 225 </span>            <span class="keyword">case</span> SetupStates.ASKING_PERMISSIONS:
-<span class="caretline"><span class="lineno"> 226 </span>                progressText.setText(<span class="warning"><span class="string">"Asking permissions for screen capture"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 227 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 228 </span>
-<span class="lineno"> 229 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
+<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:272</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 269 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 270 </span>
+<span class="lineno"> 271 </span>            <span class="keyword">case</span> SetupStates.ASKING_PERMISSIONS:
+<span class="caretline"><span class="lineno"> 272 </span>                progressText.setText(<span class="warning"><span class="string">"Asking permissions for screen capture"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 273 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 274 </span>
+<span class="lineno"> 275 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:230</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 227 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 228 </span>
-<span class="lineno"> 229 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
-<span class="caretline"><span class="lineno"> 230 </span>                progressText.setText(<span class="warning"><span class="string">"Setup screen share connection with server"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 231 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 232 </span>
-<span class="lineno"> 233 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
+<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:276</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 273 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 274 </span>
+<span class="lineno"> 275 </span>            <span class="keyword">case</span> SetupStates.SETUP_SCREEN_CONNECTION:
+<span class="caretline"><span class="lineno"> 276 </span>                progressText.setText(<span class="warning"><span class="string">"Setup screen share connection with server"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 277 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 278 </span>
+<span class="lineno"> 279 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:234</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 231 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 232 </span>
-<span class="lineno"> 233 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
-<span class="caretline"><span class="lineno"> 234 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 235 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 236 </span>
-<span class="lineno"> 237 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
+<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:280</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 277 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 278 </span>
+<span class="lineno"> 279 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_CREATE:
+<span class="caretline"><span class="lineno"> 280 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 281 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 282 </span>
+<span class="lineno"> 283 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:238</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 235 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 236 </span>
-<span class="lineno"> 237 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
-<span class="caretline"><span class="lineno"> 238 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 239 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 240 </span>
-<span class="lineno"> 241 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
+<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:284</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 281 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 282 </span>
+<span class="lineno"> 283 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_CREATE:
+<span class="caretline"><span class="lineno"> 284 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor created Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 285 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 286 </span>
+<span class="lineno"> 287 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:242</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 239 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 240 </span>
-<span class="lineno"> 241 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
-<span class="caretline"><span class="lineno"> 242 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 243 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 244 </span>
-<span class="lineno"> 245 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
+<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:288</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 285 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 286 </span>
+<span class="lineno"> 287 </span>            <span class="keyword">case</span> SetupStates.LOCAL_DESCRIPTOR_SETTED:
+<span class="caretline"><span class="lineno"> 288 </span>                progressText.setText(<span class="warning"><span class="string">"Local descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 289 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 290 </span>
+<span class="lineno"> 291 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:246</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 243 </span>                <span class="keyword">break</span>;
-<span class="lineno"> 244 </span>
-<span class="lineno"> 245 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
-<span class="caretline"><span class="lineno"> 246 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 247 </span>                progressText.setVisibility(View.INVISIBLE);
-<span class="lineno"> 248 </span>                infiniteBar.setVisibility(View.INVISIBLE);
-<span class="lineno"> 249 </span>                connectedMessage.setVisibility(View.VISIBLE);
+<span class="location"><a href="src/main/java/com/amos/flyinn/ConnectionSetupActivity.java">C:\Projects\amos\amos-tub-ws18-proj1\app\src\main\java\com\amos\flyinn\ConnectionSetupActivity.java</a>:292</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 289 </span>                <span class="keyword">break</span>;
+<span class="lineno"> 290 </span>
+<span class="lineno"> 291 </span>            <span class="keyword">case</span> SetupStates.REMOTE_DESCRIPTOR_SETTED:
+<span class="caretline"><span class="lineno"> 292 </span>                progressText.setText(<span class="warning"><span class="string">"Remote descriptor setted Successfully"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 293 </span>                progressText.setVisibility(View.INVISIBLE);
+<span class="lineno"> 294 </span>                infiniteBar.setVisibility(View.INVISIBLE);
+<span class="lineno"> 295 </span>                connectedMessage.setVisibility(View.VISIBLE);
 </pre>
 
 </div>
