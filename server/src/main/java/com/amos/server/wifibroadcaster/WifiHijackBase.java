@@ -1,7 +1,6 @@
-package com.amos.server;
+package com.amos.server.wifibroadcaster;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -10,20 +9,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.Menu;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
-
-import com.amos.server.wifibroadcaster.WifiBradcasterSingelton;
 
 import java.lang.reflect.Method;
 
-
-public class P2PActivityServer extends Activity {
+public abstract class WifiHijackBase extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private static final int COARSE_LOCATION = 1001;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +28,7 @@ public class P2PActivityServer extends Activity {
             Toast.makeText(this, "Requesting permission for peers", Toast.LENGTH_SHORT).show();
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_LOCATION);
         }
+        Log.d("onCreate", "called");
 
         // Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -46,48 +43,47 @@ public class P2PActivityServer extends Activity {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        this.mChannel = mManager.initialize(this, getMainLooper(), null);
-        this.setWifiName("1234");
-
-        //Making the smartphone in discovery mode for other peers
-        this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(P2PActivityServer.this, "Listening to Peers", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(int i) {
-                Toast.makeText(P2PActivityServer.this, "Error listening to Peers", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void setWifiName(String name) {
+        Log.d("ChangeWifiName", "New name:" + name);
         String fullName = "flyinn-" + name;
         try {
-            Method method = this.mManager.getClass().getMethod(
-                    "setDeviceName",
-                    new Class[]{WifiP2pManager.Channel.class, String.class,
-                            WifiP2pManager.ActionListener.class});
-
-            method.invoke(this.mManager, this.mChannel, fullName, new WifiP2pManager.ActionListener() {
-                public void onSuccess() {
-                }
-
-                public void onFailure(int reason) {
-                }
-            });
+            Method method = this.mManager.getClass().getMethod("setDeviceName", new Class[]{WifiP2pManager.Channel.class, String.class, WifiP2pManager.ActionListener.class});
+            method.invoke(this.mManager, this.mChannel, fullName, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
+    public void changeName(String name) {
+        try {
+            unregisterReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster());
+            mManager.stopPeerDiscovery(mChannel, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        this.mChannel = mManager.initialize(this, getMainLooper(), null);
+        this.setWifiName(name);
+        WifiBradcasterSingelton.getInstance().setInstance(mManager, mChannel, this);
+        registerReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster(), this.intentFilter);
+
+        Log.d("changeName", "Start discovering");
+        this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d("discovery", "yeah");
+                Toast.makeText(WifiHijackBase.this, "Listening to Peers", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Log.d("discovery", "neah");
+                Toast.makeText(WifiHijackBase.this, "Error listening to Peers", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     public void onResume() {
@@ -107,6 +103,5 @@ public class P2PActivityServer extends Activity {
         if (requestCode == COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Permission for peers listening given", Toast.LENGTH_SHORT).show();
         }
-
     }
 }

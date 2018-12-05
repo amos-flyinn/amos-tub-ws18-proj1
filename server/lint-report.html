@@ -173,10 +173,10 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 17 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 16 warnings</span>
       <div class="mdl-layout-spacer"></div>
       <nav class="mdl-navigation mdl-layout--large-screen-only">
-Check performed at Sun Dec 02 13:04:12 CET 2018      </nav>
+Check performed at Wed Dec 05 21:44:38 CET 2018      </nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -191,7 +191,7 @@ Check performed at Sun Dec 02 13:04:12 CET 2018      </nav>
       <a class="mdl-navigation__link" href="#ClickableViewAccessibility"><i class="material-icons warning-icon">warning</i>Accessibility in Custom Views (4)</a>
       <a class="mdl-navigation__link" href="#LabelFor"><i class="material-icons warning-icon">warning</i>Missing accessibility label (1)</a>
       <a class="mdl-navigation__link" href="#SetTextI18n"><i class="material-icons warning-icon">warning</i>TextView Internationalization (1)</a>
-      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (6)</a>
+      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (5)</a>
     </nav>
   </div>
   <main class="mdl-layout__content">
@@ -239,7 +239,7 @@ Check performed at Sun Dec 02 13:04:12 CET 2018      </nav>
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#SetTextI18n">SetTextI18n</a>: TextView Internationalization</td></tr>
 <tr>
-<td class="countColumn">6</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">5</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#HardcodedText">HardcodedText</a>: Hardcoded text</td></tr>
 <tr><td></td><td class="categoryColumn"><a href="#MissingIssues">Disabled Checks (29)</a>
 </td></tr></table>
@@ -456,14 +456,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/res/layout/activity_connect_to_client.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/activity_connect_to_client.xml</a>:24</span>: <span class="message">Missing <code>autofillHints</code> attribute</span><br /><pre class="errorlines">
-<span class="lineno"> 21 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintTop_toTopOf</span>=<span class="value">"parent"</span>
-<span class="lineno"> 22 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintVertical_bias</span>=<span class="value">"0.836"</span> />
-<span class="lineno"> 23 </span>
-<span class="caretline"><span class="lineno"> 24 </span>    <span class="tag">&lt;</span><span class="warning"><span class="tag">EditText</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
-</span><span class="lineno"> 25 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/editText"</span>
-<span class="lineno"> 26 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"236dp"</span>
-<span class="lineno"> 27 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"75dp"</span></pre>
+<span class="location"><a href="src/main/res/layout/activity_connect_to_client.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/activity_connect_to_client.xml</a>:21</span>: <span class="message">Missing <code>autofillHints</code> attribute</span><br /><pre class="errorlines">
+<span class="lineno"> 18 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintStart_toStartOf</span>=<span class="value">"parent"</span>
+<span class="lineno"> 19 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintTop_toTopOf</span>=<span class="value">"parent"</span> />
+<span class="lineno"> 20 </span>
+<span class="caretline"><span class="lineno"> 21 </span>    <span class="tag">&lt;</span><span class="warning"><span class="tag">EditText</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
+</span><span class="lineno"> 22 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/connect_editText"</span>
+<span class="lineno"> 23 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"236dp"</span>
+<span class="lineno"> 24 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"75dp"</span></pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationAutofill" style="display: none;">
@@ -527,24 +527,24 @@ Dismiss</button>            </div>
 <span class="lineno"> 74 </span>              mq.add(te);
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:95</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
-<span class="lineno">  92 </span>
-<span class="lineno">  93 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
-<span class="lineno">  94 </span>  senderRunner.start();
-<span class="caretline"><span class="lineno">  95 </span>  <span class="warning">view.setOnTouchListener(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  96 </span>          (View v, MotionEvent e) -> {
-<span class="lineno">  97 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
-<span class="lineno">  98 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
+<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:74</span>: <span class="message">Custom view `<code>SurfaceViewRenderer</code>` has <code>setOnTouchListener</code> called on it but does not override <code>performClick</code></span><br /><pre class="errorlines">
+<span class="lineno">  71 </span>
+<span class="lineno">  72 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
+<span class="lineno">  73 </span>  senderRunner.start();
+<span class="caretline"><span class="lineno">  74 </span>  <span class="warning">view.setOnTouchListener(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  75 </span>          (View v, MotionEvent e) -> {
+<span class="lineno">  76 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
+<span class="lineno">  77 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
 </pre>
 
-<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:96</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
-<span class="lineno">  93 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
-<span class="lineno">  94 </span>  senderRunner.start();
-<span class="lineno">  95 </span>  view.setOnTouchListener(
-<span class="caretline"><span class="lineno">  96 </span>          <span class="warning">(View v, MotionEvent e) -> {</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  97 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
-<span class="lineno">  98 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
-<span class="lineno">  99 </span>              msgQueue.add(te);
+<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:75</span>: <span class="message"><code>onTouch</code> lambda should call <code>View#performClick</code> when a click is detected</span><br /><pre class="errorlines">
+<span class="lineno">  72 </span>  senderRunner = <span class="keyword">new</span> Thread(eventSender);
+<span class="lineno">  73 </span>  senderRunner.start();
+<span class="lineno">  74 </span>  view.setOnTouchListener(
+<span class="caretline"><span class="lineno">  75 </span>          <span class="warning">(View v, MotionEvent e) -> {</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  76 </span>              e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
+<span class="lineno">  77 </span>              TouchEvent te = <span class="keyword">new</span> TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
+<span class="lineno">  78 </span>              msgQueue.add(te);
 </pre>
 
 </div>
@@ -582,14 +582,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/res/layout/activity_connect_to_client.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/activity_connect_to_client.xml</a>:24</span>: <span class="message">Missing accessibility label: provide either a view with an <code>android:labelFor</code> that references this view or provide an <code>android:hint</code></span><br /><pre class="errorlines">
-<span class="lineno"> 21 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintTop_toTopOf</span>=<span class="value">"parent"</span>
-<span class="lineno"> 22 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintVertical_bias</span>=<span class="value">"0.836"</span> />
-<span class="lineno"> 23 </span>
-<span class="caretline"><span class="lineno"> 24 </span>    <span class="tag">&lt;</span><span class="warning"><span class="tag">EditText</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
-</span><span class="lineno"> 25 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/editText"</span>
-<span class="lineno"> 26 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"236dp"</span>
-<span class="lineno"> 27 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"75dp"</span></pre>
+<span class="location"><a href="src/main/res/layout/activity_connect_to_client.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/activity_connect_to_client.xml</a>:21</span>: <span class="message">Missing accessibility label: provide either a view with an <code>android:labelFor</code> that references this view or provide an <code>android:hint</code></span><br /><pre class="errorlines">
+<span class="lineno"> 18 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintStart_toStartOf</span>=<span class="value">"parent"</span>
+<span class="lineno"> 19 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintTop_toTopOf</span>=<span class="value">"parent"</span> />
+<span class="lineno"> 20 </span>
+<span class="caretline"><span class="lineno"> 21 </span>    <span class="tag">&lt;</span><span class="warning"><span class="tag">EditText</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
+</span><span class="lineno"> 22 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/connect_editText"</span>
+<span class="lineno"> 23 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"236dp"</span>
+<span class="lineno"> 24 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"75dp"</span></pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationLabelFor" style="display: none;">
@@ -633,14 +633,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:116</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno"> 113 </span>    <span class="annotation">@Override</span>
-<span class="lineno"> 114 </span>    <span class="keyword">protected</span> <span class="keyword">void</span> onStart() {
-<span class="lineno"> 115 </span>        <span class="keyword">super</span>.onStart();
-<span class="caretline"><span class="lineno"> 116 </span>        connectionInfo.setText(<span class="warning"><span class="string">"Waiting for P2P Wifi connection"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 117 </span>    }
-<span class="lineno"> 118 </span>
-<span class="lineno"> 119 </span>    <span class="annotation">@Override</span></pre>
+<span class="location"><a href="src/main/java/com/amos/server/MainActivity.java">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/java/com/amos/server/MainActivity.java</a>:95</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno">  92 </span>    <span class="annotation">@Override</span>
+<span class="lineno">  93 </span>    <span class="keyword">protected</span> <span class="keyword">void</span> onStart() {
+<span class="lineno">  94 </span>        <span class="keyword">super</span>.onStart();
+<span class="caretline"><span class="lineno">  95 </span>        connectionInfo.setText(<span class="warning"><span class="string">"Waiting for P2P Wifi connection"</span></span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  96 </span>    }
+<span class="lineno">  97 </span>
+<span class="lineno">  98 </span>    <span class="annotation">@Override</span></pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationSetTextI18n" style="display: none;">
@@ -681,14 +681,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="src/main/res/layout/activity_connect_to_client.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/activity_connect_to_client.xml</a>:15</span>: <span class="message">Hardcoded string "Enter the Code from the App", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/layout/activity_connect_to_client.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/activity_connect_to_client.xml</a>:14</span>: <span class="message">Hardcoded string "Enter the Code from the App", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno"> 11 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
 <span class="lineno"> 12 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
-<span class="lineno"> 13 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
-<span class="lineno"> 14 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginBottom</span>=<span class="value">"8dp"</span>
-<span class="caretline"><span class="lineno"> 15 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Enter the Code from the App"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 16 </span>        <span class="prefix">android:</span><span class="attribute">textAlignment</span>=<span class="value">"center"</span>
-<span class="lineno"> 17 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintBottom_toTopOf</span>=<span class="value">"@+id/editText"</span>
-<span class="lineno"> 18 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintEnd_toEndOf</span>=<span class="value">"parent"</span></pre>
+<span class="lineno"> 13 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"140dp"</span>
+<span class="caretline"><span class="lineno"> 14 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Enter the Code from the App"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 15 </span>        <span class="prefix">android:</span><span class="attribute">textAlignment</span>=<span class="value">"center"</span>
+<span class="lineno"> 16 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintEnd_toEndOf</span>=<span class="value">"parent"</span>
+<span class="lineno"> 17 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintHorizontal_bias</span>=<span class="value">"0.502"</span></pre>
 
 <span class="location"><a href="src/main/res/layout/content_event_grab_demo.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/layout/content_event_grab_demo.xml</a>:52</span>: <span class="message">Hardcoded string "TextView", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 49 </span><span class="attribute">                </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/debug"</span>
@@ -699,41 +699,32 @@ Dismiss</button>            </div>
 <span class="lineno"> 54 </span>    <span class="tag">&lt;/ScrollView></span>
 </pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:7</span>: <span class="message">Hardcoded string "P2PServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:7</span>: <span class="message">Hardcoded string "WebRTCServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno">  4 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno">  5 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/p2pserver_activity"</span>
+</span><span class="lineno">  5 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_server_activity"</span>
 <span class="lineno">  6 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
-<span class="caretline"><span class="lineno">  7 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"P2PServerActivity"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="caretline"><span class="lineno">  7 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"WebRTCServerActivity"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  8 </span>    <span class="tag">&lt;/item></span>
 <span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_server_activity"</span></pre>
+</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_grab_activity"</span></pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:12</span>: <span class="message">Hardcoded string "WebRTCServerActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:12</span>: <span class="message">Hardcoded string "Event Grab Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_server_activity"</span>
+</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_grab_activity"</span>
 <span class="lineno"> 11 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
-<span class="caretline"><span class="lineno"> 12 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"WebRTCServerActivity"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="caretline"><span class="lineno"> 12 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Event Grab Demo"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno"> 13 </span>    <span class="tag">&lt;/item></span>
 <span class="lineno"> 14 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_grab_activity"</span></pre>
+</span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_sender_activity"</span></pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:17</span>: <span class="message">Hardcoded string "Event Grab Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:17</span>: <span class="message">Hardcoded string "Event Sender Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 14 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_grab_activity"</span>
+</span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_sender_activity"</span>
 <span class="lineno"> 16 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
-<span class="caretline"><span class="lineno"> 17 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Event Grab Demo"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="caretline"><span class="lineno"> 17 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Event Sender Demo"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno"> 18 </span>    <span class="tag">&lt;/item></span>
 <span class="lineno"> 19 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 20 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_sender_activity"</span></pre>
-
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/server/src/main/res/menu/main_menu.xml</a>:22</span>: <span class="message">Hardcoded string "Event Sender Demo", should use <code>@string</code> resource</span><br /><pre class="errorlines">
-<span class="lineno"> 19 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 20 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/event_sender_activity"</span>
-<span class="lineno"> 21 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
-<span class="caretline"><span class="lineno"> 22 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Event Sender Demo"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 23 </span>    <span class="tag">&lt;/item></span>
-<span class="lineno"> 24 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 25 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/build_info_activity"</span></pre>
+</span><span class="lineno"> 20 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/build_info_activity"</span></pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationHardcodedText" style="display: none;">

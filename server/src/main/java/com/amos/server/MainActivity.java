@@ -2,25 +2,17 @@ package com.amos.server;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.Button;
-import android.widget.TextView;
-import android.content.Intent;
-
-import org.w3c.dom.Text;
-import org.webrtc.PeerConnection;
-import org.webrtc.SurfaceViewRenderer;
-
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.amos.server.eventsender.EventServer;
 import com.amos.server.signaling.Emitter;
@@ -29,8 +21,10 @@ import com.amos.server.webrtc.IPeer;
 import com.amos.server.webrtc.PeerWrapper;
 import com.amos.shared.TouchEvent;
 
+import org.webrtc.PeerConnection;
+import org.webrtc.SurfaceViewRenderer;
+
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MainActivity extends Activity {
@@ -67,21 +61,6 @@ public class MainActivity extends Activity {
         eventSender = new EventServer(msgQueue, uiHandler);
         threadStarter = findViewById(R.id.threadStarter);
         threadStarter.setVisibility(View.INVISIBLE);
-        // threadStarter.setOnClickListener((View v) -> {
-        //     if (senderRunner == null) {
-        //         senderRunner = new Thread(eventSender);
-        //         senderRunner.start();
-        //         threadStarter.setText("Stop server");
-        //     } else {
-        //         eventSender.close();
-        //         try {
-        //             senderRunner.join();
-        //             threadStarter.setText("Start server");
-        //             senderRunner = null;
-        //         } catch (InterruptedException e) {
-        //         }
-        //     }
-        // });
 
         //init WebRTC Signaling server
         this.initViews();
@@ -127,9 +106,6 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.p2pserver_activity:
-                intent = new Intent(this,P2PActivityServer.class);
-                break;
             case R.id.webrtc_server_activity:
                 intent = new Intent(this,WebRTCServerActivity.class);
                 break;

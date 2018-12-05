@@ -173,10 +173,10 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 19 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 18 warnings</span>
       <div class="mdl-layout-spacer"></div>
       <nav class="mdl-navigation mdl-layout--large-screen-only">
-Check performed at Sun Dec 02 13:02:54 CET 2018      </nav>
+Check performed at Wed Dec 05 21:43:27 CET 2018      </nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -190,7 +190,7 @@ Check performed at Sun Dec 02 13:02:54 CET 2018      </nav>
       <a class="mdl-navigation__link" href="#UselessLeaf"><i class="material-icons warning-icon">warning</i>Useless leaf layout (1)</a>
       <a class="mdl-navigation__link" href="#UnusedNamespace"><i class="material-icons warning-icon">warning</i>Unused namespace (1)</a>
       <a class="mdl-navigation__link" href="#GoogleAppIndexingWarning"><i class="material-icons warning-icon">warning</i>Missing support for Firebase App Indexing (1)</a>
-      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (10)</a>
+      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (9)</a>
     </nav>
   </div>
   <main class="mdl-layout__content">
@@ -235,7 +235,7 @@ Check performed at Sun Dec 02 13:02:54 CET 2018      </nav>
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Internationalization">Internationalization</a>
 </td></tr>
 <tr>
-<td class="countColumn">10</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">9</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#HardcodedText">HardcodedText</a>: Hardcoded text</td></tr>
 <tr><td></td><td class="categoryColumn"><a href="#MissingIssues">Disabled Checks (29)</a>
 </td></tr></table>
@@ -657,7 +657,7 @@ Dismiss</button>            </div>
 <span class="lineno"> 17 </span>        <span class="prefix">android:</span><span class="attribute">textColor</span>=<span class="value">"@android:color/black"</span>
 <span class="lineno"> 18 </span>        <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"24sp"</span></pre>
 
-<button class="mdl-button mdl-js-button mdl-button--primary" id="HardcodedTextDivLink" onclick="reveal('HardcodedTextDiv');" />+ 5 More Occurrences...</button>
+<button class="mdl-button mdl-js-button mdl-button--primary" id="HardcodedTextDivLink" onclick="reveal('HardcodedTextDiv');" />+ 4 More Occurrences...</button>
 <div id="HardcodedTextDiv" style="display: none">
 <span class="location"><a href="src/main/res/layout/activity_show_code.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/app/src/main/res/layout/activity_show_code.xml</a>:33</span>: <span class="message">Hardcoded string "1234", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno"> 30 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
@@ -677,32 +677,23 @@ Dismiss</button>            </div>
 <span class="lineno"> 52 </span>        <span class="prefix">android:</span><span class="attribute">textColor</span>=<span class="value">"@android:color/black"</span>
 <span class="lineno"> 53 </span>        <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"18sp"</span></pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/app/src/main/res/menu/main_menu.xml</a>:7</span>: <span class="message">Hardcoded string "WIFIP2PActivity", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/app/src/main/res/menu/main_menu.xml</a>:7</span>: <span class="message">Hardcoded string "WEBRTCExample", should use <code>@string</code> resource</span><br /><pre class="errorlines">
 <span class="lineno">  4 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno">  5 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/wifip2p_activity"</span>
+</span><span class="lineno">  5 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_activity"</span>
 <span class="lineno">  6 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
-<span class="caretline"><span class="lineno">  7 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"WIFIP2PActivity"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="caretline"><span class="lineno">  7 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"WEBRTCExample"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  8 </span>    <span class="tag">&lt;/item></span>
 <span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_activity"</span></pre>
+</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/adb_activity"</span></pre>
 
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/app/src/main/res/menu/main_menu.xml</a>:12</span>: <span class="message">Hardcoded string "WEBRTCExample", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/app/src/main/res/menu/main_menu.xml</a>:11</span>: <span class="message">Hardcoded string "ADB", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  8 </span>    <span class="tag">&lt;/item></span>
 <span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/webrtc_activity"</span>
-<span class="lineno"> 11 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span>
-<span class="caretline"><span class="lineno"> 12 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"WEBRTCExample"</span></span>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 13 </span>    <span class="tag">&lt;/item></span>
-<span class="lineno"> 14 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/adb_activity"</span></pre>
-
-<span class="location"><a href="src/main/res/menu/main_menu.xml">/Users/lbb/AndroidStudioProjects/amos-tub-ws18-proj1/app/src/main/res/menu/main_menu.xml</a>:16</span>: <span class="message">Hardcoded string "ADB", should use <code>@string</code> resource</span><br /><pre class="errorlines">
-<span class="lineno"> 13 </span>    <span class="tag">&lt;/item></span>
-<span class="lineno"> 14 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 15 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/adb_activity"</span>
-<span class="caretline"><span class="lineno"> 16 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"ADB"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 17 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span> />
-<span class="lineno"> 18 </span>    <span class="tag">&lt;item</span><span class="attribute">
-</span><span class="lineno"> 19 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/build_info_activity"</span></pre>
+</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/adb_activity"</span>
+<span class="caretline"><span class="lineno"> 11 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"ADB"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 12 </span>        <span class="prefix">app:</span><span class="attribute">showAsAction</span>=<span class="value">"never"</span> />
+<span class="lineno"> 13 </span>    <span class="tag">&lt;item</span><span class="attribute">
+</span><span class="lineno"> 14 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/build_info_activity"</span></pre>
 
 </div>
 </div>

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.amos.flyinn.summoner.Demo;
-import com.amos.flyinn.wificonnector.WifiReceiverSingelton;
 
 public class ADBActivity extends AppCompatActivity {
 
@@ -23,7 +22,7 @@ public class ADBActivity extends AppCompatActivity {
             try {
                 Point p = new Point();
                 getWindowManager().getDefaultDisplay().getRealSize(p);
-                Demo.start(getApplicationContext(), WifiReceiverSingelton.getInstance().getWifiReceiverP2P().getHostAddr(), p);
+                Demo.start(getApplicationContext(), "127.0.0.1", p);
             } catch (Exception e) {
                 e.printStackTrace();
             }
