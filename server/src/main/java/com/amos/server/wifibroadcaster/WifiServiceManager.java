@@ -27,6 +27,7 @@ class WifiServiceManager extends BroadcastReceiver {
                 NetworkInfo infoNet = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
                 if (infoNet.isConnected()) {
                     try {
+                        Log.d("TestHere","test");
                         mManager.requestConnectionInfo(mChannel, this.connectionService);
                     } catch (Exception e) {
                         e.printStackTrace();

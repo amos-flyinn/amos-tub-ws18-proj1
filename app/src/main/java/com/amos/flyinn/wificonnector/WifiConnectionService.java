@@ -61,9 +61,14 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
             e.printStackTrace();
         }
 
-
+        setupNext();
 
     }
 
+
+    private void setupNext(){
+        Intent intent = new Intent(activity,ConnectionSetupActivity.class);
+        activity.startActivity(intent);
+    }
 
 }

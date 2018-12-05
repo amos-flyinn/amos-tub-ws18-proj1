@@ -83,10 +83,7 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
-    private void setupNext(){
-        Intent intent = new Intent(this,ConnectionSetupActivity.class);
-        startActivity(intent);
-    }
+
 
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
         synchronized (this.lock) {
@@ -105,7 +102,6 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
                         WifiConnectorBase.this.connected = true;
                     }
                     Toast.makeText(WifiConnectorBase.this, "Connection Successful", Toast.LENGTH_SHORT).show();
-                    setupNext();
                 }
 
                 @Override
