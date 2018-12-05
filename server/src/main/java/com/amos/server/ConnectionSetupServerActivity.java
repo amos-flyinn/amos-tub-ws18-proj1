@@ -96,6 +96,12 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
         
     }
 
+    /**
+     *This method returns the SurfaceViewRender instance that
+     * the client is using for the screen capture streaming
+     *
+     * @return SurfaceViewRenderer return instance of SurfaceView component
+     */
     public SurfaceViewRenderer getRender(){
         return remoteRender;
     }
@@ -113,7 +119,16 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-
+    /**
+     * This method should be use to update the TextView description state.
+     * It will write a description about the current state of the WebRTC stream.
+     * This method is going to handle all possible error states that the App could reach.
+     *
+     * Please see {@link com.amos.server.webrtc.SetupStates} for the states list.
+     *
+     * @param state the identification number to identify correct or error states.
+     *
+     */
     public void setStateText(int state) {
 
         AlertDialog.Builder builder;
@@ -217,10 +232,6 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
                 infiniteBar.setVisibility(View.INVISIBLE);
                 break;
         }
-
-
-
-
     }
 
 
