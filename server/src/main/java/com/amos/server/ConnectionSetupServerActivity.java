@@ -59,7 +59,7 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
         connectionInfo = (TextView) findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
 
-
+        //setStateText(SetupStates.LOCAL_DESCRIPTOR_CREATE);
         // create touch listener components
         msgQueue = new LinkedBlockingQueue<>();
         uiHandler = new Handler(Looper.getMainLooper()) {
@@ -164,6 +164,9 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
 
             case SetupStates.REMOTE_DESCRIPTOR_SETTED:
                 progressText.setText("Remote descriptor setted Successfully");
+                progressText.setVisibility(View.INVISIBLE);
+                remoteRender.setVisibility(View.VISIBLE);
+
                 break;
 
             case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:

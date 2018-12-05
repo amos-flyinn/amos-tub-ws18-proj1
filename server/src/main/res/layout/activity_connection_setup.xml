@@ -29,8 +29,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="TextView"
-        android:textSize="22dp"
+        android:text="Waiting For Connection"
+        android:textSize="17dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/infiniteBar" />
@@ -49,7 +49,7 @@
 
 
     <org.webrtc.SurfaceViewRenderer
-        android:visibility="visible"
+        android:visibility="invisible"
         android:id="@+id/surface_remote_viewer"
         android:layout_width="match_parent"
         android:layout_gravity="bottom|end"

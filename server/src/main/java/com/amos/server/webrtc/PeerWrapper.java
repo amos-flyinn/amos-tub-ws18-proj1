@@ -117,11 +117,11 @@ public class PeerWrapper implements IPeer {
     public void beginTransactionWithAnswer() {
 
         MediaConstraints sdpConstraints = new MediaConstraints();
-        this.connection.createAnswer(new SdpObserver() {
+        this.connection.createAnswer(new SdpObserver("LocalDescriptor", activity, SdpObserver.LOCAL_SDP) {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
-                connection.setLocalDescription(new SdpObserver(), sessionDescription);
+                connection.setLocalDescription(new SdpObserver("LocalDescriptor", activity, SdpObserver.LOCAL_SDP), sessionDescription);
                 emitter.shareSessionDescription(sessionDescription);
             }
         }, sdpConstraints);
@@ -135,7 +135,7 @@ public class PeerWrapper implements IPeer {
 
     @Override
     public void setRemoteDescriptorPeer(SessionDescription descriptorPeer) {
-        this.connection.setRemoteDescription(new SdpObserver(), descriptorPeer);
+        this.connection.setRemoteDescription(new SdpObserver("RemoteDescriptor", activity, SdpObserver.REMOTE_SDP), descriptorPeer);
         this.beginTransactionWithAnswer();
     }
 
