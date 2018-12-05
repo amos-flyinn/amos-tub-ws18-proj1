@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
         this.initViews();
         this.peerWrapper = new PeerWrapper(this);
         this.webSocketServer = new WebServer((IPeer) this.peerWrapper);
-        this.peerWrapper.setEmitter((Emitter)this.webSocketServer);
+        this.peerWrapper.setEmitter((Emitter) this.webSocketServer);
         this.webSocketServer.start();
 
         senderRunner = new Thread(eventSender);
@@ -81,11 +81,11 @@ public class MainActivity extends Activity {
         );
     }
 
-    public SurfaceViewRenderer getRender(){
+    public SurfaceViewRenderer getRender() {
         return remoteRender;
     }
 
-    private void initViews(){
+    private void initViews() {
         remoteRender = findViewById(R.id.surface_remote_viewer);
     }
 
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.webrtc_server_activity:
-                intent = new Intent(this,WebRTCServerActivity.class);
+                intent = new Intent(this, WebRTCServerActivity.class);
                 break;
             case R.id.event_grab_activity:
                 intent = new Intent(MainActivity.this, EventGrabDemo.class);
