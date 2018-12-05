@@ -36,6 +36,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Activity that handles connection to servers via nearby connection.
+ * Updates a list (that is viewed by the user) containing all reachable servers.
+ * Includes permission handling and simple token authentication.
+ */
 public class NearbyConnectionActivity extends ListActivity {
 
     /** Permissions required for Nearby Connection */

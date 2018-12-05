@@ -1,33 +1,18 @@
 package com.amos.server;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.Button;
-import android.widget.TextView;
-
-import org.webrtc.PeerConnection;
-import org.webrtc.SurfaceViewRenderer;
-
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.amos.server.eventsender.EventServer;
 import com.amos.server.signaling.Emitter;
@@ -35,19 +20,10 @@ import com.amos.server.signaling.WebServer;
 import com.amos.server.webrtc.IPeer;
 import com.amos.server.webrtc.PeerWrapper;
 import com.amos.shared.TouchEvent;
-import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.AdvertisingOptions;
-import com.google.android.gms.nearby.connection.ConnectionInfo;
-import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
-import com.google.android.gms.nearby.connection.ConnectionResolution;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
-import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
-import com.google.android.gms.nearby.connection.Payload;
-import com.google.android.gms.nearby.connection.PayloadCallback;
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
-import com.google.android.gms.nearby.connection.Strategy;
 
-import java.security.SecureRandom;
+import org.webrtc.PeerConnection;
+import org.webrtc.SurfaceViewRenderer;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

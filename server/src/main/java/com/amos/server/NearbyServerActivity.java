@@ -28,6 +28,10 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import java.security.SecureRandom;
 
+/**
+ * Activity that handles connection to clients via nearby connection.
+ * Includes permission handling and simple token authentication.
+ */
 public class NearbyServerActivity extends Activity {
 
     /** Permissions required for Nearby Connection */
