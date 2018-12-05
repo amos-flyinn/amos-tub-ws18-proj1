@@ -1,11 +1,14 @@
 package com.amos.flyinn.wificonnector;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
+
+import com.amos.flyinn.ConnectionSetupActivity;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -58,5 +61,9 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
             e.printStackTrace();
         }
 
+
+
     }
+
+
 }

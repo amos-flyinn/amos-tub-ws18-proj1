@@ -16,7 +16,7 @@ public class WifiConnectorSingelton {
         this.manager.removeGroup(this.channel, null);
     }
 
-    WifiStateMachine getWifiReceiverP2P() {
+    public WifiStateMachine getWifiReceiverP2P() {
         return this.receiver;
     }
 

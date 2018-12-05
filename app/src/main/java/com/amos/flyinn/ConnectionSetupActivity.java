@@ -27,7 +27,9 @@ import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
-import com.amos.flyinn.wifimanager.WifiManager;
+import com.amos.flyinn.wificonnector.WifiConnectorBase;
+import com.amos.flyinn.wificonnector.WifiConnectorSingelton;
+import com.amos.flyinn.wificonnector.WifiStateMachine;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
@@ -94,7 +96,10 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         String addr;
         //Preparing and initializing the ADB service to listen for incoming connections.
         try {
-            addr = WifiManager.getInstance().getWifiReceiverP2P().getHostAddr();
+            addr = "192.168.49.1";
+            WifiConnectorSingelton wifiConnector = WifiConnectorSingelton.getInstance();
+            WifiStateMachine stateMachine = wifiConnector.getWifiReceiverP2P();
+            Log.d("IP",stateMachine.getHostAddr());
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }

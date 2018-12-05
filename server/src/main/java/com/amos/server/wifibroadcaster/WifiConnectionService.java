@@ -1,10 +1,13 @@
 package com.amos.server.wifibroadcaster;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.amos.server.ConnectionSetupServerActivity;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -48,5 +51,11 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
             e.printStackTrace();
         }
         // TODO(ich): Handle staring connection
+        setupNext();
+    }
+
+    private void setupNext(){
+        Intent intent = new Intent(activity,ConnectionSetupServerActivity.class);
+        activity.startActivity(intent);
     }
 }

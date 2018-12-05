@@ -2,6 +2,7 @@ package com.amos.flyinn.wificonnector;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -14,6 +15,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.amos.flyinn.ConnectionSetupActivity;
 
 import java.util.List;
 
@@ -80,6 +83,11 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
+    private void setupNext(){
+        Intent intent = new Intent(this,ConnectionSetupActivity.class);
+        startActivity(intent);
+    }
+
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
         synchronized (this.lock) {
             if (this.connected)
@@ -97,6 +105,7 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
                         WifiConnectorBase.this.connected = true;
                     }
                     Toast.makeText(WifiConnectorBase.this, "Connection Successful", Toast.LENGTH_SHORT).show();
+                    setupNext();
                 }
 
                 @Override
