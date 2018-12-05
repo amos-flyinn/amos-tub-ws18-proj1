@@ -4,7 +4,7 @@ set -e
 
 # get valid emulator ports
 get_emulators() {
-	adb devices | grep -Po 'emulator-\d+' | cut -d - -f 2
+	adb devices | grep -o "emulator-[0-9]\+" | cut -d '-' -f 2
 }
 
 # auth token needed for admin operations in emulator console
