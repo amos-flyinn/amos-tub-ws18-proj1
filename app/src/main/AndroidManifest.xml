@@ -26,6 +26,8 @@
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
@@ -39,7 +41,7 @@
             android:name=".WebRTCActivity"
             android:label="WEBRTC Example"
             android:theme="@android:style/Theme.Holo.Light.DarkActionBar"></activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity"> </activity>
         <activity
             android:name=".ADBActivity"
             android:label="@string/title_activity_adb"
@@ -56,7 +58,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service android:name=".summoner.ADBService" />
+
+        <activity
+            android:name=".NearbyConnectionActivity"
+            android:label="@string/title_activity_nearby_connection"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.amos.flyinn.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

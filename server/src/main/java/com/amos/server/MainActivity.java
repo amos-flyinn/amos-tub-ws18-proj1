@@ -90,12 +90,6 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        connectionInfo.setText("Waiting for P2P Wifi connection");
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
@@ -125,7 +119,5 @@ public class MainActivity extends Activity {
         startActivity(intent);
         return super.onOptionsItemSelected(item);
     }
-
-
 
 }

@@ -93,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case R.id.search_connections:
+                // intent = new Intent(this,WifiP2PActivity.class);
+                intent = new Intent(this, NearbyConnectionActivity.class);
+                break;
             case R.id.adb_activity:
                 intent = new Intent(this, ADBActivity.class);
                 break;
