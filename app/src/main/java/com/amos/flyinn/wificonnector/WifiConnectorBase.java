@@ -1,10 +1,11 @@
 package com.amos.flyinn.wificonnector;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -16,8 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.amos.flyinn.ConnectionSetupActivity;
-
+import java.lang.reflect.Method;
 import java.util.List;
 
 public abstract class WifiConnectorBase extends AppCompatActivity {
@@ -46,6 +46,9 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
 
         this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         this.mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        this.disconnect();
+
         this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -76,13 +79,36 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }).start();
     }
 
+    protected void disconnect() {
+        try {
+            @SuppressLint("WifiManagerLeak")
+            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(true);
+            wifiManager.setWifiEnabled(false);
+        } catch (Exception e) {
+        }
+
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(mManager, mChannel, netid, null);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void onDisconnected() {
         synchronized (this.lock) {
             Log.d("onDisconnected", "just disconnected");
             this.connected = false;
         }
     }
-
 
 
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
