@@ -281,9 +281,9 @@ public class NearbyConnectionActivity extends ListActivity {
      */
     @Override
     protected void onDestroy() {
-        clearServerData();
         connectionsClient.stopDiscovery();
         connectionsClient.stopAllEndpoints();
+        clearServerData();
         super.onDestroy();
     }
 
@@ -374,10 +374,10 @@ public class NearbyConnectionActivity extends ListActivity {
      * Clears servers data maps, stops discovery of new servers and adds close connection button
      */
     private void connectedToServer() {
+        connectionsClient.stopDiscovery();
         servers.clear();
         serverNamesToIDs.clear();
         serverIDsToNames.clear();
-        connectionsClient.stopDiscovery();
 
         //add close connection button
         servers.add(getResources().getString(R.string.nearby_close_connection) + " " + serverName);
