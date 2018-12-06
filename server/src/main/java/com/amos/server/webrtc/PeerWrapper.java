@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
+import com.amos.server.ConnectionSetupServerActivity;
 import com.amos.server.MainActivity;
 import com.amos.server.WebRTCServerActivity;
 import com.amos.server.signaling.Emitter;
@@ -25,9 +26,16 @@ import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
 
+/**
+ * <h1>PeerWrapper Class</h1>
+ *
+ * <p>This class is responsible to handle the live cycle of the WebRTC connection protocol.
+ * It begins the connection between the signaling server and the located peer.
+ * </p>
+ */
 public class PeerWrapper implements IPeer {
 
-    private MainActivity activity;
+    private ConnectionSetupServerActivity activity;
     private Emitter emitter;
     private Context appContext;
     private PeerConnection connection;
@@ -38,7 +46,7 @@ public class PeerWrapper implements IPeer {
     public PeerWrapper(Activity app) {
 
         this.appContext = app.getApplicationContext();
-        this.activity = (MainActivity) app;
+        this.activity = (ConnectionSetupServerActivity) app;
 
         this.configPeerConnection();
         this.createPeer();
@@ -76,9 +84,8 @@ public class PeerWrapper implements IPeer {
     }
 
 
+
     private void createPeer() {
-
-
 
 
         this.connection = peerFactory.createPeerConnection(new ArrayList<>(), new PeerObserver() {
@@ -102,6 +109,8 @@ public class PeerWrapper implements IPeer {
 
     }
 
+
+
     public void setRemoteStream(MediaStream stream) {
         VideoTrack trackRemoteCamera = stream.videoTracks.get(0);
         this.activity.runOnUiThread(new Runnable() {
@@ -116,11 +125,11 @@ public class PeerWrapper implements IPeer {
     public void beginTransactionWithAnswer() {
 
         MediaConstraints sdpConstraints = new MediaConstraints();
-        this.connection.createAnswer(new SdpObserver() {
+        this.connection.createAnswer(new SdpObserver("LocalDescriptor", activity, SdpObserver.LOCAL_SDP) {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
-                connection.setLocalDescription(new SdpObserver(), sessionDescription);
+                connection.setLocalDescription(new SdpObserver("LocalDescriptor", activity, SdpObserver.LOCAL_SDP), sessionDescription);
                 emitter.shareSessionDescription(sessionDescription);
             }
         }, sdpConstraints);
@@ -132,12 +141,22 @@ public class PeerWrapper implements IPeer {
     }
 
 
+
+    /**
+     * This method set the new remote sessions descriptor with the information needed to the peer
+     * @param descriptorPeer remote session descriptor that was sent over the signaling server.
+     */
     @Override
     public void setRemoteDescriptorPeer(SessionDescription descriptorPeer) {
-        this.connection.setRemoteDescription(new SdpObserver(), descriptorPeer);
+        this.connection.setRemoteDescription(new SdpObserver("RemoteDescriptor", activity, SdpObserver.REMOTE_SDP), descriptorPeer);
         this.beginTransactionWithAnswer();
     }
 
+    /**
+     * This method set the new remote ice candidate with the information needed to the peer.
+     * The candidate gives the position and the instructions to connect with the other peer
+     * @param candidate the remote ice candidate that was sent over the signaling server.
+     */
     @Override
     public void setRemoteIceCandidate(IceCandidate candidate) {
         this.connection.addIceCandidate(candidate);

@@ -1,9 +1,11 @@
 package com.amos.flyinn.wificonnector;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -15,8 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
+/**
+ * Create a WifiP2P class handling correct P2P intents.
+ */
 public abstract class WifiConnectorBase extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
@@ -26,6 +32,14 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
     private final Object lock = new Object();
     private boolean connected = false; // Locked
 
+    /**
+     * Try to listen to existing peers.
+     *
+     * Since we depend on a server network changing its name to something we recognize (via the code
+     * entered by the user on the server), we will need to completely empty the cache of the wifimanager
+     * on the phone. This is done in a separate thread every 10 seconds.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +57,9 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
 
         this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         this.mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        this.disconnect();
+
         this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -73,6 +90,39 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }).start();
     }
 
+    /**
+     * Disconnect from an existing P2P connection.
+     */
+    protected void disconnect() {
+        this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        this.mChannel = mManager.initialize(this, getMainLooper(), null);
+        try {
+            @SuppressLint("WifiManagerLeak")
+            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(false);
+            Thread.sleep(100);
+            wifiManager.setWifiEnabled(true);
+        } catch (Exception e) {
+        }
+
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(mManager, mChannel, netid, null);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set our connection status on disconnect.
+     */
     protected void onDisconnected() {
         synchronized (this.lock) {
             Log.d("onDisconnected", "just disconnected");
@@ -80,6 +130,11 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Connect to the given P2P device.
+     * @param deviceToConnect
+     */
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
         synchronized (this.lock) {
             if (this.connected)
@@ -111,9 +166,12 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
+    /**
+     * Destroy wifi cache to get new network names. This is necessary to make network name changes visible to the client.
+     */
     public void totalRefresh() {
         try {
-            unregisterReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P());
+            unregisterReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P());
         } catch (Exception e) {
         }
         this.mManager.stopPeerDiscovery(this.mChannel, null);
@@ -132,25 +190,41 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
                 Log.d("WifiP2PActivity", "Error listening to peers : " + i);
             }
         });
-        WifiConnectorSingelton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
-        registerReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
+        WifiConnectorSingleton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
+        registerReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
+    /**
+     * Reinstantiate on resume.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        WifiConnectorSingelton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
-        registerReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
+        WifiConnectorSingleton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
+        registerReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
+    /**
+     * Stop receiver from getting updates on pause.
+     */
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P());
+        unregisterReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P());
     }
 
+    /**
+     * Set list of peers.
+     * @param listOfPeers
+     */
     abstract public void setPeers(List<WifiP2pDevice> listOfPeers);
 
+    /**
+     * Give visual indication if required permissions have been given.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

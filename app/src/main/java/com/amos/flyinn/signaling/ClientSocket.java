@@ -29,7 +29,13 @@ public class ClientSocket extends WebSocketClient implements Emitter {
     }
 
 
-
+    /**
+     * This method receive the information that was sent by the signaling server.
+     * It is also responsible to unserialize the messages and set the session descriptor and
+     * the ice candidate when received
+     *
+     * @param message the message information as string that contains the serialized message.
+     */
     @Override
     public void onMessage(String message) {
         Log.d("ClientSocket","OnMessage -- Received : " + message);
@@ -65,7 +71,13 @@ public class ClientSocket extends WebSocketClient implements Emitter {
         ex.printStackTrace();
     }
 
-
+    /**
+     * This method is useful to serialize an ice candidate object that is supposed to be read
+     * by the signaling server.
+     *
+     * @param candidate candidate that is going to be serialized
+     * @return JsonObject returns the JsonObject that contains information about some ice candidate
+     */
     public JSONObject serializeIceCandidate(IceCandidate candidate){
         try{
             JSONObject jsonIceCandidate = new JSONObject();
@@ -82,13 +94,25 @@ public class ClientSocket extends WebSocketClient implements Emitter {
         return null;
     }
 
+    /**
+     * This method is responsible to send the serialized ice candidate to the signaling server.
+     *
+     * @param candidate candidate that is going to be shared with the signaling server.
+     */
     @Override
     public void shareIceCandidate(IceCandidate candidate) {
             Log.d("ClientSocket","Sending icecandidate! -- " + candidate);
             JSONObject jsonIceCandidate = this.serializeIceCandidate(candidate);
             this.send(jsonIceCandidate.toString());
-    }
 
+    }
+    /**
+     * This method is useful to serialize serial descriptor object that is supposed to be read
+     * by the signaling server.
+     *
+     * @param session Session descriptor that is going to be serialized
+     * @return JsonObject returns the JsonObject that contains information about some session descriptor
+     */
     public JSONObject serializeSessionDescription(SessionDescription session)
     {
         try{
@@ -107,6 +131,11 @@ public class ClientSocket extends WebSocketClient implements Emitter {
     }
 
 
+    /**
+     * This method is responsible to send the serialized session descriptor to the signaling server.
+     *
+     * @param session session descriptor that is going to be shared with the signaling server.
+     */
     @Override
     public void shareSessionDescription(SessionDescription session) {
 

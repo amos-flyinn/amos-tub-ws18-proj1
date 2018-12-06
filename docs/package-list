@@ -1,0 +1,15 @@
+android.util
+com.amos.fakeinputlib
+com.amos.flyinn
+com.amos.flyinn.screenRecording
+com.amos.flyinn.settingsCheck
+com.amos.flyinn.signaling
+com.amos.flyinn.summoner
+com.amos.flyinn.webrtc
+com.amos.flyinn.wificonnector
+com.amos.server
+com.amos.server.eventsender
+com.amos.server.signaling
+com.amos.server.webrtc
+com.amos.server.wifibroadcaster
+com.amos.shared

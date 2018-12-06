@@ -28,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amos.flyinn.screenRecording.RecordingActivity;
-import com.amos.flyinn.settingsCheck.settingsCheck;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
@@ -159,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }
             adbDaemon = createADBService(addr);
+
         } catch (Exception e) {
         }
 
@@ -179,11 +179,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkForDebuggingMode();
-    }
 
     private void checkForDebuggingMode() {
         if (Settings.Secure.getInt(this.getContentResolver(), Settings.Global.ADB_ENABLED, 0) != 1) {

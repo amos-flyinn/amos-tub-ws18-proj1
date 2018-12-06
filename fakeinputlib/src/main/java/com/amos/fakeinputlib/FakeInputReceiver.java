@@ -55,7 +55,7 @@ class FakeInputReceiver {
                 e = (TouchEvent) istream.readObject();
             } catch (IOException e1) {
                 Log.e(TAG, "failed to receive object", e1);
-                continue;
+                break;
             } catch (ClassNotFoundException e1) {
                 Log.wtf(TAG, "received object of unknown type", e1);
                 continue;

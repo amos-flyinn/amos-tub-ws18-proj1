@@ -7,6 +7,9 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
+/**
+ * Handle changes in the state of our connection setup and manage changes between stages.
+ */
 public class WifiStateMachine extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -14,6 +17,12 @@ public class WifiStateMachine extends BroadcastReceiver {
     private WifiConnectorBase base;
     private WifiConnectionService connectionService;
 
+    /**
+     * Create a new state machine object.
+     * @param manager
+     * @param channel
+     * @param activity
+     */
     protected WifiStateMachine(WifiP2pManager manager, WifiP2pManager.Channel channel, WifiConnectorBase activity) {
         this.base = activity;
         this.mManager = manager;
@@ -22,10 +31,20 @@ public class WifiStateMachine extends BroadcastReceiver {
         this.connectionService = new WifiConnectionService(activity, this.mManager, this.mChannel);
     }
 
+    /**
+     * Get the server host address from an existing connection.
+     * @return
+     * @throws Exception
+     */
     public String getHostAddr() throws Exception {
         return this.connectionService.getServerAddress();
     }
 
+    /**
+     * Handle received intents. These are used to trigger state changes.
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();

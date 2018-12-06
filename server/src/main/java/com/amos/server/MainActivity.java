@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
         connectionInfo = findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
         view = findViewById(R.id.surface_remote_viewer);
+
         // create touch listener components
         msgQueue = new LinkedBlockingQueue<>();
         uiHandler = new Handler(Looper.getMainLooper()) {

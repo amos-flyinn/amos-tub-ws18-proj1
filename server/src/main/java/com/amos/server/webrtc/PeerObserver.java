@@ -44,6 +44,7 @@ public class PeerObserver implements PeerConnection.Observer {
 
     @Override
     public void onAddStream(MediaStream mediaStream) {
+
         Log.d(logTag, "onAddStream() called with: mediaStream = [" + mediaStream + "]");
     }
 
