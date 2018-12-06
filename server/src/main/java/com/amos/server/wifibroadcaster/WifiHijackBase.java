@@ -15,12 +15,19 @@ import android.widget.Toast;
 
 import java.lang.reflect.Method;
 
+/**
+ * Set up Wifimanager and handle Intents. Calls are passed through to the WifiBroadCasterSingleton.
+ */
 public abstract class WifiHijackBase extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private static final int COARSE_LOCATION = 1001;
 
+    /**
+     * Register handled intents and get all required permissions for Wifi P2P
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +63,16 @@ public abstract class WifiHijackBase extends AppCompatActivity {
         }
     }
 
+    /**
+     * Set the correct wifi name and initiate peer search. Further actions are handled in the
+     * WifiBradcasterSingelton.
+     *
+     * We change the name of our server network to the one the WifiP2P on the app is expecting.
+     * This way we can establish the connection from the server side without further interaction
+     * on the client.
+     *
+     * @param name
+     */
     public void changeName(String name) {
         try {
             unregisterReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster());
@@ -85,6 +102,9 @@ public abstract class WifiHijackBase extends AppCompatActivity {
         });
     }
 
+    /**
+     * Rebind to WifiBradCasterSingelton on resume.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -92,12 +112,22 @@ public abstract class WifiHijackBase extends AppCompatActivity {
         registerReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster(), intentFilter);
     }
 
+    /**
+     * Do not continue to listen on program pause.
+     */
     @Override
     public void onPause() {
         super.onPause();
         unregisterReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster());
     }
 
+    /**
+     * Show visual feedback if permissions for WifiP2P have been correctly granted.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
