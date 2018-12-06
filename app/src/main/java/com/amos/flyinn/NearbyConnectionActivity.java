@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -64,6 +65,11 @@ public class NearbyConnectionActivity extends ListActivity {
     private final String clientName = generateName(5);
     private String serverID;
     private String serverName;
+
+    final Handler handler = new Handler();
+
+    /** Toast to publish user notifications */
+    private Toast mToast = Toast.makeText(this  , "" , Toast.LENGTH_SHORT);
 
     /** List of all discovered servers by name, continuously updated. */
     private List<String> servers = new ArrayList<>();
@@ -183,16 +189,16 @@ public class NearbyConnectionActivity extends ListActivity {
                         case ConnectionsStatusCodes.STATUS_OK:
                             // successful connection with server
                             Log.i(NEARBY_TAG, "Connected with " + endpointId);
-                            Toast.makeText(NearbyConnectionActivity.this,
-                                    R.string.nearby_connection_success, Toast.LENGTH_SHORT).show();
+                            mToast.setText(R.string.nearby_connection_success);
+                            mToast.show();
                             connectedToServer();
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                             // connection was rejected by one side (or both)
                             Log.i(NEARBY_TAG, "Connection rejected with " + endpointId);
-                            Toast.makeText(NearbyConnectionActivity.this,
-                                    R.string.nearby_connection_rejected, Toast.LENGTH_LONG).show();
+                            mToast.setText(R.string.nearby_connection_rejected);
+                            mToast.show();
                             serverName = null;
                             serverID = null;
                             break;
@@ -200,8 +206,8 @@ public class NearbyConnectionActivity extends ListActivity {
                         case ConnectionsStatusCodes.STATUS_ERROR:
                             // connection was lost
                             Log.w(NEARBY_TAG, "Connection lost: " + endpointId);
-                            Toast.makeText(NearbyConnectionActivity.this,
-                                    R.string.nearby_connection_error, Toast.LENGTH_LONG).show();
+                            mToast.setText(R.string.nearby_connection_error);
+                            mToast.show();
                             serverName = null;
                             serverID = null;
                             break;
@@ -210,8 +216,8 @@ public class NearbyConnectionActivity extends ListActivity {
                             // unknown status code. we shouldn't be here
                             Log.e(NEARBY_TAG, "Unknown error when attempting to connect with "
                                     + endpointId);
-                            Toast.makeText(NearbyConnectionActivity.this,
-                                    R.string.nearby_connection_error, Toast.LENGTH_LONG).show();
+                            mToast.setText(R.string.nearby_connection_error);
+                            mToast.show();
                             serverName = null;
                             serverID = null;
                     }
@@ -221,8 +227,8 @@ public class NearbyConnectionActivity extends ListActivity {
                 public void onDisconnected(String endpointId) {
                     // disconnected from server
                     Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
-                    Toast.makeText(NearbyConnectionActivity.this,
-                            R.string.nearby_disconnected, Toast.LENGTH_LONG).show();
+                    mToast.setText(R.string.nearby_disconnected);
+                    mToast.show();
                     clearServerData();
                     finish();
                 }
@@ -230,22 +236,32 @@ public class NearbyConnectionActivity extends ListActivity {
 
 
     /**
-     * Initialises nearby's connectionsClient and our list adapter to showcase servers to the user
+     * Initialises nearby's connectionsClient and our list adapter to showcase servers to the user,
+     * checks permissions and starts discovery
      * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        } else {
+            Log.w(NEARBY_TAG, "Could not check permissions due to version");
+        }
         
         connectionsClient = Nearby.getConnectionsClient(this);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, servers);
         setListAdapter(adapter);
+
+        startDiscovering();
     }
 
     /**
-     * Checks needed permissions for nearby connection and starts discovery of servers
+     * Checks needed permissions for nearby connection
      */
     @Override
     protected void onStart() {
@@ -256,10 +272,6 @@ public class NearbyConnectionActivity extends ListActivity {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
-        }
-
-        if (serverID == null || serverID.isEmpty()) {
-            startDiscovering();
         }
     }
 
@@ -289,14 +301,14 @@ public class NearbyConnectionActivity extends ListActivity {
                 .addOnSuccessListener( (Void unused) -> {
                     // started searching for servers successfully
                     Log.i(NEARBY_TAG, "Discovering connections on " + clientName);
-                    Toast.makeText(this, R.string.nearby_discovering_success,
-                            Toast.LENGTH_SHORT).show();
+                    mToast.setText(R.string.nearby_discovering_success);
+                    mToast.show();
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to start discovery
                     Log.e(NEARBY_TAG, "Unable to start discovery on " + clientName);
-                    Toast.makeText(this, R.string.nearby_discovering_error,
-                            Toast.LENGTH_LONG).show();
+                    mToast.setText(R.string.nearby_discovering_error);
+                    mToast.show();
                     finish();
                 });
     }
@@ -319,21 +331,9 @@ public class NearbyConnectionActivity extends ListActivity {
                 getResources().getString(R.string.nearby_close_connection))) {
 
             connectionsClient.stopAllEndpoints();
-            Log.i(NEARBY_TAG, "User disconnected from " + serverID);
-            Toast.makeText(NearbyConnectionActivity.this,
-                    R.string.nearby_disconnected, Toast.LENGTH_SHORT).show();
-            new Thread(){
-                @Override
-                public void run() {
-                    try {
-                        // display close connection toast for 2s
-                        Thread.sleep(2000);
-                        finish();
-                    } catch (Exception e) {
-                        Log.e(NEARBY_TAG, "Thread error after disconnect.");
-                    }
-                }
-            }.start();
+            Log.i(NEARBY_TAG, "User chose to disconnect from " + serverID);
+            // make sure connectionLifecycleCallback.onDisconnected() is called by delaying finish
+            handler.postDelayed(() -> finish(), 2000);
             return;
         }
 
@@ -353,8 +353,8 @@ public class NearbyConnectionActivity extends ListActivity {
                     serverID = null;
                     Log.w(NEARBY_TAG, clientName + " failed requesting connection to " +
                             serverID);
-                    Toast.makeText(this, R.string.nearby_connection_error,
-                            Toast.LENGTH_LONG).show();
+                    mToast.setText(R.string.nearby_connection_error);
+                    mToast.show();
                 });
     }
 
@@ -420,10 +420,9 @@ public class NearbyConnectionActivity extends ListActivity {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
                 Log.w(NEARBY_TAG, "Permissions necessary for " +
                         "Nearby Connection were not granted.");
-                Toast.makeText(this, R.string.nearby_missing_permissions,
-                        Toast.LENGTH_LONG).show();
+                mToast.setText(R.string.nearby_missing_permissions);
+                mToast.show();
                 finish();
-                return;
             }
         }
         recreate();
@@ -442,6 +441,9 @@ public class NearbyConnectionActivity extends ListActivity {
         for (int i = 0; i < appendixLength; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
-        return Build.MODEL + "_" + sb.toString();
+
+        String name = Build.MODEL + "_" + sb.toString();
+        Log.d(NEARBY_TAG, "Current name is: " + name);
+        return name;
     }
 }

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -54,6 +55,9 @@ public class NearbyServerActivity extends Activity {
     private final String serverName = generateName(5);
     private String clientID;
     private String clientName;
+
+    /** Toast to publish user notifications */
+    private Toast mToast = Toast.makeText(this  , "" , Toast.LENGTH_SHORT);
 
     /** Tag for logging purposes. */
     private static final String NEARBY_TAG = "ServerNearbyConnection";
@@ -112,8 +116,8 @@ public class NearbyServerActivity extends Activity {
                         case ConnectionsStatusCodes.STATUS_OK:
                             // successful connection with client
                             Log.i(NEARBY_TAG, "Connected with " + endpointId);
-                            Toast.makeText(NearbyServerActivity.this,
-                                    R.string.nearby_connection_success, Toast.LENGTH_SHORT).show();
+                            mToast.setText(R.string.nearby_connection_success);
+                            mToast.show();
                             connectionsClient.stopAdvertising();
                             clientID = endpointId;
                             break;
@@ -121,16 +125,16 @@ public class NearbyServerActivity extends Activity {
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                             // connection was rejected by one side (or both)
                             Log.i(NEARBY_TAG, "Connection rejected with " + endpointId);
-                            Toast.makeText(NearbyServerActivity.this,
-                                    R.string.nearby_connection_rejected, Toast.LENGTH_LONG).show();
+                            mToast.setText(R.string.nearby_connection_rejected);
+                            mToast.show();
                             clearClientData();
                             break;
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
                             // connection was lost
                             Log.w(NEARBY_TAG, "Connection lost: " + endpointId);
-                            Toast.makeText(NearbyServerActivity.this,
-                                    R.string.nearby_connection_lost, Toast.LENGTH_LONG).show();
+                            mToast.setText(R.string.nearby_connection_lost);
+                            mToast.show();
                             clearClientData();
                             break;
 
@@ -138,36 +142,32 @@ public class NearbyServerActivity extends Activity {
                             // unknown status code. we shouldn't be here
                             Log.e(NEARBY_TAG, "Unknown error when attempting to connect with "
                                     + endpointId);
-                            Toast.makeText(NearbyServerActivity.this,
-                                    R.string.nearby_connection_lost, Toast.LENGTH_LONG).show();
+                            mToast.setText(R.string.nearby_connection_lost);
+                            mToast.show();
                             clearClientData();
                     }
                 }
 
                 @Override
                 public void onDisconnected(String endpointId) {
-                    // disconnect from client
+                    // disconnected from client
                     Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
-                    Toast.makeText(NearbyServerActivity.this,
-                            R.string.nearby_disconnected, Toast.LENGTH_SHORT).show();
+                    mToast.setText(R.string.nearby_disconnected);
+                    mToast.show();
+
+                    // better be safe
                     clearClientData();
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            try {
-                                // display disconnect toast for 2s
-                                Thread.sleep(2000);
-                                if (clientID == null || clientID.isEmpty()) {
-                                    startAdvertising();
-                                }
-                            } catch (Exception e) {
-                                Log.e(NEARBY_TAG, "Thread error after disconnect.");
-                            }
-                        }
-                    }.start();
+                    connectionsClient.stopAdvertising();
+                    connectionsClient.stopAllEndpoints();
+
+                    startAdvertising();
                 }
             };
 
+    /**
+     * Starts a nearby connectionsClient, checks permissions and calls startAdvertising().
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,15 +175,6 @@ public class NearbyServerActivity extends Activity {
 
         // initiate nearby connection manager
         connectionsClient = Nearby.getConnectionsClient(this);
-    }
-
-    /**
-     * Checks whether the app has the required permissions to establish connections,
-     * and then starts advertising to search for clients.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -192,9 +183,23 @@ public class NearbyServerActivity extends Activity {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
 
-        // check whether we are connected to a device
-        if (clientID == null || clientID.isEmpty()) {
-            startAdvertising();
+        startAdvertising();
+    }
+
+    /**
+     * Checks whether the app has the required permissions to establish connections after the
+     * super.onStart() call (the user may have changed permissions after starting the app).
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // user may have changed permissions
+        if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        } else {
+            Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
     }
 
@@ -204,9 +209,9 @@ public class NearbyServerActivity extends Activity {
      */
     @Override
     protected void onDestroy() {
-        clearClientData();
         connectionsClient.stopAdvertising();
         connectionsClient.stopAllEndpoints();
+        clearClientData();
         super.onDestroy();
     }
 
@@ -226,20 +231,20 @@ public class NearbyServerActivity extends Activity {
                 .addOnSuccessListener( (Void unused) -> {
                     // started advertising successfully
                     Log.i(NEARBY_TAG, "Started advertising " + serverName);
-                    Toast.makeText(this, R.string.nearby_advertising_success,
-                            Toast.LENGTH_SHORT).show();
+                    mToast.setText(R.string.nearby_advertising_success);
+                    mToast.show();
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to advertise
                     Log.e(NEARBY_TAG, "Unable to start advertising " + serverName);
-                    Toast.makeText(this, R.string.nearby_advertising_error,
-                            Toast.LENGTH_LONG).show();
+                    mToast.setText(R.string.nearby_advertising_error);
+                    mToast.show();
                     finish();
                 });
     }
 
     /**
-     * Sets client ID and client name to null.
+     * Resets client ID and client name to null.
      */
     private void clearClientData() {
         clientID = null;
@@ -281,10 +286,9 @@ public class NearbyServerActivity extends Activity {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
                 Log.w(NEARBY_TAG, "Permissions necessary for connections were not granted.");
-                Toast.makeText(this, R.string.nearby_missing_permissions,
-                        Toast.LENGTH_LONG).show();
+                mToast.setText(R.string.nearby_missing_permissions);
+                mToast.show();
                 finish();
-                return;
             }
         }
         recreate();
@@ -303,6 +307,9 @@ public class NearbyServerActivity extends Activity {
         for (int i = 0; i < appendixLength; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
-        return Build.MODEL + "_" + sb.toString();
+
+        String name = Build.MODEL + "_" + sb.toString();
+        Log.d(NEARBY_TAG, "Current name is: " + name);
+        return name;
     }
 }
