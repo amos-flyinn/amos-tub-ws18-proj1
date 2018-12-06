@@ -20,6 +20,9 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 import java.util.List;
 
+/**
+ * Create a WifiP2P class handling correct P2P intents.
+ */
 public abstract class WifiConnectorBase extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
@@ -29,6 +32,14 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
     private final Object lock = new Object();
     private boolean connected = false; // Locked
 
+    /**
+     * Try to listen to existing peers.
+     *
+     * Since we depend on a server network changing its name to something we recognize (via the code
+     * entered by the user on the server), we will need to completely empty the cache of the wifimanager
+     * on the phone. This is done in a separate thread every 10 seconds.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +90,9 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }).start();
     }
 
+    /**
+     * Disconnect from an existing P2P connection.
+     */
     protected void disconnect() {
         this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         this.mChannel = mManager.initialize(this, getMainLooper(), null);
@@ -106,6 +120,9 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
+    /**
+     * Set our connection status on disconnect.
+     */
     protected void onDisconnected() {
         synchronized (this.lock) {
             Log.d("onDisconnected", "just disconnected");
@@ -113,6 +130,11 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Connect to the given P2P device.
+     * @param deviceToConnect
+     */
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
         synchronized (this.lock) {
             if (this.connected)
@@ -144,6 +166,9 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         }
     }
 
+    /**
+     * Destroy wifi cache to get new network names. This is necessary to make network name changes visible to the client.
+     */
     public void totalRefresh() {
         try {
             unregisterReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P());
@@ -169,6 +194,9 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         registerReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
+    /**
+     * Reinstantiate on resume.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -176,14 +204,27 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
         registerReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
+    /**
+     * Stop receiver from getting updates on pause.
+     */
     @Override
     public void onPause() {
         super.onPause();
         unregisterReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P());
     }
 
+    /**
+     * Set list of peers.
+     * @param listOfPeers
+     */
     abstract public void setPeers(List<WifiP2pDevice> listOfPeers);
 
+    /**
+     * Give visual indication if required permissions have been given.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == COARSE_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

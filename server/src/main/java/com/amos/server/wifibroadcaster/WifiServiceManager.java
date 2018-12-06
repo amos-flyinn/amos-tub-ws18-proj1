@@ -8,17 +8,35 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
+/**
+ * Use intent broadcasts to trigger activity changes and further connection setup.
+ */
 class WifiServiceManager extends BroadcastReceiver {
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private WifiConnectionService connectionService;
 
+    /**
+     * Create a new WifiService manager.
+     *
+     * This constructor should only be called by the bradcaster.
+     * @param manager
+     * @param channel
+     * @param activity
+     */
     public WifiServiceManager(WifiP2pManager manager, WifiP2pManager.Channel channel, Activity activity) {
         this.mManager = manager;
         this.mChannel = channel;
         this.connectionService = new WifiConnectionService(activity, mManager, mChannel);
     }
 
+    /**
+     * Try to get connection information on connection setup message from Wifi P2P
+     *
+     * Further processing is handled by WifiConnectionService, which acts on the resulting connection information.
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();

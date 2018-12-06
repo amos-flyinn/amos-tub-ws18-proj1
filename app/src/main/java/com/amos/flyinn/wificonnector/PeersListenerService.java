@@ -9,14 +9,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Handle our list of available peers for P2P.
+ */
 class PeersListenerService implements WifiP2pManager.PeerListListener {
     private List<WifiP2pDevice> listOfPeers = new ArrayList<>();
     private WifiConnectorBase base;
 
+    /**
+     * Create a new listener.
+     * @param activity
+     */
     PeersListenerService(WifiConnectorBase activity) {
         base = activity;
     }
 
+    /**
+     * Trigger changes to our list of peers after an update to available peers.
+     * @param wifiP2pDeviceList
+     */
     @Override
     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
         Log.d("PeersListenerService", "Called onPeersAvailable");

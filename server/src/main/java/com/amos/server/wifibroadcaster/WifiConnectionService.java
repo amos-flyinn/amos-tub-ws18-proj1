@@ -14,17 +14,30 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+/**
+ * Process wifi connection information and setup further activity switch to setup connections between Event and Screen sharing processes.
+ */
 class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
     private Activity activity;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
 
+    /**
+     * Create a new connection service.
+     * @param activity
+     * @param manager
+     * @param channel
+     */
     WifiConnectionService(Activity activity, WifiP2pManager manager, WifiP2pManager.Channel channel) {
         this.activity = activity;
         this.mChannel = channel;
         this.mManager = manager;
     }
 
+    /**
+     * Display information on established connection (ie accepted invitation to P2P network) and trigger activity change.
+     * @param wifiP2pInfo
+     */
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
         InetAddress address = wifiP2pInfo.groupOwnerAddress;
@@ -54,6 +67,12 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
         setupNext();
     }
 
+    /**
+     * Start ConnectionSetupActivity.
+     *
+     * This function is called after connection information has been made available, which is a callback
+     * defined in the WifiP2P library.
+     */
     private void setupNext(){
         Intent intent = new Intent(activity,ConnectionSetupServerActivity.class);
         activity.startActivity(intent);

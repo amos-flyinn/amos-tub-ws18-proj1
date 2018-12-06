@@ -15,18 +15,32 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+/**
+ * Handle an established P2P connection.
+ */
 class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
     private Context activity;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private InetAddress address;
 
+    /**
+     * Create a new connection service.
+     * @param activity
+     * @param manager
+     * @param channel
+     */
     WifiConnectionService(Context activity, WifiP2pManager manager, WifiP2pManager.Channel channel) {
         this.activity = activity;
         this.mChannel = channel;
         this.mManager = manager;
     }
 
+    /**
+     * Get address of the server we are connected to.
+     * @return
+     * @throws Exception
+     */
     public String getServerAddress() throws Exception {
         if (address != null) {
             return address.getHostAddress();
@@ -34,6 +48,10 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
         throw new Exception("Host not ready");
     }
 
+    /**
+     * Display connection information and trigger activity change.
+     * @param wifiP2pInfo
+     */
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
         this.address = wifiP2pInfo.groupOwnerAddress;
@@ -66,6 +84,9 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
     }
 
 
+    /**
+     * Switch to connection setup.
+     */
     private void setupNext(){
         Intent intent = new Intent(activity,ConnectionSetupActivity.class);
         activity.startActivity(intent);
