@@ -19,7 +19,7 @@ class WifiServiceManager extends BroadcastReceiver {
     /**
      * Create a new WifiService manager.
      *
-     * This constructor should only be called by the bradcaster.
+     * This constructor should only be called by the broadcaster.
      * @param manager
      * @param channel
      * @param activity

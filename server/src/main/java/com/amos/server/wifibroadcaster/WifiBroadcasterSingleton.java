@@ -9,18 +9,18 @@ import android.net.wifi.p2p.WifiP2pManager;
  * Only one connection needs to be handled at any time, but the object itself can change depending
  * on disconnects and other operations. This wrapper class handles global access to the WifiServiceManager object.
  */
-public class WifiBradcasterSingelton {
-    private static final WifiBradcasterSingelton ourInstance = new WifiBradcasterSingelton();
+public class WifiBroadcasterSingleton {
+    private static final WifiBroadcasterSingleton ourInstance = new WifiBroadcasterSingleton();
     private WifiServiceManager s;
 
     /**
-     * Get current WifiBradcaster.
+     * Get current WifiBroadcaster.
      *
      * This follows a standard singleton pattern for java. Other objects have to reference to this
      * class via a getter, thus avoiding creating additional instances of this class across the application.
      * @return
      */
-    public static WifiBradcasterSingelton getInstance() {
+    public static WifiBroadcasterSingleton getInstance() {
         return ourInstance;
     }
 

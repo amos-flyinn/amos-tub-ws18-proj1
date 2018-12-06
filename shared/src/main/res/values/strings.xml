@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">shared</string>
+    <string name="product_name_prefix_identifier">flyinn-</string>
 </resources>

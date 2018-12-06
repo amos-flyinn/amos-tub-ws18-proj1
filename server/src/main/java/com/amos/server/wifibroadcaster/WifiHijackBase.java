@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amos.server.R;
+
 import java.lang.reflect.Method;
 
 /**
@@ -86,7 +88,7 @@ public abstract class WifiHijackBase extends AppCompatActivity {
 
     private void setWifiName(String name) {
         Log.d("ChangeWifiName", "New name:" + name);
-        String fullName = "flyinn-" + name;
+        String fullName = getString(R.string.product_name_prefix_identifier) + name;
         try {
             Method method = this.mManager.getClass().getMethod("setDeviceName", new Class[]{WifiP2pManager.Channel.class, String.class, WifiP2pManager.ActionListener.class});
             method.invoke(this.mManager, this.mChannel, fullName, null);
@@ -97,7 +99,7 @@ public abstract class WifiHijackBase extends AppCompatActivity {
 
     /**
      * Set the correct wifi name and initiate peer search. Further actions are handled in the
-     * WifiBradcasterSingelton.
+     * WifiBroadcasterSingleton.
      *
      * We change the name of our server network to the one the WifiP2P on the app is expecting.
      * This way we can establish the connection from the server side without further interaction
@@ -107,7 +109,7 @@ public abstract class WifiHijackBase extends AppCompatActivity {
      */
     public void changeName(String name) {
         try {
-            unregisterReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster());
+            unregisterReceiver(WifiBroadcasterSingleton.getInstance().getBroadcaster());
             mManager.stopPeerDiscovery(mChannel, null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,33 +117,31 @@ public abstract class WifiHijackBase extends AppCompatActivity {
 
         this.mChannel = mManager.initialize(this, getMainLooper(), null);
         this.setWifiName(name);
-        WifiBradcasterSingelton.getInstance().setInstance(mManager, mChannel, this);
-        registerReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster(), this.intentFilter);
+        WifiBroadcasterSingleton.getInstance().setInstance(mManager, mChannel, this);
+        registerReceiver(WifiBroadcasterSingleton.getInstance().getBroadcaster(), this.intentFilter);
 
         Log.d("changeName", "Start discovering");
         this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Log.d("discovery", "yeah");
                 Toast.makeText(WifiHijackBase.this, "Listening to Peers", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int i) {
-                Log.d("discovery", "neah");
                 Toast.makeText(WifiHijackBase.this, "Error listening to Peers", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     /**
-     * Rebind to WifiBradCasterSingelton on resume.
+     * Rebind to WifiBroadCasterSingleton on resume.
      */
     @Override
     public void onResume() {
         super.onResume();
-        WifiBradcasterSingelton.getInstance().setInstance(mManager, mChannel, this);
-        registerReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster(), intentFilter);
+        WifiBroadcasterSingleton.getInstance().setInstance(mManager, mChannel, this);
+        registerReceiver(WifiBroadcasterSingleton.getInstance().getBroadcaster(), intentFilter);
     }
 
     /**
@@ -150,7 +150,7 @@ public abstract class WifiHijackBase extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(WifiBradcasterSingelton.getInstance().getBroadcaster());
+        unregisterReceiver(WifiBroadcasterSingleton.getInstance().getBroadcaster());
     }
 
     /**

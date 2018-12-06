@@ -135,7 +135,7 @@ public class ConnectionSetupServerActivity extends Activity {
                 .setCancelable(false)
                 .setTitle("Setup error");
 
-        builder.setNegativeButton("Restar app", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Restart app", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 restarAPP();

@@ -46,7 +46,7 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
         mManager.stopPeerDiscovery(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(activity, "Discovery mode closed Succeessfully", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "Discovery mode closed Successfully", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -63,7 +63,6 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        // TODO(ich): Handle staring connection
         setupNext();
     }
 
