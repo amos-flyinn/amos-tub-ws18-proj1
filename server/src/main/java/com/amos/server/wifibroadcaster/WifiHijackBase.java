@@ -1,9 +1,11 @@
 package com.amos.server.wifibroadcaster;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +45,36 @@ public abstract class WifiHijackBase extends AppCompatActivity {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        this.mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        this.disconnect();
+    }
+
+    protected void disconnect() {
+        try {
+            @SuppressLint("WifiManagerLeak")
+            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(false);
+            Thread.sleep(100);
+            wifiManager.setWifiEnabled(true);
+        } catch (Exception e) {
+        }
+
+
+
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(mManager, mChannel, netid, null);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setWifiName(String name) {

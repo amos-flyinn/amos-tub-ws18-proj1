@@ -80,11 +80,14 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
     }
 
     protected void disconnect() {
+        this.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        this.mChannel = mManager.initialize(this, getMainLooper(), null);
         try {
             @SuppressLint("WifiManagerLeak")
             WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            wifiManager.setWifiEnabled(true);
             wifiManager.setWifiEnabled(false);
+            Thread.sleep(100);
+            wifiManager.setWifiEnabled(true);
         } catch (Exception e) {
         }
 
@@ -109,7 +112,6 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
             this.connected = false;
         }
     }
-
 
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
         synchronized (this.lock) {

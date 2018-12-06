@@ -1,5 +1,6 @@
 package com.amos.server;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amos.server.eventsender.EventServer;
-import com.amos.server.signaling.Emitter;
 import com.amos.server.signaling.WebServer;
-import com.amos.server.webrtc.IPeer;
 import com.amos.server.webrtc.PeerWrapper;
 import com.amos.server.webrtc.SetupStates;
 import com.amos.shared.TouchEvent;
@@ -30,7 +28,7 @@ import org.webrtc.SurfaceViewRenderer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ConnectionSetupServerActivity extends AppCompatActivity {
+public class ConnectionSetupServerActivity extends Activity {
 
     private ProgressBar infiniteBar;
     private TextView progressText;
@@ -53,10 +51,10 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_setup);
-        infiniteBar = (ProgressBar) findViewById(R.id.infiniteBar);
-        progressText = (TextView) findViewById(R.id.progressText);
+        infiniteBar = findViewById(R.id.infiniteBar);
+        progressText = findViewById(R.id.progressText);
         view = findViewById(R.id.surface_remote_viewer);
-        connectionInfo = (TextView) findViewById(R.id.connectionInfo);
+        connectionInfo = findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
 
         //setStateText(SetupStates.LOCAL_DESCRIPTOR_CREATE);
@@ -72,13 +70,11 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
         eventSender = new EventServer(msgQueue, uiHandler);
 
 
-
-
         //init WebRTC Signaling server
         this.initViews();
         this.peerWrapper = new PeerWrapper(this);
-        this.webSocketServer = new WebServer((IPeer) this.peerWrapper);
-        this.peerWrapper.setEmitter((Emitter)this.webSocketServer);
+        this.webSocketServer = new WebServer(this.peerWrapper);
+        this.peerWrapper.setEmitter(this.webSocketServer);
         this.webSocketServer.start();
 
 
@@ -93,28 +89,27 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
                 }
         );
 
-        
+
     }
 
     /**
-     *This method returns the SurfaceViewRender instance that
+     * This method returns the SurfaceViewRender instance that
      * the client is using for the screen capture streaming
      *
      * @return SurfaceViewRenderer return instance of SurfaceView component
      */
-    public SurfaceViewRenderer getRender(){
+    public SurfaceViewRenderer getRender() {
         return remoteRender;
     }
 
-    private void initViews(){
+    private void initViews() {
         remoteRender = findViewById(R.id.surface_remote_viewer);
     }
 
 
-
-    private void restarAPP(){
+    private void restarAPP() {
         Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
@@ -123,11 +118,10 @@ public class ConnectionSetupServerActivity extends AppCompatActivity {
      * This method should be use to update the TextView description state.
      * It will write a description about the current state of the WebRTC stream.
      * This method is going to handle all possible error states that the App could reach.
-     *
+     * <p>
      * Please see {@link com.amos.server.webrtc.SetupStates} for the states list.
      *
      * @param state the identification number to identify correct or error states.
-     *
      */
     public void setStateText(int state) {
 

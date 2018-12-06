@@ -4,36 +4,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
-import android.os.IBinder;
 import android.util.Log;
-import android.view.Surface;
 import android.view.View;
 
 import com.amos.flyinn.ConnectionSetupActivity;
-import com.amos.flyinn.MainActivity;
-import com.amos.flyinn.WebRTCActivity;
 import com.amos.flyinn.signaling.Emitter;
 
-import org.webrtc.Camera1Enumerator;
-import org.webrtc.CameraEnumerator;
 import org.webrtc.DataChannel;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
-import org.webrtc.Logging;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceTextureHelper;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
-import org.webrtc.VideoFrame;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
-import org.webrtc.ScreenCapturerAndroid;
 
 import java.util.ArrayList;
 
@@ -138,9 +130,8 @@ public class PeerWrapper implements IPeer {
     /**
      * This method close the established connection between the Peers.
      * It is also responsible to stop the screen recording
-     *
      */
-    public void closeConnection(){
+    public void closeConnection() {
         try {
             this.videoCapturer.stopCapture();
         } catch (InterruptedException e) {
@@ -177,9 +168,8 @@ public class PeerWrapper implements IPeer {
      * This method begins the communication between the Peer and the signaling server.
      * It creates the local session descriptor with the needed information to Receive an
      * audio and video stream.
-     *
+     * <p>
      * This method is responsible to begin the first state of the WebRTC stream.
-     *
      */
 
     public void beginTransactionWithOffer() {
@@ -210,15 +200,18 @@ public class PeerWrapper implements IPeer {
 
     /**
      * This method set the new remote sessions descriptor with the information needed to the peer
+     *
      * @param descriptorPeer remote session descriptor that was sent over the signaling server.
      */
     @Override
     public void setRemoteDescriptorPeer(SessionDescription descriptorPeer) {
         this.connection.setRemoteDescription(new SdpObserver("RemoteDescriptor", activity, SdpObserver.REMOTE_SDP), descriptorPeer);
     }
+
     /**
      * This method set the new remote ice candidate with the information needed to the peer.
      * The candidate gives the position and the instructions to connect with the other peer
+     *
      * @param candidate the remote ice candidate that was sent over the signaling server.
      */
     @Override

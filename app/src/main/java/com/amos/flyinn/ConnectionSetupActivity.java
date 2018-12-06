@@ -1,7 +1,7 @@
 package com.amos.flyinn;
 
 import android.Manifest;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.media.projection.MediaProjectionManager;
+import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,20 +24,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amos.flyinn.webrtc.SetupStates;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
+import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
-import com.amos.flyinn.wificonnector.WifiConnectorBase;
+import com.amos.flyinn.webrtc.SetupStates;
 import com.amos.flyinn.wificonnector.WifiConnectorSingelton;
 import com.amos.flyinn.wificonnector.WifiStateMachine;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
 
+import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,11 +48,9 @@ import java.util.concurrent.TimeUnit;
  * or in the ADB server connection.
  * It also tries to handle all possible error states giving the user some options to proceed in failure cases.
  * </p>
- *
  */
 
 public class ConnectionSetupActivity extends AppCompatActivity {
-
     private ProgressBar infiniteBar;
     private TextView progressText;
     private Button switchToHomeScreenButton;
@@ -70,11 +70,11 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_setup);
-        infiniteBar = (ProgressBar) findViewById(R.id.infiniteBar);
-        progressText = (TextView) findViewById(R.id.progressText);
-        closeConnectionButton = (Button) findViewById(R.id.close_connection);
-        switchToHomeScreenButton = (Button) findViewById(R.id.switch_home_screen);
-        connectedMessage = (TextView) findViewById(R.id.connected_message);
+        infiniteBar = findViewById(R.id.infiniteBar);
+        progressText = findViewById(R.id.progressText);
+        closeConnectionButton = findViewById(R.id.close_connection);
+        switchToHomeScreenButton = findViewById(R.id.switch_home_screen);
+        connectedMessage = findViewById(R.id.connected_message);
 
         //Giving callback to the close connection button
         closeConnectionButton.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +99,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             addr = "192.168.49.1";
             WifiConnectorSingelton wifiConnector = WifiConnectorSingelton.getInstance();
             WifiStateMachine stateMachine = wifiConnector.getWifiReceiverP2P();
-            Log.d("IP",stateMachine.getHostAddr());
+            Log.d("IP", stateMachine.getHostAddr());
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }
@@ -113,89 +113,69 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         this.initScreenCapturePermissions();
     }
 
-
     /**
      * Method to minimize the app and go to the home screen
-     *
      */
-    public void swtichToHomeScreen(){
+    public void swtichToHomeScreen() {
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startMain);
     }
 
-
     /**
      * This method is going to be called after the screen capture permission is asked.
      * It gives the permissions necessary for the WebRTC screen capture to work
      *
      * @param requestCode the permission code for the Android permission
-     * @param resultCode the result of the operation
-     * @param data information about the screen capture permissions
+     * @param resultCode  the result of the operation
+     * @param data        information about the screen capture permissions
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
         if (resultCode != RESULT_OK) {
             Toast.makeText(this,
                     "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
             setStateText(SetupStates.PERMISSIONS_FOR_SCREENCAST_DENIED);
             return;
-
         }
-
         setStateText(1);
         this.configForWebRTC(data);
         this.initWebRTCScreenCapture();
-
     }
-
 
     private void initWebRTCScreenCapture() {
         try {
             boolean connected = this.clientSocket.connectBlocking(1, TimeUnit.MINUTES);
-            if(!connected)
-            {
+            if (!connected) {
                 boolean retry = true;
                 int counter = 0;
-                while(retry)
-                {
+                while (retry) {
                     boolean retryReconnect = this.clientSocket.reconnectBlocking();
-                    if(retryReconnect)
-                    {
+                    if (retryReconnect) {
                         retry = false;
                     }
 
-
-                    if(counter == 4)
-                    {
+                    if (counter == 4) {
                         retry = false;
                         break;
                     }
-
                     counter++;
                 }
-
-                if(counter == 4)
-                {
+                if (counter == 4) {
                     this.setStateText(SetupStates.ERROR_CONNECTING_SERVER);
                 }
-            }
-            else
-            {
+            } else {
                 this.peerWrapper.beginTransactionWithOffer();
             }
-
         } catch (InterruptedException e) {
             e.printStackTrace();
             Log.d("MainActivity", "initWebRTCScreenCapture: " + "Error traying to connect to the server");
         }
-
     }
 
     /**
-     *This method returns the SurfaceViewRender instance that
+     * This method returns the SurfaceViewRender instance that
      * the client is using for the screen capture streaming
      *
      * @return SurfaceViewRenderer return instance of SurfaceView component
@@ -221,20 +201,19 @@ public class ConnectionSetupActivity extends AppCompatActivity {
                 (Context.MEDIA_PROJECTION_SERVICE);
         setStateText(0);
         startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 42);
-
-
     }
 
 
-    private void restarAPP(){
+    private void restarAPP() {
         Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 
     /**
      * This method is to create an ADB service
+     *
      * @param addr the address where the ADB service is going to listen for connections
      * @return returns Daemon service to work with the ADB service
      */
@@ -252,9 +231,37 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     }
 
 
-    private void closeConnection(){
+    private void closeConnection() {
         peerWrapper.closeConnection();
         this.render.clearImage();
+        this.stopService(new Intent(this, ADBService.class));
+
+        WifiP2pManager mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        WifiP2pManager.Channel mChannel = mManager.initialize(this, getMainLooper(), null);
+        try {
+            @SuppressLint("WifiManagerLeak")
+            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(false);
+            Thread.sleep(100);
+            wifiManager.setWifiEnabled(true);
+        } catch (Exception e) {
+        }
+
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(mManager, mChannel, netid, null);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        finish();
     }
 
 
@@ -262,11 +269,10 @@ public class ConnectionSetupActivity extends AppCompatActivity {
      * This method should be use to update the TextView description state.
      * It will write a description about the current state of the WebRTC stream.
      * This method is going to handle all possible error states that the App could reach.
-     *
+     * <p>
      * Please see {@link com.amos.flyinn.webrtc.SetupStates} for the states list.
      *
      * @param state the identification number to identify correct or error states.
-     *
      */
     public void setStateText(int state) {
 
@@ -276,7 +282,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         } else {
             builder = new AlertDialog.Builder(this);
         }
-                builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setTitle("Setup error");
 
@@ -373,8 +379,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
                 infiniteBar.setVisibility(View.INVISIBLE);
                 break;
         }
-
-
 
 
     }
