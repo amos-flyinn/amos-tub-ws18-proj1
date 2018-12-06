@@ -5,8 +5,8 @@ import android.net.wifi.p2p.WifiP2pManager;
 /**
  * Globally manage our wifi state.
  */
-public class WifiConnectorSingelton {
-    private static final WifiConnectorSingelton ourInstance = new WifiConnectorSingelton();
+public class WifiConnectorSingleton {
+    private static final WifiConnectorSingleton ourInstance = new WifiConnectorSingleton();
     private WifiStateMachine receiver;
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
@@ -15,7 +15,7 @@ public class WifiConnectorSingelton {
      * Get the global WifiConnector object.
      * @return
      */
-    public static WifiConnectorSingelton getInstance() {
+    public static WifiConnectorSingleton getInstance() {
         return ourInstance;
     }
 

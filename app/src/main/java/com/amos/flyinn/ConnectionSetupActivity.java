@@ -30,7 +30,7 @@ import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
 import com.amos.flyinn.webrtc.SetupStates;
-import com.amos.flyinn.wificonnector.WifiConnectorSingelton;
+import com.amos.flyinn.wificonnector.WifiConnectorSingleton;
 import com.amos.flyinn.wificonnector.WifiStateMachine;
 
 import org.webrtc.PeerConnection;
@@ -88,7 +88,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         switchToHomeScreenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                swtichToHomeScreen();
+                switchToHomeScreen();
             }
         });
 
@@ -96,14 +96,13 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         String addr;
         //Preparing and initializing the ADB service to listen for incoming connections.
         try {
-            addr = "192.168.49.1";
-            WifiConnectorSingelton wifiConnector = WifiConnectorSingelton.getInstance();
+            WifiConnectorSingleton wifiConnector = WifiConnectorSingleton.getInstance();
             WifiStateMachine stateMachine = wifiConnector.getWifiReceiverP2P();
             Log.d("IP", stateMachine.getHostAddr());
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }
-            adbDaemon = createADBService(addr);
+            adbDaemon = createADBService(stateMachine.getHostAddr());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +115,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     /**
      * Method to minimize the app and go to the home screen
      */
-    public void swtichToHomeScreen() {
+    public void switchToHomeScreen() {
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -204,7 +203,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     }
 
 
-    private void restarAPP() {
+    private void restartAPP() {
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -229,7 +228,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         }
         return d;
     }
-
 
     private void closeConnection() {
         peerWrapper.closeConnection();
@@ -289,7 +287,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
         builder.setNegativeButton("Restar app", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                restarAPP();
+                restartAPP();
             }
         });
 
@@ -332,7 +330,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
                 break;
 
             case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
-
                 builder.setMessage("Creating local descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
@@ -341,16 +338,13 @@ public class ConnectionSetupActivity extends AppCompatActivity {
 
 
             case SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR:
-
                 builder.setMessage("Creating remote descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
                 infiniteBar.setVisibility(View.INVISIBLE);
                 break;
 
-
             case SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION:
-
                 builder.setMessage("Setting local descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
@@ -363,7 +357,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
                 progressText.setVisibility(View.INVISIBLE);
                 infiniteBar.setVisibility(View.INVISIBLE);
                 break;
-
 
             case SetupStates.FAIL_SENDING_SESSION_DESCRIPTOR:
                 builder.setMessage("Sending remote descriptor failed. Please restart the app");
@@ -379,8 +372,5 @@ public class ConnectionSetupActivity extends AppCompatActivity {
                 infiniteBar.setVisibility(View.INVISIBLE);
                 break;
         }
-
-
     }
-
 }

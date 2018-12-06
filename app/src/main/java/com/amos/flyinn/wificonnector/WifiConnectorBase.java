@@ -171,7 +171,7 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
      */
     public void totalRefresh() {
         try {
-            unregisterReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P());
+            unregisterReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P());
         } catch (Exception e) {
         }
         this.mManager.stopPeerDiscovery(this.mChannel, null);
@@ -190,8 +190,8 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
                 Log.d("WifiP2PActivity", "Error listening to peers : " + i);
             }
         });
-        WifiConnectorSingelton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
-        registerReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
+        WifiConnectorSingleton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
+        registerReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
     /**
@@ -200,8 +200,8 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        WifiConnectorSingelton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
-        registerReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P(), intentFilter);
+        WifiConnectorSingleton.getInstance().setWifiReceiverP2P(mManager, mChannel, this);
+        registerReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P(), intentFilter);
     }
 
     /**
@@ -210,7 +210,7 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(WifiConnectorSingelton.getInstance().getWifiReceiverP2P());
+        unregisterReceiver(WifiConnectorSingleton.getInstance().getWifiReceiverP2P());
     }
 
     /**

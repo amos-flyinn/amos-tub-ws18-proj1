@@ -22,7 +22,6 @@ import com.amos.server.webrtc.PeerWrapper;
 import com.amos.server.webrtc.SetupStates;
 import com.amos.shared.TouchEvent;
 
-import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
 
 import java.util.concurrent.BlockingQueue;
@@ -41,10 +40,8 @@ public class ConnectionSetupServerActivity extends Activity {
     Handler uiHandler;
     SurfaceViewRenderer view;
 
-    private PeerConnection localConnection;
     private WebServer webSocketServer;
     private PeerWrapper peerWrapper;
-    private Button buttonInit;
     private SurfaceViewRenderer remoteRender;
 
     @Override
