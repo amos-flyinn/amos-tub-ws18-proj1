@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -65,8 +64,6 @@ public class NearbyConnectionActivity extends ListActivity {
     private final String clientName = generateName(5);
     private String serverID;
     private String serverName;
-
-    final Handler handler = new Handler();
 
     /** Toast to publish user notifications */
     private Toast mToast;
@@ -230,9 +227,7 @@ public class NearbyConnectionActivity extends ListActivity {
                     mToast.setText(R.string.nearby_disconnected);
                     mToast.show();
                     clearServerData();
-
-                    // display toast for 2s, then finish
-                    handler.postDelayed(() -> finish(), 2000);
+                    finish();
                 }
             };
 
@@ -336,8 +331,10 @@ public class NearbyConnectionActivity extends ListActivity {
 
             connectionsClient.stopAllEndpoints();
             Log.i(NEARBY_TAG, "User chose to disconnect from " + serverID);
-            // make sure connectionLifecycleCallback.onDisconnected() is called by delaying finish
-            handler.postDelayed(() -> finish(), 2000);
+            mToast.setText(R.string.nearby_disconnected);
+            mToast.show();
+            clearServerData();
+            finish();
             return;
         }
 
