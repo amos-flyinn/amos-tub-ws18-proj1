@@ -194,8 +194,6 @@ public class NearbyServerActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        Log.d(NEARBY_TAG, "DEBUGME");
-
         // user may have changed permissions
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
