@@ -56,6 +56,8 @@ public class NearbyServerActivity extends Activity {
     private String clientID;
     private String clientName;
 
+    final Handler handler = new Handler();
+
     /** Toast to publish user notifications */
     private Toast mToast;
 
@@ -160,7 +162,8 @@ public class NearbyServerActivity extends Activity {
                     connectionsClient.stopAdvertising();
                     connectionsClient.stopAllEndpoints();
 
-                    startAdvertising();
+                    // display toast for 2s, then start advertising again
+                    handler.postDelayed(() -> startAdvertising(), 2000);
                 }
             };
 

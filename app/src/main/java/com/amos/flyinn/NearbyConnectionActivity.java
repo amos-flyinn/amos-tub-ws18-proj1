@@ -230,7 +230,9 @@ public class NearbyConnectionActivity extends ListActivity {
                     mToast.setText(R.string.nearby_disconnected);
                     mToast.show();
                     clearServerData();
-                    finish();
+
+                    // display toast for 2s, then finish
+                    handler.postDelayed(() -> finish(), 2000);
                 }
             };
 
