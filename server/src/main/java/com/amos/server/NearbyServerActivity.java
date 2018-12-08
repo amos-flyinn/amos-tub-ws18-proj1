@@ -57,7 +57,7 @@ public class NearbyServerActivity extends Activity {
     private String clientName;
 
     /** Toast to publish user notifications */
-    private Toast mToast = Toast.makeText(this  , "" , Toast.LENGTH_SHORT);
+    private Toast mToast;
 
     /** Tag for logging purposes. */
     private static final String NEARBY_TAG = "ServerNearbyConnection";
@@ -173,15 +173,15 @@ public class NearbyServerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_server);
 
-        // initiate nearby connection manager
-        connectionsClient = Nearby.getConnectionsClient(this);
-
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
+
+        connectionsClient = Nearby.getConnectionsClient(this);
+        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         startAdvertising();
     }
@@ -193,6 +193,8 @@ public class NearbyServerActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        Log.d(NEARBY_TAG, "DEBUGME");
 
         // user may have changed permissions
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
@@ -309,7 +311,7 @@ public class NearbyServerActivity extends Activity {
         }
 
         String name = Build.MODEL + "_" + sb.toString();
-        Log.d(NEARBY_TAG, "Current name is: " + name);
+        Log.i(NEARBY_TAG, "Current name is: " + name);
         return name;
     }
 }

@@ -69,7 +69,7 @@ public class NearbyConnectionActivity extends ListActivity {
     final Handler handler = new Handler();
 
     /** Toast to publish user notifications */
-    private Toast mToast = Toast.makeText(this  , "" , Toast.LENGTH_SHORT);
+    private Toast mToast;
 
     /** List of all discovered servers by name, continuously updated. */
     private List<String> servers = new ArrayList<>();
@@ -118,7 +118,7 @@ public class NearbyConnectionActivity extends ListActivity {
                         serverIDsToNames.put(endpointId, endpointName);
                         ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                                 .notifyDataSetChanged();
-                        Log.d(NEARBY_TAG, clientName + " discovered endpoint " + endpointId);
+                        Log.i(NEARBY_TAG, clientName + " discovered endpoint " + endpointId);
 
                     } else {
                         // this should not happen
@@ -141,7 +141,7 @@ public class NearbyConnectionActivity extends ListActivity {
                     while (servers.remove(lostEndpointName)) {}
                     ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                             .notifyDataSetChanged();
-                    Log.d(NEARBY_TAG, clientName + " lost discovered endpoint " + endpointId);
+                    Log.i(NEARBY_TAG, clientName + " lost discovered endpoint " + endpointId);
                 }
             };
 
@@ -252,6 +252,7 @@ public class NearbyConnectionActivity extends ListActivity {
         }
         
         connectionsClient = Nearby.getConnectionsClient(this);
+        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, servers);
@@ -443,7 +444,7 @@ public class NearbyConnectionActivity extends ListActivity {
         }
 
         String name = Build.MODEL + "_" + sb.toString();
-        Log.d(NEARBY_TAG, "Current name is: " + name);
+        Log.i(NEARBY_TAG, "Current name is: " + name);
         return name;
     }
 }
