@@ -62,19 +62,11 @@
         <service android:name=".summoner.ADBService" />
 
         <activity android:name=".ConnectionSetupActivity" />
-        <activity
-            android:name=".NearbyConnectionActivity"
-            android:label="@string/title_activity_nearby_connection"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amos.flyinn.MainActivity" />
-        </activity>
+        <activity android:name=".NearbyConnectionActivity" />
         <activity android:name=".ShowCodeConnAuth" />
-
-        <service
-            android:name=".ClientConnAuthService"
-            android:exported="false"></service>
+        <activity
+            android:name=".ClientConnAuthActivity"
+            android:label="@string/title_activity_client_conn_auth"></activity>
     </application>
 
 </manifest>

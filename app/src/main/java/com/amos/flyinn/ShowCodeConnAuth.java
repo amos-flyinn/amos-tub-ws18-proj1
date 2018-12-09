@@ -11,41 +11,36 @@ import java.security.SecureRandom;
  * Class zeigt CheckCode an
  * und geht rüber zum ClientConnAuth-Service, damit
  * eine Datenübertragung stattfinden kann.
+ *
+ * TODO javadocs
  */
+public class ShowCodeConnAuth extends ClientConnAuthActivity {
 
-public class ShowCodeConnAuth extends AppCompatActivity {
+    private final int CODE_LENGTH = 4;
 
-
-    private final String appCode = generateNumber();
-    private final String appName = R.string.flyinn_name + appCode;
+    private final String appCode = generateNumber(CODE_LENGTH);
 
     private TextView display;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_code);
         display = findViewById(R.id.textView2);
         display.setText(appCode);
-
-        Intent serviceIntent = new Intent(this, ClientConnAuthService.class);
-
-        Bundle b = new Bundle();
-        //b.putParcelable();
-        b.putString("name", appName); // Übergebe String
-        serviceIntent.putExtras(b); //Put your id to your next Intent
-        startService(serviceIntent);
+        super.onCreate(savedInstanceState);
     }
 
-
-    private String generateNumber() {
+    private String generateNumber(int length) {
         SecureRandom rnd = new SecureRandom();
         String number = "";
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < length; i++) {
             number += rnd.nextInt(10);
         }
         return number;
     }
 
+    @Override
+    protected String generateName() {
+        return R.string.flyinn_name + appCode;
+    }
 }
