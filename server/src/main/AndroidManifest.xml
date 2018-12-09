@@ -28,9 +28,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".WebRTCServerActivity" />
-
         <activity android:name=".MainActivity" />
-
         <activity
             android:name=".EventGrabDemo"
             android:label="@string/title_activity_event_grab_demo"
@@ -40,27 +38,29 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amos.server.MainActivity" />
         </activity>
-
         <activity android:name=".EventSenderDemo" />
-
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".ConnectToClientActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".NearbyServerActivity"
-            android:label="NearbyActivity"></activity>
-
+            android:label="NearbyActivity" />
         <activity
             android:name=".ConnectionSetupServerActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".ServerConnectionConnAuth" />
+
+        <service
+            android:name=".ServerConnAuthService"
+            android:exported="false"></service>
     </application>
+
 </manifest>
