@@ -58,9 +58,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".ServerConnectionConnAuth" />
 
-        <service
-            android:name=".ServerConnAuthService"
-            android:exported="false"></service>
+        <activity android:name=".ServerConnAuthActivity"></activity>
     </application>
 
 </manifest>

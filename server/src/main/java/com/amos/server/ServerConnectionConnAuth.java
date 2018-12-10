@@ -14,7 +14,7 @@ import android.widget.TextView;
  *  - Class schickt Eingabe an Service
  */
 
-public class ServerConnectionConnAuth extends AppCompatActivity {
+public class ServerConnectionConnAuth extends ServerConnAuthActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class ServerConnectionConnAuth extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String name = v.getText().toString(); // Get the String
-
+                    /*
                     Intent serviceIntent = new Intent(ServerConnectionConnAuth.this,
                             ServerConnAuthService.class);
 
@@ -35,6 +35,7 @@ public class ServerConnectionConnAuth extends AppCompatActivity {
                     //b.putString("name", appName); // Übergebe String
                     serviceIntent.putExtras(b); //Put your id to your next Intent
                     startService(serviceIntent);
+                    */
                     return true;
                 }
                 return false;
