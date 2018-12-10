@@ -57,7 +57,7 @@ public class ClientConnAuthActivity extends Activity {
 
     /** Toast to publish user notifications */
     private Toast mToast;
-    
+
     Handler handler = new Handler();
 
     /** Tag for logging purposes. */
@@ -165,6 +165,8 @@ public class ClientConnAuthActivity extends Activity {
             Log.w(CONN_AUTH_TAG, "Could not check permissions due to version");
         }
 
+
+        Log.i(CONN_AUTH_TAG, "Current name is: " + clientName);
         connectionsClient = Nearby.getConnectionsClient(this);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
@@ -222,7 +224,9 @@ public class ClientConnAuthActivity extends Activity {
                     Log.e(CONN_AUTH_TAG, "Unable to start advertising " + clientName);
                     mToast.setText(R.string.nearby_advertising_error);
                     mToast.show();
-                    finish();
+
+                    // display toast for 2s, then finish
+                    handler.postDelayed(() -> finish(), 2000);
                 });
     }
 
@@ -281,17 +285,16 @@ public class ClientConnAuthActivity extends Activity {
      * Generates a name for the server.
      * @return The server name, consisting of the build model + a random string
      */
-    protected String generateName(){
+    protected String generateName() {
+        int suffix = 5;
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
-        StringBuilder sb = new StringBuilder(5);
-        for (int i = 0; i < 5; i++) {
+        StringBuilder sb = new StringBuilder(suffix);
+        for (int i = 0; i < suffix; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
 
-        String name = Build.MODEL + "_" + sb.toString();
-        Log.i(CONN_AUTH_TAG, "Current name is: " + name);
-        return name;
+        return Build.MODEL + "_" + sb.toString();
     }
 }

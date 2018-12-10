@@ -1,6 +1,7 @@
 package com.amos.server;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -46,8 +48,9 @@ import java.util.List;
  *  - Service checkt Eingabe, ob User in Liste, mit dieser Eingabe übereinstimmt
  *  - Service verbindet sich mit User aus dieser Liste
  *
+ * TODO javadoc rewrite
  */
-public class ServerConnAuthActivity extends ListActivity {
+public class ServerConnAuthActivity extends Activity {
 
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {
@@ -66,15 +69,14 @@ public class ServerConnAuthActivity extends ListActivity {
     /** Connection manager for the connection to FlyInn clients. */
     protected ConnectionsClient connectionsClient;
 
-    private final String serverName = generateName(5);
+    private final String serverName = generateName();
     private String clientID;
     private String clientName;
 
     /** Toast to publish user notifications */
     private Toast mToast;
 
-    /** List of all discovered servers by name, continuously updated. */
-    private List<String> servers = new ArrayList<>();
+    Handler handler = new Handler();
 
     /** Maps server names to their nearby connection IDs. */
     private HashMap<String, String> clientNamesToIDs = new HashMap<>();
@@ -103,7 +105,7 @@ public class ServerConnAuthActivity extends ListActivity {
             };
 
     /**
-     * Handling of discovered endpoints (servers). Adds new endpoints to servers data maps/list,
+     * Handling of discovered endpoints (clients). Adds new endpoints to clients data maps/list,
      * and removes lost endpoints.
      */
     private final EndpointDiscoveryCallback endpointDiscoveryCallback =
@@ -111,39 +113,13 @@ public class ServerConnAuthActivity extends ListActivity {
                 @Override
                 public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
                     // discovered a server, add to data maps
-                    String endpointName = info.getEndpointName();
-
-                    if (!(clientIDsToNames.containsKey(endpointId)
-                            || clientNamesToIDs.containsKey(endpointName))) {
-                        servers.add(endpointName);
-                        clientNamesToIDs.put(endpointName, endpointId);
-                        clientIDsToNames.put(endpointId, endpointName);
-                        ((ArrayAdapter) ServerConnAuthActivity.this.getListAdapter())
-                                .notifyDataSetChanged();
-                        Log.i(CONN_AUTH_TAG, serverName + " digscovered endpoint " + endpointId); //did
-
-                    } else {
-                        // this should not happen
-                        while (servers.remove(endpointName)) {}
-                        servers.add(endpointName);
-                        clientIDsToNames.put(endpointId, endpointName);
-                        clientNamesToIDs.put(endpointName, endpointId);
-                        ((ArrayAdapter) ServerConnAuthActivity.this.getListAdapter())
-                                .notifyDataSetChanged();
-                        Log.w(CONN_AUTH_TAG, serverName + " rediscovered endpoint " + endpointId); // did
-                    }
+                    addClient(info.getEndpointName(), endpointId);
                 }
 
                 @Override
                 public void onEndpointLost(String endpointId) {
                     // previously discovered server is no longer reachable, remove from data maps
-                    String lostEndpointName = clientIDsToNames.get(endpointId);
-                    clientIDsToNames.remove(endpointId);
-                    clientNamesToIDs.remove(lostEndpointName);
-                    while (servers.remove(lostEndpointName)) {}
-                    ((ArrayAdapter) ServerConnAuthActivity.this.getListAdapter())
-                            .notifyDataSetChanged();
-                    Log.i(CONN_AUTH_TAG, serverName + " lost discovered endpoint " + endpointId); // did
+                    removeClient(endpointId);
                 }
             };
 
@@ -157,30 +133,15 @@ public class ServerConnAuthActivity extends ListActivity {
                 public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
                     Log.i(CONN_AUTH_TAG, "Connection initiated to " + endpointId);
 
-                    if (endpointId.equals(clientID)) {
-                        // authentication via tokens
-                        // TODO replace token authentication with QR code/manual code input
-                        new AlertDialog.Builder(ServerConnAuthActivity.this)
-                                .setTitle("Accept connection to " + clientName + "?")
-                                .setMessage("Confirm the code matches on both devices: " +
-                                        connectionInfo.getAuthenticationToken())
-                                .setPositiveButton(android.R.string.yes,
-                                        (DialogInterface dialog, int which) ->
-                                                // accept the connection
-                                                connectionsClient.acceptConnection(endpointId,
-                                                        payloadCallback))
-                                .setNegativeButton(android.R.string.cancel,
-                                        (DialogInterface dialog, int which) ->
-                                                // reject the connection
-                                                connectionsClient.rejectConnection(endpointId))
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
+                    if (clientName != null && clientID != null && clientID.equals(endpointId)
+                            && connectionInfo.getEndpointName().endsWith(clientName)) {
+
+                        connectionsClient.acceptConnection(endpointId, payloadCallback);
+                        Log.i(CONN_AUTH_TAG, "Attempt to connect to " + endpointId);
 
                     } else {
-                        // initiated connection is not with server selected by user
                         connectionsClient.rejectConnection(endpointId);
-                        Log.i(CONN_AUTH_TAG, "Connection rejected to non-selected server "
-                                + endpointId);
+                        Log.i(CONN_AUTH_TAG, "Reject connection to " + endpointId);
                     }
                 }
 
@@ -193,7 +154,7 @@ public class ServerConnAuthActivity extends ListActivity {
                             Log.i(CONN_AUTH_TAG, "Connected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
-                            connectedToServer();
+                            connectionsClient.stopDiscovery();
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
@@ -231,14 +192,16 @@ public class ServerConnAuthActivity extends ListActivity {
                     Log.i(CONN_AUTH_TAG, "Disconnected from " + endpointId);
                     mToast.setText(R.string.nearby_disconnected);
                     mToast.show();
-                    clearServerData();
-                    finish();
+                    clearClientData();
+
+                    // display toast for 2s, then recreate
+                    handler.postDelayed(() -> recreate(), 2000);
                 }
             };
 
 
     /**
-     * Initialises nearby's connectionsClient and our list adapter to showcase servers to the user,
+     * Initialises nearby's connectionsClient and our list adapter to showcase clients to the user,
      * checks permissions and starts discovery
      * @param savedInstanceState
      */
@@ -253,12 +216,10 @@ public class ServerConnAuthActivity extends ListActivity {
             Log.w(CONN_AUTH_TAG, "Could not check permissions due to version");
         }
 
+
+        Log.i(CONN_AUTH_TAG, "Current name is: " + serverName);
         connectionsClient = Nearby.getConnectionsClient(this);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_list_item_1, servers);
-        setListAdapter(adapter);
 
         startDiscovering();
     }
@@ -287,15 +248,15 @@ public class ServerConnAuthActivity extends ListActivity {
     protected void onDestroy() {
         connectionsClient.stopDiscovery();
         connectionsClient.stopAllEndpoints();
-        clearServerData();
+        clearClientData();
         super.onDestroy();
     }
 
     /**
-     * Clears all servers map data as well as serverName/serverID and starts discovery
+     * Clears all clients map data as well as serverName/serverID and starts discovery
      */
     private void startDiscovering() {
-        clearServerData();
+        clearClientData();
 
         DiscoveryOptions discoveryOptions =
                 new DiscoveryOptions.Builder().setStrategy(STRATEGY).build();
@@ -303,91 +264,86 @@ public class ServerConnAuthActivity extends ListActivity {
         connectionsClient.startDiscovery("com.amos.flyinn", endpointDiscoveryCallback,
                 discoveryOptions)
                 .addOnSuccessListener( (Void unused) -> {
-                    // started searching for servers successfully
-                    Log.i(CONN_AUTH_TAG, "Discovering connections on " + serverName); // did
+                    // started searching for clients successfully
+                    Log.i(CONN_AUTH_TAG, "Discovering connections on " + serverName);
                     mToast.setText(R.string.nearby_discovering_success);
                     mToast.show();
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to start discovery
-                    Log.e(CONN_AUTH_TAG, "Unable to start discovery on " + serverName); // did
+                    Log.e(CONN_AUTH_TAG, "Unable to start discovery on " + serverName);
                     mToast.setText(R.string.nearby_discovering_error);
                     mToast.show();
-                    finish();
+
+                    // display toast for 2s, then finish
+                    handler.postDelayed(() -> finish(), 2000);
                 });
     }
 
     /**
-     * Handles selection of server from list by user and requesting connections to those servers
-     * when not connected to another device, and "close connection" button actions if a server
-     * connection is active.
-     * @param l The ListView where the click happened
-     * @param v The view that was clicked within the ListView
-     * @param position The position of the view in the list
-     * @param id The row id of the item that was clicked
+     *
+     * @param clientCode
+     * @return
      */
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        // user chose to disconnect from server
-        if (servers.get(position).startsWith(
-                getResources().getString(R.string.nearby_close_connection))) {
-
-            connectionsClient.stopAllEndpoints();
-            Log.i(CONN_AUTH_TAG, "User chose to disconnect from " + clientID);
-            mToast.setText(R.string.nearby_disconnected);
-            mToast.show();
-            clearServerData();
-            finish();
-            return;
+    protected boolean connectToClient(String clientCode) {
+        if (clientNamesToIDs.containsKey(clientCode)) {
+            // client is reachable (=in our data maps)
+            clientName = clientCode;
+            clientID = clientNamesToIDs.get(clientCode);
+            connectionsClient.requestConnection(serverName, clientID, connectionLifecycleCallback);
+            Log.i(CONN_AUTH_TAG, "User selected endpoint " + clientID + " with code "
+                    + clientCode + " on server " + serverName);
+            return true;
         }
-
-        // store user selection
-        clientName = servers.get(position);
-        clientID = clientNamesToIDs.get(clientName);
-
-        //request connection to server selected by user
-        connectionsClient.requestConnection(serverName, clientID, connectionLifecycleCallback) // did
-                .addOnSuccessListener( (Void unused) -> {
-                    // connection request successful
-                    Log.i(CONN_AUTH_TAG, serverName + " requested connection to " + clientID); // did
-                })
-                .addOnFailureListener( (Exception e) -> {
-                    // failed to request connection
-                    clientName = null;
-                    clientID = null;
-                    Log.w(CONN_AUTH_TAG, serverName + " failed requesting connection to " + // did
-                            clientID);
-                    mToast.setText(R.string.nearby_connection_error);
-                    mToast.show();
-                });
+        // else client not reachable
+        Log.w(CONN_AUTH_TAG, "Endpoint with code " + clientCode
+                + " not reachable from server " + serverName);
+        mToast.setText(R.string.nearby_connection_unreachable);
+        mToast.show();
+        return false;
     }
 
     /**
-     * Clears serverName/serverID and all server data maps as well as the servers list
+     *
+     * @param endpointName
+     * @param id
      */
-    private void clearServerData() {
-        servers.clear();
-        ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
+    private void addClient(String endpointName, String id) {
+        // extract last 4 characters of endpointName as name of the client (4-digit code)
+        if (endpointName.length() >= 4) {
+            String name = endpointName.substring(endpointName.length()-3);
+            clientIDsToNames.put(id, name);
+            clientNamesToIDs.put(name, id);
+            Log.i(CONN_AUTH_TAG, serverName + " discovered endpoint " + id);
+        } else {
+            Log.e(CONN_AUTH_TAG, serverName + " discovered faulty endpoint " + id);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     */
+    private void removeClient(String id) {
+        try {
+            String name = clientIDsToNames.get(id);
+            clientIDsToNames.remove(id);
+            clientNamesToIDs.remove(name);
+            Log.i(CONN_AUTH_TAG, serverName + " lost discovered endpoint " + id);
+        } catch (NullPointerException e) {
+            Log.e(CONN_AUTH_TAG, "Endpoint " + id
+                    + " was not stored correctly in the data maps of " + serverName);
+        }
+    }
+
+    /**
+     * Clears serverName/serverID and all server data maps as well as the clients list
+     */
+    private void clearClientData() {
         clientIDsToNames.clear();
         clientNamesToIDs.clear();
         clientID = null;
         clientName = null;
-    }
-
-    /**
-     * Clears servers data maps, stops discovery of new servers and adds close connection button
-     */
-    private void connectedToServer() {
-        connectionsClient.stopDiscovery();
-        servers.clear();
-        clientNamesToIDs.clear();
-        clientIDsToNames.clear();
-
-        //add close connection button
-        servers.add(getResources().getString(R.string.nearby_close_connection) + " " + clientName);
-        ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
     }
 
     /**
@@ -438,18 +394,16 @@ public class ServerConnAuthActivity extends ListActivity {
      * Generates a name for the server.
      * @return The server name, consisting of the build model + a random string
      */
-    // TODO Define better name system?
-    private String generateName(int appendixLength){
+    protected String generateName() {
+        int suffix = 5;
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
-        StringBuilder sb = new StringBuilder(appendixLength);
-        for (int i = 0; i < appendixLength; i++) {
+        StringBuilder sb = new StringBuilder(suffix);
+        for (int i = 0; i < suffix; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
 
-        String name = Build.MODEL + "_" + sb.toString();
-        Log.i(CONN_AUTH_TAG, "Current name is: " + name);
-        return name;
+        return Build.MODEL + "_" + sb.toString();
     }
 }

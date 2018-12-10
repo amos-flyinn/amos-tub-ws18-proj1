@@ -13,7 +13,10 @@
     <string name="nearby_connection_success">Connection established.</string>
     <string name="nearby_connection_rejected">Connection was rejected.</string>
     <string name="nearby_connection_error">Failed to establish connection.</string>
+    <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
     <string name="nearby_disconnected">Connection closed.</string>
+
+    <string name="flyinn_server_name">FlyInnServer-</string>
 
     <string name="buildinfo_git_tag_name">Git Tag: </string>
     <string name="buildinfo_git_commit_date">Git Commit: </string>

@@ -12,16 +12,22 @@ import java.security.SecureRandom;
  * und geht rüber zum ClientConnAuth-Service, damit
  * eine Datenübertragung stattfinden kann.
  *
- * TODO javadocs
+ * TODO javadoc
  */
 public class ShowCodeConnAuth extends ClientConnAuthActivity {
 
+    /** */
     private final int CODE_LENGTH = 4;
 
+    /** */
     private final String appCode = generateNumber(CODE_LENGTH);
 
     private TextView display;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_show_code);
@@ -30,6 +36,11 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     *
+     * @param length
+     * @return
+     */
     private String generateNumber(int length) {
         SecureRandom rnd = new SecureRandom();
         String number = "";
@@ -39,6 +50,10 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
         return number;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected String generateName() {
         return R.string.flyinn_name + appCode;
