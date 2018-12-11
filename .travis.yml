@@ -56,7 +56,6 @@ before_script:
   - bash before_operations.sh
 
 script:
-  - bash update_fakeinput_jar_asset.sh
   - bash build_operations.sh
 
 #before_deploy:
