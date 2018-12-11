@@ -43,9 +43,11 @@ import java.util.List;
  */
 public class NearbyConnectionActivity extends ListActivity {
 
-    /** Permissions required for Nearby Connection */
+    /**
+     * Permissions required for Nearby Connection
+     */
     private static final String[] REQUIRED_PERMISSIONS =
-            new String[] {
+            new String[]{
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_WIFI_STATE,
@@ -55,29 +57,43 @@ public class NearbyConnectionActivity extends ListActivity {
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
-    /** 1-to-1 since a device will be connected to only one other device at most. */
+    /**
+     * 1-to-1 since a device will be connected to only one other device at most.
+     */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
-    /** Connection manager for the connection to FlyInn clients. */
+    /**
+     * Connection manager for the connection to FlyInn clients.
+     */
     protected ConnectionsClient connectionsClient;
 
     private final String clientName = generateName(5);
     private String serverID;
     private String serverName;
 
-    /** Toast to publish user notifications */
+    /**
+     * Toast to publish user notifications
+     */
     private Toast mToast;
 
-    /** List of all discovered servers by name, continuously updated. */
+    /**
+     * List of all discovered servers by name, continuously updated.
+     */
     private List<String> servers = new ArrayList<>();
 
-    /** Maps server names to their nearby connection IDs. */
+    /**
+     * Maps server names to their nearby connection IDs.
+     */
     private HashMap<String, String> serverNamesToIDs = new HashMap<>();
 
-    /** Maps server IDs to their nearby connection names. */
+    /**
+     * Maps server IDs to their nearby connection names.
+     */
     private HashMap<String, String> serverIDsToNames = new HashMap<>();
 
-    /** Tag for logging purposes. */
+    /**
+     * Tag for logging purposes.
+     */
     private static final String NEARBY_TAG = "ClientNearbyConnection";
 
 
@@ -119,7 +135,8 @@ public class NearbyConnectionActivity extends ListActivity {
 
                     } else {
                         // this should not happen
-                        while (servers.remove(endpointName)) {}
+                        while (servers.remove(endpointName)) {
+                        }
                         servers.add(endpointName);
                         serverIDsToNames.put(endpointId, endpointName);
                         serverNamesToIDs.put(endpointName, endpointId);
@@ -135,7 +152,8 @@ public class NearbyConnectionActivity extends ListActivity {
                     String lostEndpointName = serverIDsToNames.get(endpointId);
                     serverIDsToNames.remove(endpointId);
                     serverNamesToIDs.remove(lostEndpointName);
-                    while (servers.remove(lostEndpointName)) {}
+                    while (servers.remove(lostEndpointName)) {
+                    }
                     ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                             .notifyDataSetChanged();
                     Log.i(NEARBY_TAG, clientName + " lost discovered endpoint " + endpointId);
@@ -235,6 +253,7 @@ public class NearbyConnectionActivity extends ListActivity {
     /**
      * Initialises nearby's connectionsClient and our list adapter to showcase servers to the user,
      * checks permissions and starts discovery
+     *
      * @param savedInstanceState
      */
     @Override
@@ -247,9 +266,9 @@ public class NearbyConnectionActivity extends ListActivity {
         } else {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
-        
+
         connectionsClient = Nearby.getConnectionsClient(this);
-        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+//        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, servers);
@@ -297,13 +316,13 @@ public class NearbyConnectionActivity extends ListActivity {
 
         connectionsClient.startDiscovery("com.amos.flyinn", endpointDiscoveryCallback,
                 discoveryOptions)
-                .addOnSuccessListener( (Void unused) -> {
+                .addOnSuccessListener((Void unused) -> {
                     // started searching for servers successfully
                     Log.i(NEARBY_TAG, "Discovering connections on " + clientName);
                     mToast.setText(R.string.nearby_discovering_success);
                     mToast.show();
                 })
-                .addOnFailureListener( (Exception e) -> {
+                .addOnFailureListener((Exception e) -> {
                     // unable to start discovery
                     Log.e(NEARBY_TAG, "Unable to start discovery on " + clientName);
                     mToast.setText(R.string.nearby_discovering_error);
@@ -316,10 +335,11 @@ public class NearbyConnectionActivity extends ListActivity {
      * Handles selection of server from list by user and requesting connections to those servers
      * when not connected to another device, and "close connection" button actions if a server
      * connection is active.
-     * @param l The ListView where the click happened
-     * @param v The view that was clicked within the ListView
+     *
+     * @param l        The ListView where the click happened
+     * @param v        The view that was clicked within the ListView
      * @param position The position of the view in the list
-     * @param id The row id of the item that was clicked
+     * @param id       The row id of the item that was clicked
      */
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -344,11 +364,11 @@ public class NearbyConnectionActivity extends ListActivity {
 
         //request connection to server selected by user
         connectionsClient.requestConnection(clientName, serverID, connectionLifecycleCallback)
-                .addOnSuccessListener( (Void unused) -> {
+                .addOnSuccessListener((Void unused) -> {
                     // connection request successful
                     Log.i(NEARBY_TAG, clientName + " requested connection to " + serverID);
                 })
-                .addOnFailureListener( (Exception e) -> {
+                .addOnFailureListener((Exception e) -> {
                     // failed to request connection
                     serverName = null;
                     serverID = null;
@@ -387,7 +407,8 @@ public class NearbyConnectionActivity extends ListActivity {
 
     /**
      * Determines whether the FlyInn server app has the necessary permissions to run nearby.
-     * @param context Checks the permissions against this context/application environment
+     *
+     * @param context     Checks the permissions against this context/application environment
      * @param permissions The permissions to be checked
      * @return True if the app was granted all the permissions, false otherwise
      */
@@ -403,8 +424,9 @@ public class NearbyConnectionActivity extends ListActivity {
 
     /**
      * Handles user acceptance (or denial) of our permission request.
-     * @param requestCode The request code passed in requestPermissions()
-     * @param permissions Permissions that must be granted to run nearby connections
+     *
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
      */
     @CallSuper
@@ -431,10 +453,11 @@ public class NearbyConnectionActivity extends ListActivity {
 
     /**
      * Generates a name for the server.
+     *
      * @return The server name, consisting of the build model + a random string
      */
     // TODO Define better name system?
-    private String generateName(int appendixLength){
+    private String generateName(int appendixLength) {
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
