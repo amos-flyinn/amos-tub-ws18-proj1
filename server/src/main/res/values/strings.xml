@@ -16,7 +16,6 @@
     <string name="nearby_connection_error">Failed to establish connection.</string>
     <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
     <string name="nearby_disconnected">Connection closed.</string>
-    <string name="nearby_connection_lost">Failed to establish connection.</string>
 
     <string name="flyinn_server_name">FlyInnServer-</string>
 

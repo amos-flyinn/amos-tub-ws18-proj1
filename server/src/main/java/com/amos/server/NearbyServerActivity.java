@@ -135,7 +135,7 @@ public class NearbyServerActivity extends Activity {
                         case ConnectionsStatusCodes.STATUS_ERROR:
                             // connection was lost
                             Log.w(NEARBY_TAG, "Connection lost: " + endpointId);
-                            mToast.setText(R.string.nearby_connection_lost);
+                            mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
                             clearClientData();
                             break;
@@ -144,7 +144,7 @@ public class NearbyServerActivity extends Activity {
                             // unknown status code. we shouldn't be here
                             Log.e(NEARBY_TAG, "Unknown error when attempting to connect with "
                                     + endpointId);
-                            mToast.setText(R.string.nearby_connection_lost);
+                            mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
                             clearClientData();
                     }

@@ -6,13 +6,14 @@
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_error">Could not start searching for connections.</string>
-    <string name="nearby_advertising_error">Could not start searching for connections.</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>
+    <string name="nearby_advertising_error">Could not start searching for connections.</string>
     <string name="nearby_connection_success">Connection established.</string>
     <string name="nearby_connection_rejected">Connection was rejected.</string>
     <string name="nearby_connection_error">Failed to establish connection.</string>
     <string name="nearby_disconnected">Connection closed.</string>
-    
+
+    <string name="flyinn_name">FlyInn-</string>
 
     <string name="buildinfo_git_tag_name">Git Tag: </string>
     <string name="buildinfo_git_commit_date">Git Commit: </string>

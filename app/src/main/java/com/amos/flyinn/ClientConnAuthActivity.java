@@ -1,13 +1,11 @@
 package com.amos.flyinn;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
 import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -27,12 +25,10 @@ import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
-import java.security.SecureRandom;
-
 /**
  * TODO javadoc rewrite
  */
-public class ClientConnAuthActivity extends Activity {
+public abstract class ClientConnAuthActivity extends Activity {
 
     /** Permissions required for Nearby Connection */
     private static final String[] REQUIRED_PERMISSIONS =
@@ -49,12 +45,9 @@ public class ClientConnAuthActivity extends Activity {
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
     /** Connection manager for the connection to FlyInn clients.*/
-    protected ConnectionsClient connectionsClient;
+    private ConnectionsClient connectionsClient;
 
-    private final int CODE_LENGTH = 4;
-    protected final String appCode = generateNumber(CODE_LENGTH);
-
-    protected final String clientName = generateName();
+    private final String clientName = generateName();
     private String serverID;
     private String serverName;
 
@@ -152,6 +145,19 @@ public class ClientConnAuthActivity extends Activity {
                     handler.postDelayed(() -> finish(), 2000);
                 }
             };
+
+
+    /**
+     *
+     * @return
+     */
+    protected String getClient() { return clientName; }
+
+    /**
+     *
+     * @return
+     */
+    protected String[] getServer() { return new String[]{serverID, serverName}; }
 
     /**
      * Starts a nearby connectionsClient, checks permissions and calls startAdvertising().
@@ -283,36 +289,10 @@ public class ClientConnAuthActivity extends Activity {
         }
         recreate();
     }
-/*
+
     /**
-     * Generates a name for the server.
-     * @return The server name, consisting of the build model + a random string
+     *
+     * @return
      */
-
-    private String generateNumber(int length) {
-
-        SecureRandom rnd = new SecureRandom();
-        String number = "";
-        for (int i = 0; i < length; i++) {
-            number += rnd.nextInt(10);
-        }
-        return number;
-    }
-    protected String generateName() {
-        String foo = "FlyInn-"+ appCode;
-        return foo;
-    }
-    /*
-    protected String generateName() {
-        int suffix = 5;
-        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(suffix);
-        for (int i = 0; i < suffix; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
-        }
-
-        return Build.MODEL + "_" + sb.toString();
-    }*/
+    protected abstract String generateName();
 }

@@ -1,27 +1,24 @@
 package com.amos.flyinn;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.security.SecureRandom;
 
 /**
- * Class zeigt CheckCode an
- * und geht rüber zum ClientConnAuth-Service, damit
- * eine Datenübertragung stattfinden kann.
- *
- * TODO javadoc
+ * 
  */
 public class ShowCodeConnAuth extends ClientConnAuthActivity {
 
     /** */
+    private final int CODE_LENGTH = 4;
 
+    /** */
+    private final String appCode = generateNumber();
 
     private TextView display;
-    private static final String CLIENT_NAME_TAG = "Client name is:";
+
+
     /**
      *
      * @param savedInstanceState
@@ -30,9 +27,29 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_show_code);
         display = findViewById(R.id.textView2);
-        display.setText(super.appCode);
-        Log.i(CLIENT_NAME_TAG, "Started advertising " + super.clientName);
+        display.setText(appCode);
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     *
+     * @return
+     */
+    private String generateNumber() {
+        SecureRandom rnd = new SecureRandom();
+        String number = "";
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            number += rnd.nextInt(10);
+        }
+        return number;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    protected String generateName() {
+        return R.string.flyinn_name + appCode;
+    }
 }

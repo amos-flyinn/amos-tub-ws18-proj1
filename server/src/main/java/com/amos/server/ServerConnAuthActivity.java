@@ -2,10 +2,7 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,9 +11,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.nearby.Nearby;
@@ -34,9 +28,7 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 /**
  *  - Service OnEndpointFound -> Findet einen Advertiser und speichert in eine Liste
  *      ==> Erhält id, können über Endpointinfo den Namen des Advertiser rausfinden
@@ -63,11 +55,14 @@ public class ServerConnAuthActivity extends Activity {
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
+    /** */
+    private final int NAME_SUFFIX_LENGTH = 5;
+
     /** 1-to-1 since a device will be connected to only one other device at most. */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
     /** Connection manager for the connection to FlyInn clients. */
-    protected ConnectionsClient connectionsClient;
+    private ConnectionsClient connectionsClient;
 
     private final String serverName = generateName();
     private String clientID;
@@ -199,6 +194,30 @@ public class ServerConnAuthActivity extends Activity {
                 }
             };
 
+
+    /**
+     *
+     * @return
+     */
+    protected String getServer() { return serverName; }
+
+    /**
+     *
+     * @return
+     */
+    protected String[] getClient() { return new String[]{clientID, clientName}; }
+
+    /**
+     *
+     * @return
+     */
+    protected HashMap<String, String> getClientNamesMap() { return clientNamesToIDs; }
+
+    /**
+     *
+     * @return
+     */
+    protected HashMap<String, String> getClientIDsMap() { return clientIDsToNames; }
 
     /**
      * Initialises nearby's connectionsClient and our list adapter to showcase clients to the user,
@@ -392,18 +411,17 @@ public class ServerConnAuthActivity extends Activity {
 
     /**
      * Generates a name for the server.
-     * @return The server name, consisting of the build model + a random string
+     * @return The server name, consisting of R.string.flyinn_server_name + a random string
      */
     protected String generateName() {
-        int suffix = 5;
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
-        StringBuilder sb = new StringBuilder(suffix);
-        for (int i = 0; i < suffix; i++) {
+        StringBuilder sb = new StringBuilder(NAME_SUFFIX_LENGTH);
+        for (int i = 0; i < NAME_SUFFIX_LENGTH; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
 
-        return Build.MODEL + "_" + sb.toString();
+        return R.string.flyinn_server_name + sb.toString();
     }
 }
