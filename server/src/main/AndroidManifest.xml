@@ -48,16 +48,18 @@
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".ConnectToClientActivity">
+        <activity android:name=".ConnectToClientActivity"></activity>
+
+        <activity android:name=".ScreensharingServer"></activity>
+
+        <activity
+            android:name=".NearbyServerActivity"
+            android:label="NearbyActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".NearbyServerActivity"
-            android:label="NearbyActivity"></activity>
 
         <activity
             android:name=".ConnectionSetupServerActivity"

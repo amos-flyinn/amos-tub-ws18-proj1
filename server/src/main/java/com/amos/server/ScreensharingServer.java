@@ -18,6 +18,7 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
+
 import android.view.SurfaceHolder.Callback;
 
 // Sources:
@@ -34,7 +35,7 @@ public class ScreensharingServer extends Activity {
                 @Override
                 public void onPayloadReceived(String endpointId, Payload payload) {
                     //triggered when the first byte of STREAM type payload is received.
-                    if(payload.getType()==Payload.Type.STREAM) {
+                    if (payload.getType() == Payload.Type.STREAM) {
                         incomingStreamPayloads.put(payload.getId(), payload);
                     }
                 }
@@ -53,13 +54,14 @@ public class ScreensharingServer extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_screen_server);
 
         // Set endpoint ID
         Intent i = getIntent();
         String endpointID = i.getStringExtra("endpointID");
 
         // Set payload callback
-        ConnectionsClient connectionsClient=Nearby.getConnectionsClient(this);
+        ConnectionsClient connectionsClient = Nearby.getConnectionsClient(this);
         connectionsClient.acceptConnection(endpointID, payloadCallback);
     }
 
@@ -75,7 +77,8 @@ public class ScreensharingServer extends Activity {
 
         try {
             mediaPlayer.prepare();
-        } catch(Exception ex) {
+            InitMediaPlayerView();
+        } catch (Exception ex) {
 
         }
     }
@@ -83,11 +86,12 @@ public class ScreensharingServer extends Activity {
     // Init view where the media player should be displayed
     private void InitMediaPlayerView() {
         // Apply surface to mediaplayer
-        SurfaceView sv = (SurfaceView) findViewById(R.id.surface_remote_viewer);
+        SurfaceView sv = (SurfaceView) findViewById(R.id.surfaceView);
         SurfaceHolder holder = sv.getHolder();
-        holder.addCallback(new Callback(){
+        holder.addCallback(new Callback() {
             @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) { }
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
 
             @Override
             public void surfaceCreated(SurfaceHolder holder) {

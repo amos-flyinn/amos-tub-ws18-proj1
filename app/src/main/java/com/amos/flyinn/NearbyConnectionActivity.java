@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -188,7 +189,7 @@ public class NearbyConnectionActivity extends ListActivity {
                             Log.i(NEARBY_TAG, "Connected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
-                            connectedToServer();
+                            connectedToServer(endpointId);
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
@@ -248,7 +249,7 @@ public class NearbyConnectionActivity extends ListActivity {
             Log.w(NEARBY_TAG, "Could not check permissions due to version");
         }
         
-        connectionsClient = Nearby.getConnectionsClient(this);
+        connectionsClient = Nearby.getConnectionsClient(this.getApplicationContext());
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -374,7 +375,7 @@ public class NearbyConnectionActivity extends ListActivity {
     /**
      * Clears servers data maps, stops discovery of new servers and adds close connection button
      */
-    private void connectedToServer() {
+    private void connectedToServer(String endpointId) {
         connectionsClient.stopDiscovery();
         servers.clear();
         serverNamesToIDs.clear();
@@ -383,6 +384,10 @@ public class NearbyConnectionActivity extends ListActivity {
         //add close connection button
         servers.add(getResources().getString(R.string.nearby_close_connection) + " " + serverName);
         ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
+
+        Intent intent = new Intent(this.getApplicationContext(), ScreenSharingClient.class);
+        intent.putExtra("endPoint", endpointId);
+        startActivity(intent);
     }
 
     /**

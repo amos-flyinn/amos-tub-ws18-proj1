@@ -30,8 +30,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -42,9 +40,8 @@
         <activity
             android:name=".WebRTCActivity"
             android:label="WEBRTC Example"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            ></activity>
-        <activity android:name=".MainActivity"></activity>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".ADBActivity"
             android:label="@string/title_activity_adb"
@@ -54,14 +51,11 @@
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ShowCodeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".ShowCodeActivity"></activity>
+
         <service android:name=".summoner.ADBService" />
-        <activity android:name=".ConnectionSetupActivity"></activity>
+
+        <activity android:name=".ConnectionSetupActivity" />
         <activity
             android:name=".NearbyConnectionActivity"
             android:label="@string/title_activity_nearby_connection"
@@ -69,7 +63,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.amos.flyinn.MainActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".ScreenSharingClient"
+            android:label="@string/title_activity_screen_sharing_client"></activity>
     </application>
 
 </manifest>
