@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -122,6 +123,12 @@ public class NearbyServerActivity extends Activity {
                             mToast.show();
                             connectionsClient.stopAdvertising();
                             clientID = endpointId;
+
+                            // Send endpointID to Screensharing server
+                            Intent i = new Intent(getApplicationContext(), ScreensharingServer.class);
+                            i.putExtra("endpointID", endpointId);
+                            startActivity(i);
+
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
