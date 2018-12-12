@@ -431,7 +431,6 @@ public class ServerConnAuthActivity extends Activity {
         for (int i = 0; i < NAME_SUFFIX_LENGTH; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
-
-        return this.getString(R.string.flyinn_server_name) + sb.toString();
+        return "FlyInnServer-" + sb.toString();
     }
 }
