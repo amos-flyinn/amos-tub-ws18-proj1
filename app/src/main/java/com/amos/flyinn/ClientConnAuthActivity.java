@@ -47,7 +47,7 @@ public abstract class ClientConnAuthActivity extends Activity {
 
     private ConnectionsClient connectionsClient;
 
-    private final String clientName = generateName();
+    private String clientName;
     private String serverID;
     private String serverName;
 
@@ -168,6 +168,8 @@ public abstract class ClientConnAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        clientName = generateName();
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

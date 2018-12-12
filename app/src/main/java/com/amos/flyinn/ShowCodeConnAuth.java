@@ -16,7 +16,7 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
     private final int CODE_LENGTH = 4;
 
     /** The numeric app code displayed to the user, used to connect client and server. */
-    private final String appCode = generateNumber();
+    protected final String appCode = generateNumber();
 
     private TextView display;
 
