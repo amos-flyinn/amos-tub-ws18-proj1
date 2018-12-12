@@ -108,9 +108,11 @@ class NearbyServer {
         connectionsClient.startAdvertising(serverName, TAG,
                 connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener((Void unused) -> {
+                    Log.d(TAG, "Start advertising Android nearby");
                 })
                 .addOnFailureListener((Exception e) -> {
-                    // unable to advertise
+                    Log.d(TAG, "Error trying to advertise Android nearby");
+                    nearbyService.handleResponse(true, e.toString());
                 });
     }
 

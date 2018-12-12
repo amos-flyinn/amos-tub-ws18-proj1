@@ -20,6 +20,7 @@ import android.util.Log;
 import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.R;
 import com.amos.flyinn.ShowCodeActivity;
+import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
 import javax.annotation.Nullable;
 
@@ -101,20 +102,6 @@ public class NearbyService extends IntentService {
         return(b.build());
     }
 
-    public NearbyService(Handler handler) {
-        this();
-        this.handler = handler;
-    }
-
-    /**
-     * Check that our components have all required permissions
-     *
-     * @return
-     */
-    public boolean hasPermissions() {
-        return server.hasPermissions(this);
-    }
-
     /**
      * Create an Intent to control NearbyService.
      *
@@ -128,16 +115,11 @@ public class NearbyService extends IntentService {
         return intent;
     }
 
-    /**
-     * Create a system toast message
-     *
-     * @param message
-     */
-    protected void createToast(String message) {
-        if (handler != null) {
-            Message.obtain(handler, 0, message);
+    public void handleResponse(boolean error, String message) {
+        if (error) {
+            Log.d(TAG, String.format("Error received: %s", message));
         } else {
-            Log.d(TAG, String.format("No toast defined. Cannot send: %s", message));
+            Log.d(TAG, String.format("Status update: %s", message));
         }
     }
 
