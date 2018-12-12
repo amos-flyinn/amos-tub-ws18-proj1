@@ -115,7 +115,7 @@ public class NearbyConnectionActivity extends ListActivity {
                         serverIDsToNames.put(endpointId, endpointName);
                         ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                                 .notifyDataSetChanged();
-                        Log.i(NEARBY_TAG, clientName + " discovered endpoint " + endpointId);
+                        Log.i(NEARBY_TAG, clientName + " digscovered endpoint " + endpointId);
 
                     } else {
                         // this should not happen

@@ -51,7 +51,10 @@ public class ClientConnAuthActivity extends Activity {
     /** Connection manager for the connection to FlyInn clients.*/
     protected ConnectionsClient connectionsClient;
 
-    private final String clientName = generateName();
+    private final int CODE_LENGTH = 4;
+    protected final String appCode = generateNumber(CODE_LENGTH);
+
+    protected final String clientName = generateName();
     private String serverID;
     private String serverName;
 
@@ -280,11 +283,26 @@ public class ClientConnAuthActivity extends Activity {
         }
         recreate();
     }
-
+/*
     /**
      * Generates a name for the server.
      * @return The server name, consisting of the build model + a random string
      */
+
+    private String generateNumber(int length) {
+
+        SecureRandom rnd = new SecureRandom();
+        String number = "";
+        for (int i = 0; i < length; i++) {
+            number += rnd.nextInt(10);
+        }
+        return number;
+    }
+    protected String generateName() {
+        String foo = "FlyInn-"+ appCode;
+        return foo;
+    }
+    /*
     protected String generateName() {
         int suffix = 5;
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -296,5 +314,5 @@ public class ClientConnAuthActivity extends Activity {
         }
 
         return Build.MODEL + "_" + sb.toString();
-    }
+    }*/
 }

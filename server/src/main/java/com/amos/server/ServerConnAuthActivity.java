@@ -311,7 +311,7 @@ public class ServerConnAuthActivity extends Activity {
     private void addClient(String endpointName, String id) {
         // extract last 4 characters of endpointName as name of the client (4-digit code)
         if (endpointName.length() >= 4) {
-            String name = endpointName.substring(endpointName.length()-3);
+            String name = endpointName.substring(endpointName.length()-4);
             clientIDsToNames.put(id, name);
             clientNamesToIDs.put(name, id);
             Log.i(CONN_AUTH_TAG, serverName + " discovered endpoint " + id);
