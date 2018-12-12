@@ -159,6 +159,7 @@ public abstract class ClientConnAuthActivity extends Activity {
      */
     protected String[] getServer() { return new String[]{serverID, serverName}; }
 
+
     /**
      * Initialises nearby connectionsClient and Toast instances,
      * checks permissions and calls startAdvertising().
@@ -168,7 +169,6 @@ public abstract class ClientConnAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         clientName = generateName();
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&

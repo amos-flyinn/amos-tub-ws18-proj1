@@ -16,9 +16,17 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
     private final int CODE_LENGTH = 4;
 
     /** The numeric app code displayed to the user, used to connect client and server. */
-    protected final String appCode = generateNumber();
+    private final String appCode = generateNumber();
 
     private TextView display;
+
+
+    /**
+     * Returns the numeric client ID displayed to the user.
+     *
+     * @return The number identifying the client with CODE_LENGTH digits as string (e.g., 0000-9999)
+     */
+    protected String getAppCode() { return appCode; }
 
 
     /**
@@ -33,6 +41,7 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
         display.setText(appCode);
         super.onCreate(savedInstanceState);
     }
+
 
     /**
      * Generates the random app code that will be displayed to the user and
@@ -56,6 +65,6 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
      */
     @Override
     protected String generateName() {
-        return R.string.flyinn_name + appCode;
+        return this.getString(R.string.flyinn_name) + appCode;
     }
 }

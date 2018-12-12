@@ -213,6 +213,7 @@ public class ServerConnAuthActivity extends Activity {
      */
     protected HashMap<String, String> getClientIDsMap() { return clientIDsToNames; }
 
+
     /**
      * Initialises nearby connectionsClient and Toast, checks permissions and starts discovery by
      * calling startAdvertising().
@@ -431,6 +432,6 @@ public class ServerConnAuthActivity extends Activity {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
 
-        return R.string.flyinn_server_name + sb.toString();
+        return this.getString(R.string.flyinn_server_name) + sb.toString();
     }
 }
