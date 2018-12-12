@@ -52,7 +52,7 @@ public class Daemon {
      * @throws IOException
      */
     public void writeFakeInputToFilesystem() throws IOException {
-        InputStream in = this.context.getResources().openRawResource(R.raw.flyinn_fakeinputlib);
+        InputStream in = this.context.getResources().openRawResource(R.raw.fakeinputlib);
 
 
         File fpath = new File(FAKE_INPUT_SERVER_PATH);

@@ -52,8 +52,6 @@ android {
             path "CMakeLists.txt"
         }
     }
-
-
 }
 
 dependencies {
@@ -90,4 +88,6 @@ task prePreBuild {
         commandLine('bash', 'update-build-info.sh', 'app')
     }
 }
-preBuild.dependsOn prePreBuild
+
+preBuild.dependsOn(prePreBuild, ':fakeinputlib:assemble')
+

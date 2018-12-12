@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'java-library'
 
 android {
     compileSdkVersion 27
@@ -17,6 +16,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    android.applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.all {
+                outputFileName = "fakeinputlib.jar"
+            }
+        }
+    }
+}
+
+task copyLib(type: Copy) {
+    from file('build/outputs/apk/release/')
+    include "*.jar"
+    into file('../app/src/main/res/raw/')
 }
 
 dependencies {
@@ -25,11 +38,10 @@ dependencies {
     implementation project(path: ':shared')
 }
 
-//apply plugin: 'java-library'
-//
-//dependencies {
-//    implementation fileTree(dir: 'libs', include: ['*.jar'])
-//}
-//
-//sourceCompatibility = "7"
-//targetCompatibility = "7"
+assemble.finalizedBy(copyLib)
+
+sourceSets {
+    main {
+        output.dir("../app/src/main/res/raw/", builtBy: copyLib)
+    }
+}
