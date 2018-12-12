@@ -26,7 +26,8 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
 /**
- * TODO javadoc rewrite
+ * Handles the client-side connection for FlyInn authentication.
+ * Checks permissions and allows all incoming connection requests.
  */
 public abstract class ClientConnAuthActivity extends Activity {
 
@@ -44,16 +45,13 @@ public abstract class ClientConnAuthActivity extends Activity {
     /** 1-to-1 since a device will be connected to only one other device at most. */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
-    /** Connection manager for the connection to FlyInn clients.*/
     private ConnectionsClient connectionsClient;
 
     private final String clientName = generateName();
     private String serverID;
     private String serverName;
 
-    /** Toast to publish user notifications */
     private Toast mToast;
-
     Handler handler = new Handler();
 
     /** Tag for logging purposes. */
@@ -61,7 +59,7 @@ public abstract class ClientConnAuthActivity extends Activity {
 
 
     /**
-     * Obtain data from clientID/clientName and data transfer information via this handle.
+     * Obtain data from server and data transfer information via this handle.
      */
     private final PayloadCallback payloadCallback =
             new PayloadCallback() {
@@ -148,19 +146,23 @@ public abstract class ClientConnAuthActivity extends Activity {
 
 
     /**
+     * Returns the client's name (this endpoint).
      *
-     * @return
+     * @return The client's name.
      */
     protected String getClient() { return clientName; }
 
     /**
+     * Returns information about the server we are currently connected to.
      *
-     * @return
+     * @return 2-entry array, the first entry is the ID of the server, the second its name.
      */
     protected String[] getServer() { return new String[]{serverID, serverName}; }
 
     /**
-     * Starts a nearby connectionsClient, checks permissions and calls startAdvertising().
+     * Initialises nearby connectionsClient and Toast instances,
+     * checks permissions and calls startAdvertising().
+     *
      * @param savedInstanceState
      */
     @Override
@@ -200,7 +202,7 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
-     * Clears client data and stops all advertising and connections from this server
+     * Clears server data and stops all advertising and connections from this client
      * before calling super.onDestroy().
      */
     @Override
@@ -213,8 +215,8 @@ public abstract class ClientConnAuthActivity extends Activity {
 
 
     /**
-     * Broadcast our presence using Nearby Connection so FlyInn users can find us.
-     * Resets clientID and clientName first.
+     * Broadcast our presence using Nearby Connection so FlyInn servers can find us.
+     * Resets server data first.
      */
     private void startAdvertising() {
         clearServerData();
@@ -240,7 +242,7 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
-     * Resets client ID and client name to null.
+     * Resets server ID and name to null.
      */
     private void clearServerData() {
         serverID = null;
@@ -248,9 +250,11 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
-     * Determines whether the FlyInn server app has the necessary permissions to run nearby.
+     * Determines whether we (the FlyInn client app) have the necessary permissions to run nearby.
+     *
      * @param context Checks the permissions against this context/application environment
      * @param permissions The permissions to be checked
+     *
      * @return True if the app was granted all the permissions, false otherwise
      */
     private static boolean hasPermissions(Context context, String[] permissions) {
@@ -265,6 +269,7 @@ public abstract class ClientConnAuthActivity extends Activity {
 
     /**
      * Handles user acceptance (or denial) of our permission request.
+     *
      * @param requestCode The request code passed in requestPermissions()
      * @param permissions Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
@@ -291,8 +296,9 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
+     * Returns the name of this client, which is final and set at client initialisation.
      *
-     * @return
+     * @return The name of the client.
      */
     protected abstract String generateName();
 }

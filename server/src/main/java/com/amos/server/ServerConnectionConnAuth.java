@@ -5,16 +5,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 /**
- * Server-Class soll tun:
- *  - Starte Service
- *  - Class schickt Eingabe an Service
- *
- *  TODO javadoc
+ * Server for FlyInn authentication. Lets user input a string which is then used to try to
+ * connect to the client identified by that string. Connection itself is handled by superclass.
  */
-
 public class ServerConnectionConnAuth extends ServerConnAuthActivity {
 
     /**
+     * Displays a text field to the user. On input of a code (which should be displayed
+     * on the client app) it is given to the superclass to try to connect to a client
+     * identified by the code.
      *
      * @param savedInstanceState
      */
@@ -25,7 +24,7 @@ public class ServerConnectionConnAuth extends ServerConnAuthActivity {
         EditText text = findViewById(R.id.connect_editText);
 
         text.setOnEditorActionListener((v, actionId, event) -> {
-            // client code input by user
+            // client (app) code input by user
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 String name = v.getText().toString();
                 super.connectToClient(name); // returns boolean on success

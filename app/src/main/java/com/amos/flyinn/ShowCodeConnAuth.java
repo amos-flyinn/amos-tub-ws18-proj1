@@ -6,20 +6,23 @@ import android.widget.TextView;
 import java.security.SecureRandom;
 
 /**
- * 
+ * Client for FlyInn authentication. Displays a random 4-digit app code and
+ * generates the client name (containing the code). All network connection goes through
+ * superclass via nearby connection library.
  */
 public class ShowCodeConnAuth extends ClientConnAuthActivity {
 
-    /** */
+    /** Length of the numeric app code displayed to the user, used to connect client and server. */
     private final int CODE_LENGTH = 4;
 
-    /** */
+    /** The numeric app code displayed to the user, used to connect client and server. */
     private final String appCode = generateNumber();
 
     private TextView display;
 
 
     /**
+     * Displays the 4-digit app code to the user, in addition to calling super.onCreate().
      *
      * @param savedInstanceState
      */
@@ -32,8 +35,10 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
     }
 
     /**
+     * Generates the random app code that will be displayed to the user and
+     * utilised to connect client and server.
      *
-     * @return
+     * @return The 4-digit app code as string ("0000" to "9999").
      */
     private String generateNumber() {
         SecureRandom rnd = new SecureRandom();
@@ -45,8 +50,9 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
     }
 
     /**
+     * Returns the name of the client, consisting of R.string.flyinn_name and the 4-digit app code.
      *
-     * @return
+     * @return The name of this client, containing the app code as final characters.
      */
     @Override
     protected String generateName() {
