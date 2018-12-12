@@ -28,9 +28,8 @@
         android:required="true" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-
+    <uses-permission android:name="android.permission.record_audio" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -61,6 +60,7 @@
             </intent-filter>
         </activity>
         <service android:name=".summoner.ADBService" />
+        <service android:name=".nearbyservice.NearbyService"/>
         <activity android:name=".ConnectionSetupActivity"></activity>
         <activity
             android:name=".NearbyConnectionActivity"
