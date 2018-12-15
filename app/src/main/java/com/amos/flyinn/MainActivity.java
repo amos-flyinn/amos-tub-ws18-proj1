@@ -27,7 +27,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amos.flyinn.screenRecording.RecordingActivity;
 import com.amos.flyinn.signaling.ClientSocket;
 import com.amos.flyinn.signaling.Emitter;
 import com.amos.flyinn.summoner.Daemon;
@@ -173,10 +172,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String stringFromJNI();
 
-    public void toScreenActivityOnClick(View view) {
-        Intent intent = new Intent(this, RecordingActivity.class);
-        startActivity(intent);
-    }
+
 
 
 
