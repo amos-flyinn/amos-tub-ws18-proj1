@@ -6,23 +6,19 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 
-import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.R;
-import com.amos.flyinn.ShowCodeActivity;
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
-import javax.annotation.Nullable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Manage nearby connections with a server.
@@ -36,7 +32,9 @@ public class NearbyService extends IntentService {
     public static final String TAG = NearbyService.class.getPackage().getName();
     private NearbyServer server;
 
-    private static final int FOREGROUND_ID = 10;
+    private static final int FOREGROUND_ID = 1;
+    private static final int NOTIFY_ID = 2;
+    private static final String CHANNEL_ID = "flyinn_nearby";
 
     /**
      * Define the serviceState of our service.
@@ -48,58 +46,22 @@ public class NearbyService extends IntentService {
         super("NearbyService");
     }
 
-    /**
-     * Source: https://stackoverflow.com/a/50634187
-     * @param context
-     * @param id
-     * @param importance
-     */
-    @TargetApi(26)
-    private static void prepareChannel(Context context, String id, int importance) {
-        final String appName = context.getString(R.string.app_name);
-        String description = "flyInn notification";
-        final NotificationManager nm = (NotificationManager) context.getSystemService(Activity.NOTIFICATION_SERVICE);
+    private Notification buildForegroundNotification(String filename) {
+        NotificationCompat.Builder b =
+                new NotificationCompat.Builder(this, CHANNEL_ID);
 
-        if(nm != null) {
-            NotificationChannel nChannel = nm.getNotificationChannel(id);
-
-            if (nChannel == null) {
-                nChannel = new NotificationChannel(id, appName, importance);
-                nChannel.setDescription(description);
-                nm.createNotificationChannel(nChannel);
-            }
-        }
-    }
-
-    /**
-     * Source: https://stackoverflow.com/a/50634187
-     * @param context
-     * @param channelId
-     * @param importance
-     * @return
-     */
-    public static NotificationCompat.Builder getNotificationBuilder(Context context, String channelId, int importance) {
-        NotificationCompat.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            prepareChannel(context, channelId, importance);
-            builder = new NotificationCompat.Builder(context, channelId);
-        } else {
-            builder = new NotificationCompat.Builder(context);
-        }
-        return builder;
-    }
-
-    /**
-     * Source: https://stackoverflow.com/a/50634187
-     * @param text
-     * @return
-     */
-    private Notification buildForegroundNotification(String text) {
-        NotificationCompat.Builder b=getNotificationBuilder(this, "com.amos.flyinn.nearbyservice.notification.nearbyservice", NotificationManagerCompat.IMPORTANCE_LOW);
         b.setOngoing(true)
-                .setContentTitle("Testing")
-                .setContentText(text).setSmallIcon(android.R.drawable.stat_notify_sync);
-        return(b.build());
+                .setContentTitle("Ongoing")
+                .setContentText(filename)
+                .setSmallIcon(android.R.drawable.stat_sys_download);
+
+        return (b.build());
+    }
+
+    private void raiseNotification(Notification notification) {
+        NotificationManager mgr=
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mgr.notify(NOTIFY_ID, notification);
     }
 
     /**
@@ -124,14 +86,44 @@ public class NearbyService extends IntentService {
     }
 
     /**
+     * Dummy timer for testing purposes
+     */
+    private void startTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.i(TAG, "in timer");
+            }
+        }, 1000, 1000);
+    }
+
+    /**
      * Handle intents for initiation of advertising and connection shutdown.
      *
      * @param intent An intent with a custom Extra field called action.
      */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        NotificationManager mgr=
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O &&
+                mgr.getNotificationChannel(CHANNEL_ID)==null) {
+
+            NotificationChannel c=new NotificationChannel(CHANNEL_ID,
+                    "flyinnchannel", NotificationManager.IMPORTANCE_DEFAULT);
+
+            c.enableLights(true);
+            c.setLightColor(0xFFFF0000);
+
+            mgr.createNotificationChannel(c);
+        }
+        startForeground(FOREGROUND_ID,
+                buildForegroundNotification("Test"));
+        raiseNotification(buildForegroundNotification("test"));
+        startTimer();
         Log.d(TAG, "Handling intent now");
-        startForeground(FOREGROUND_ID, buildForegroundNotification("Hello"));
         NearbyState action;
         try {
             action = (NearbyState) intent.getSerializableExtra("action");
@@ -141,6 +133,8 @@ public class NearbyService extends IntentService {
         } catch (NullPointerException err) {
             action = NearbyState.UNKNOWN;
         }
+        raiseNotification(buildForegroundNotification("test"));
+        startTimer();
         switch (action) {
             case START:
                 if (serviceState == NearbyState.STOPPED) {

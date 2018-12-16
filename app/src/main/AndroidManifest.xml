@@ -60,7 +60,7 @@
             </intent-filter>
         </activity>
         <service android:name=".summoner.ADBService" />
-        <service android:name=".nearbyservice.NearbyService"/>
+        <service android:name=".nearbyservice.NearbyService" android:enabled="true" android:exported="true"/>
         <activity android:name=".ConnectionSetupActivity"></activity>
         <activity
             android:name=".NearbyConnectionActivity"
