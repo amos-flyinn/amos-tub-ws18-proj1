@@ -1,8 +1,15 @@
 package com.amos.server;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+
+import com.amos.server.SettingsScreen.SettingsActivity;
 
 /**
  * Server for FlyInn authentication. Lets user input a string which is then used to try to
@@ -31,6 +38,19 @@ public class ServerConnectionConnAuth extends ServerConnAuthActivity {
                 return true;
             }
             return false;
+        });
+        setSettingsListener();
+    }
+
+    private void setSettingsListener() {
+        Button btn = findViewById(R.id.settings_btn);
+        Context context = this;
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, SettingsActivity.class);
+                startActivity(intent);
+            }
         });
     }
 }
