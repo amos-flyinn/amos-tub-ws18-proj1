@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.ParcelFileDescriptor;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -30,6 +31,9 @@ import android.widget.ToggleButton;
 
 import com.amos.flyinn.R;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class RecordingActivity extends AppCompatActivity {
@@ -49,6 +53,14 @@ public class RecordingActivity extends AppCompatActivity {
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_PERMISSIONS = 10;
     private static final String LABEL_PERMISSIONS = "permission";
+    private ParcelFileDescriptor reader;
+    private ParcelFileDescriptor writer;
+
+    private File fileSD;
+
+    private ParcelFileDescriptor.AutoCloseOutputStream streamDescriptor;
+
+    private ParcelFileDescriptor[] parcels;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -60,9 +72,24 @@ public class RecordingActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recodring);
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mScreenDensity = metrics.densityDpi;
+        try {
+            fileSD = File.createTempFile("videoStream",".mp4",Environment
+                    .getExternalStoragePublicDirectory(Environment
+                            .DIRECTORY_DOWNLOADS));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            //reader = ParcelFileDescriptor.open(fileSD,ParcelFileDescriptor.MODE_READ_WRITE);
+            writer = ParcelFileDescriptor.open(fileSD,ParcelFileDescriptor.MODE_READ_WRITE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         mMediaRecorder = new MediaRecorder();
 
@@ -166,17 +193,18 @@ public class RecordingActivity extends AppCompatActivity {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mMediaRecorder.setOutputFile(Environment
-                    .getExternalStoragePublicDirectory(Environment
-                            .DIRECTORY_DOWNLOADS) + "/video.mp4");
+            //mMediaRecorder.setOutputFile(Environment
+            //        .getExternalStoragePublicDirectory(Environment
+            //                .DIRECTORY_DOWNLOADS) + "/video.mp4"); // Location of file
+            mMediaRecorder.setOutputFile(writer.getFileDescriptor());
             mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
             mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mMediaRecorder.setVideoEncodingBitRate(512 * 1000);
             mMediaRecorder.setVideoFrameRate(30);
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            int orientation = ORIENTATIONS.get(rotation + 90);
-            mMediaRecorder.setOrientationHint(orientation);
+            //int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            //int orientation = ORIENTATIONS.get(rotation + 90);
+            //mMediaRecorder.setOrientationHint(orientation);
             mMediaRecorder.prepare();
         } catch (IOException e) {
             e.printStackTrace();

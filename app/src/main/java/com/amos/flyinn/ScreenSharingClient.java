@@ -7,6 +7,7 @@ import android.media.projection.MediaProjection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.provider.Settings;
@@ -23,7 +24,9 @@ import com.amos.flyinn.screenRecording.ScreenRecordingHelper;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.Payload;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ScreenSharingClient extends Activity {
 
@@ -37,20 +40,41 @@ public class ScreenSharingClient extends Activity {
     ParcelFileDescriptor writeFD;
     private ScreenRecordingHelper helper;
 
+    private File tempFileVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recodring);
 
-        //Initialize parcel descriptors
         try {
-            ParcelFileDescriptor[] payloadPipe = ParcelFileDescriptor.createPipe();
-            readFD = payloadPipe[0];
-            writeFD = payloadPipe[1];
+            tempFileVideo = File.createTempFile("videoStream",".mp4",Environment
+                            .getExternalStoragePublicDirectory(Environment
+                                    .DIRECTORY_DOWNLOADS));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if(!tempFileVideo.exists())
+        {
+            Log.d(TAG, "onCreate: Error");
+
+        }
+
+
+        //Initialize parcel descriptors
+        try {
+
+            readFD = ParcelFileDescriptor.open(tempFileVideo,ParcelFileDescriptor.MODE_READ_WRITE);
+            writeFD = ParcelFileDescriptor.open(tempFileVideo,ParcelFileDescriptor.MODE_READ_WRITE);
+            Log.d(TAG, "onCreate: FilesDescriptors created");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
 
         helper = new ScreenRecordingHelper(this, writeFD);
         helper.setup();

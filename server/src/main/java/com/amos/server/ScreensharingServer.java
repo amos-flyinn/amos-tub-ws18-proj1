@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.util.SimpleArrayMap;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -35,6 +36,9 @@ public class ScreensharingServer extends Activity {
                 @Override
                 public void onPayloadReceived(String endpointId, Payload payload) {
                     //triggered when the first byte of STREAM type payload is received.
+
+                    Log.d("ScreensharingServer", "onPayloadReceived: Received from here :  " + endpointId);
+
                     if (payload.getType() == Payload.Type.STREAM) {
                         incomingStreamPayloads.put(payload.getId(), payload);
                     }
@@ -42,10 +46,13 @@ public class ScreensharingServer extends Activity {
 
                 @Override
                 public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
+
+                    Log.d("onPayloadTransferUpdate", "onPayloadReceived: Received from here :  " + endpointId);
                     if (update.getStatus() == PayloadTransferUpdate.Status.SUCCESS) {
                         //
                         Payload payload = incomingStreamPayloads.get(update.getPayloadId());
                         Payload.Stream is = payload.asStream();
+
                         InitMediaPlayer(is.asParcelFileDescriptor().getFileDescriptor());
                     }
                 }

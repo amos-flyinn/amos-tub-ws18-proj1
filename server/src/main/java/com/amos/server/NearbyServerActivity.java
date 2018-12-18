@@ -74,11 +74,18 @@ public class NearbyServerActivity extends Activity {
                 @Override
                 public void onPayloadReceived(String endpointId, Payload payload) {
                     // TODO
+
+                    Log.d("NearbyServer", "onPayloadReceived: enpoint received " + endpointId);
+
+
+
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
                     // TODO
+
+                    Log.d("NearbyServer", "onPayloadTransferUpdate: enpoint received " + endpointId);
                 }
             };
 
@@ -102,8 +109,11 @@ public class NearbyServerActivity extends Activity {
                             .setPositiveButton(android.R.string.yes,
                                     (DialogInterface dialog, int which) ->
                                             // accept the connection
-                                            connectionsClient.acceptConnection(endpointId,
-                                                    payloadCallback))
+                                            //connectionsClient.acceptConnection(endpointId,
+                                            //        payloadCallback)
+                                    {Intent i = new Intent(getApplicationContext(), ScreensharingServer.class);
+                                        i.putExtra("endpointID", endpointId);
+                                        startActivity(i);})
                             .setNegativeButton(android.R.string.cancel,
                                     (DialogInterface dialog, int which) ->
                                             // reject the connection
@@ -125,9 +135,9 @@ public class NearbyServerActivity extends Activity {
                             clientID = endpointId;
 
                             // Send endpointID to Screensharing server
-                            Intent i = new Intent(getApplicationContext(), ScreensharingServer.class);
-                            i.putExtra("endpointID", endpointId);
-                            startActivity(i);
+                            //Intent i = new Intent(getApplicationContext(), ScreensharingServer.class);
+                            //i.putExtra("endpointID", endpointId);
+                            //startActivity(i);
 
                             break;
 

@@ -84,19 +84,21 @@ public class ScreenRecordingHelper {
 
     public void initRecorder() {
         try {
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            //mMediaRecorder.setOutputFile(Environment
+            //        .getExternalStoragePublicDirectory(Environment
+            //                .DIRECTORY_DOWNLOADS) + "/video.mp4"); // Location of file
             mMediaRecorder.setOutputFile(writeFD.getFileDescriptor());
-//            mMediaRecorder.setOutputFile(Environment
-//                    .getExternalStoragePublicDirectory(Environment
-//                            .DIRECTORY_DOWNLOADS) + "/video.mp4");
             mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
             mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mMediaRecorder.setVideoEncodingBitRate(512 * 1000);
             mMediaRecorder.setVideoFrameRate(30);
-            int rotation = screenSharingActivity.getWindowManager().getDefaultDisplay().getRotation();
-            int orientation = ORIENTATIONS.get(rotation + 90);
-            mMediaRecorder.setOrientationHint(orientation);
+            //int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            //int orientation = ORIENTATIONS.get(rotation + 90);
+            //mMediaRecorder.setOrientationHint(orientation);
             mMediaRecorder.prepare();
         } catch (IOException e) {
             e.printStackTrace();
