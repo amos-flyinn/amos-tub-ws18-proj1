@@ -26,8 +26,7 @@ public class ServerConnAuthTest {
      * @throws InterruptedException
      */
     @Test
-    public void finishAfterNearbyImpossible() throws InterruptedException {
-        Thread.sleep(2000);
+    public void finishAfterDiscoveryFails() {
         assertTrue(testRule.getActivity().isFinishing());
     }
 }

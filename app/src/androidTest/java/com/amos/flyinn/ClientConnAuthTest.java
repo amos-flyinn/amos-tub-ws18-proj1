@@ -26,8 +26,7 @@ public class ClientConnAuthTest {
      * @throws InterruptedException
      */
     @Test
-    public void finishAfterNearbyImpossible() throws InterruptedException {
-        Thread.sleep(2000);
+    public void finishAfterAdvertisingFailed(){
         assertTrue(testRule.getActivity().isFinishing());
     }
 }
