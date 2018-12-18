@@ -5,10 +5,12 @@
 Remote control and screen sharing for Android devices with a focus on easy pairing and usage on shared third-party hardware.
 Seamless access to personal mobile device through an external screen integrated into an external screen, which allows comprehensive control of the device.
 ---
+
 ## Motivation
 The world of city mobility is transforming to a more flexible environment. Vehicles are not a person owned item, they are rather shared. The technology presented in the FlyInn project shall improve multimodal mobility and traffic safety.
 While using shared bikes, scooters, etc. the user is able to control his mobile without touching it physically at all times. FlyInn allows to put the users in their known habitat instead of putting barriers and unknown interfaces between them and their phone.
 ---
+
 ## Build status
 [![Build Status](https://travis-ci.org/amos-flyinn/amos-tub-ws18-proj1.svg?branch=master)](https://travis-ci.org/amos-flyinn/amos-tub-ws18-proj1)
 
