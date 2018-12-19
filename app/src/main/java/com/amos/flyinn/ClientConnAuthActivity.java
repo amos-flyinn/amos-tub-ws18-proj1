@@ -298,7 +298,7 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
-     * Returns the name of this client, which is final and set at client initialisation.
+     * Returns the name of this client, which is set in onCreate().
      *
      * @return The name of the client.
      */
