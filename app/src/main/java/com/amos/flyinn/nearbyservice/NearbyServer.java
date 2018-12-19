@@ -27,7 +27,7 @@ class NearbyServer {
     /**
      * Required permissions for Nearby connections
      */
-    private static final String[] REQUIRED_PERMISSIONS =
+    public static final String[] REQUIRED_PERMISSIONS =
             new String[]{
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
@@ -92,21 +92,6 @@ class NearbyServer {
             };
 
     /**
-     * Determines whether the FlyInn server app has the necessary permissions to run nearby.
-     *
-     * @return True if the app was granted all the permissions, false otherwise
-     */
-    public boolean hasPermissions() {
-        for (String permission : REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(nearbyService, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Broadcast our presence using Nearby Connection so FlyInn users can find us.
      * Resets clientID and clientName first.
      */
@@ -140,6 +125,8 @@ class NearbyServer {
                 public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
                     Log.i(TAG, "Connection initiated by " + endpointId);
                     clientName = connectionInfo.getEndpointName();
+                    Log.i(TAG, "Auto accept " + endpointId);
+                    connectionsClient.acceptConnection(endpointId, payloadCallback);
                 }
 
                 @Override

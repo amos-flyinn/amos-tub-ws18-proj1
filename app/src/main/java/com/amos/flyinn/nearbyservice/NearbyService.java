@@ -56,6 +56,10 @@ public class NearbyService extends IntentService {
         super("NearbyService");
     }
 
+    public static String[] getRequiredPermissions() {
+        return NearbyServer.REQUIRED_PERMISSIONS;
+    }
+
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         Log.d(TAG, "Creating channel");
