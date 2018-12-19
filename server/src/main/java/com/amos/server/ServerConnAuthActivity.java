@@ -290,7 +290,9 @@ public class ServerConnAuthActivity extends Activity {
                     Log.e(CONN_AUTH_TAG, "Unable to start discovery on " + serverName);
                     mToast.setText(R.string.nearby_discovering_error);
                     mToast.show();
-                    finish();
+
+                    // display toast for 2s, then finish
+                    handler.postDelayed(() -> finish(), 2000);
                 });
     }
 

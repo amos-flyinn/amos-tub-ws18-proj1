@@ -237,7 +237,9 @@ public abstract class ClientConnAuthActivity extends Activity {
                     Log.e(CONN_AUTH_TAG, "Unable to start advertising " + clientName);
                     mToast.setText(R.string.nearby_advertising_error);
                     mToast.show();
-                    finish();
+
+                    // display toast for 2s, then finish
+                    handler.postDelayed(() -> finish(), 2000);
                 });
     }
 
