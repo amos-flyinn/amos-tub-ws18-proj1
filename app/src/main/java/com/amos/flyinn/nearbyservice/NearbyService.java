@@ -6,6 +6,8 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -15,10 +17,13 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 
+import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.R;
+import com.amos.flyinn.ShowCodeActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Manage nearby connections with a server.
@@ -30,30 +35,55 @@ import java.util.TimerTask;
 public class NearbyService extends IntentService {
 
     public static final String TAG = NearbyService.class.getPackage().getName();
+
+    public static final String ACTION_START = "nearby_start";
+    public static final String ACTION_STOP = "nearby_stop";
+
     private NearbyServer server;
 
     private static final int FOREGROUND_ID = 1;
     private static final int NOTIFY_ID = 2;
     private static final String CHANNEL_ID = "flyinn_nearby";
 
+    private String nearbyCode = "";
+
     /**
      * Define the serviceState of our service.
      */
     private NearbyState serviceState = NearbyState.STOPPED;
-    private Handler handler = null;
 
     public NearbyService() {
         super("NearbyService");
     }
 
-    private Notification buildForegroundNotification(String filename) {
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        Log.d(TAG, "Creating channel");
+        createChannel();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * Create a sticky notification that won't go away.
+     * @param message String message shown in the notification.
+     * @param target Optional target intent to switch to after tapping the notification.
+     * @return
+     */
+    private Notification buildForegroundNotification(String message, @Nullable Intent target) {
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true)
-                .setContentTitle("Ongoing")
-                .setContentText(filename)
-                .setSmallIcon(android.R.drawable.stat_sys_download);
+                .setContentTitle(String.format("Nearby service %s", nearbyCode))
+                .setContentText(message)
+                .setSmallIcon(android.R.drawable.stat_notify_sync);
+
+        if (target != null) {
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntentWithParentStack(target);
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            b.setContentIntent(pendingIntent);
+        }
 
         return (b.build());
     }
@@ -61,7 +91,35 @@ public class NearbyService extends IntentService {
     private void raiseNotification(Notification notification) {
         NotificationManager mgr=
                 (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        startForeground(FOREGROUND_ID, buildForegroundNotification("Nearby Action running", null));
         mgr.notify(NOTIFY_ID, notification);
+    }
+
+    /**
+     * Create or update shown notification.
+     * @param message
+     */
+    public void notify(String message) {
+        Intent intent = null;
+        switch (serviceState) {
+            case STOPPED:
+                intent = new Intent(this, ShowCodeActivity.class);
+                intent.putExtra("code", getNearbyCode());
+                break;
+            case ADVERTISING:
+                intent = new Intent(this, ShowCodeActivity.class);
+                intent.putExtra("code", getNearbyCode());
+                break;
+            case CONNECTING:
+                intent = new Intent(this, ConnectionSetupActivity.class);
+                intent.putExtra("code", getNearbyCode());
+                break;
+            case CONNECTED:
+                intent = new Intent(this, ConnectionSetupActivity.class);
+                intent.putExtra("code", getNearbyCode());
+                break;
+        }
+        raiseNotification(buildForegroundNotification(message, intent));
     }
 
     /**
@@ -71,9 +129,9 @@ public class NearbyService extends IntentService {
      * @param context
      * @return Intent containing desired application serviceState.
      */
-    public static Intent createNearbyIntent(NearbyState state, Context context) {
+    public static Intent createNearbyIntent(String state, Context context) {
         Intent intent = new Intent(context, NearbyService.class);
-        intent.putExtra("action", state);
+        intent.setAction(state);
         return intent;
     }
 
@@ -86,16 +144,58 @@ public class NearbyService extends IntentService {
     }
 
     /**
-     * Dummy timer for testing purposes
+     * Start advertising Android nearby.
      */
-    private void startTimer() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Log.i(TAG, "in timer");
+    public void start() {
+        if (serviceState == NearbyState.STOPPED) {
+            Log.d(TAG, "Starting NearbyService");
+            if (server == null) {
+                server = new NearbyServer("nearby_server", this);
             }
-        }, 1000, 1000);
+            server.start();
+            serviceState = NearbyState.ADVERTISING;
+            notify("Start advertising nearby service");
+        } else {
+            Log.d(TAG, "NearbyService already started");
+        }
+    }
+
+    /**
+     * Stop advertising Android nearby.
+     */
+    public void stop() {
+        if (serviceState != NearbyState.STOPPED) {
+            Log.d(TAG, "Stopping NearbyService");
+            serviceState = NearbyState.STOPPED;
+            notify("Stopping nearby advertising");
+            server.stop();
+        } else {
+            Log.d(TAG, "NearbyService already stopped");
+        }
+    }
+
+    /**
+     * Create a notification channel.
+     *
+     * Notifications are organized into different channels to theoretically enable the user to
+     * individually set what they want to be informed about.
+     *
+     * This is required since Android 8.
+     */
+    private void createChannel() {
+        NotificationManager mgr=
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O &&
+                mgr.getNotificationChannel(CHANNEL_ID)==null) {
+
+            NotificationChannel c=new NotificationChannel(CHANNEL_ID,
+                    "flyinn_channel", NotificationManager.IMPORTANCE_DEFAULT);
+
+            c.enableLights(true);
+            c.setLightColor(0xFFFF0000);
+
+            mgr.createNotificationChannel(c);
+        }
     }
 
     /**
@@ -105,61 +205,33 @@ public class NearbyService extends IntentService {
      */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        NotificationManager mgr=
-                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O &&
-                mgr.getNotificationChannel(CHANNEL_ID)==null) {
-
-            NotificationChannel c=new NotificationChannel(CHANNEL_ID,
-                    "flyinnchannel", NotificationManager.IMPORTANCE_DEFAULT);
-
-            c.enableLights(true);
-            c.setLightColor(0xFFFF0000);
-
-            mgr.createNotificationChannel(c);
-        }
-        startForeground(FOREGROUND_ID,
-                buildForegroundNotification("Test"));
-        raiseNotification(buildForegroundNotification("test"));
-        startTimer();
         Log.d(TAG, "Handling intent now");
-        NearbyState action;
         try {
-            action = (NearbyState) intent.getSerializableExtra("action");
-            if (action == null) {
-                action = NearbyState.UNKNOWN;
-            }
+            String code = intent.getStringExtra("code");
+            setNearbyCode(code);
+            Log.d(TAG, String.format("Setting code to %s", code));
         } catch (NullPointerException err) {
-            action = NearbyState.UNKNOWN;
+            Log.d(TAG, "Could not get code from intent.");
         }
-        raiseNotification(buildForegroundNotification("test"));
-        startTimer();
-        switch (action) {
-            case START:
-                if (serviceState == NearbyState.STOPPED) {
-                    Log.d(TAG, "Starting NearbyService");
-                    if (server == null) {
-                        server = new NearbyServer("testdevice", this);
-                    }
-                    server.start();
-                    serviceState = NearbyState.STARTED;
-                } else {
-                    Log.d(TAG, "NearbyService already started");
-                }
+
+        switch (intent.getAction()) {
+            case ACTION_START:
+                start();
                 break;
-            case STOP:
-                if (serviceState == NearbyState.STARTED) {
-                    Log.d(TAG, "Stopping NearbyService");
-                    server.stop();
-                    serviceState = NearbyState.STOPPED;
-                } else {
-                    Log.d(TAG, "NearbyService already stopped");
-                }
+            case ACTION_STOP:
+                stop();
                 break;
-            case UNKNOWN:
+            default:
                 Log.d(TAG, "Unknown intent received. Will do nothing");
                 break;
         }
+    }
+
+    public void setNearbyCode(String code) {
+        nearbyCode = code;
+    }
+
+    public String getNearbyCode() {
+        return nearbyCode;
     }
 }

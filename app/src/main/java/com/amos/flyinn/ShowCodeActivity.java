@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.amos.flyinn.nearbyservice.NearbyService;
-import com.amos.flyinn.nearbyservice.NearbyState;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -18,14 +17,12 @@ public class ShowCodeActivity extends AppCompatActivity {
     private String nameNum = "1234";
     private TextView display;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_code);
-        display = findViewById(R.id.textView2);
-
-        Intent intent = NearbyService.createNearbyIntent(NearbyState.START, this);
+    /**
+     * Set state and information in android service.
+     */
+    private void setService() {
+        Intent intent = NearbyService.createNearbyIntent(NearbyService.ACTION_START, this);
+        intent.putExtra("code", nameNum);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
         } else {
@@ -34,16 +31,25 @@ public class ShowCodeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_show_code);
+        display = findViewById(R.id.textView2);
+        // setService();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
         display.setText(nameNum);
+        setService();
     }
 
 
     @Override
     protected void onDestroy() {
-        Intent intent = NearbyService.createNearbyIntent(NearbyState.UNKNOWN, this);
+        Intent intent = NearbyService.createNearbyIntent("", this);
         stopService(intent);
         super.onDestroy();
     }
