@@ -163,12 +163,16 @@ public class NearbyService extends IntentService {
         startActivity(intent);
     }
 
+    public NearbyState getServiceState() {
+        return serviceState;
+    }
+
     /**
      * Set state of the nearby service. This is used by the nearby server.
      * @param state
      * @param message
      */
-    public void setState(NearbyState state, @Nullable String message) {
+    public void setServiceState(NearbyState state, @Nullable String message) {
         // do extra things if we are switching state
         if (serviceState != state) {
             switch(serviceState) {
@@ -253,24 +257,30 @@ public class NearbyService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(TAG, "Handling intent now");
-        try {
-            String code = intent.getStringExtra("code");
-            setNearbyCode(code);
-            Log.d(TAG, String.format("Setting code to %s", code));
-        } catch (NullPointerException err) {
-            Log.d(TAG, "Could not get code from intent.");
+        if (intent.hasExtra("code")) {
+            try {
+                String code = intent.getStringExtra("code");
+                setNearbyCode(code);
+                Log.d(TAG, String.format("Setting code to %s", code));
+            } catch (NullPointerException err) {
+                Log.d(TAG, "Could not get code from intent.");
+            }
         }
 
-        switch (intent.getAction()) {
-            case ACTION_START:
-                start();
-                break;
-            case ACTION_STOP:
-                stop();
-                break;
-            default:
-                Log.d(TAG, "Unknown intent received. Will do nothing");
-                break;
+        try {
+            switch (intent.getAction()) {
+                case ACTION_START:
+                    start();
+                    break;
+                case ACTION_STOP:
+                    stop();
+                    break;
+                default:
+                    Log.d(TAG, "Unknown intent received. Will do nothing");
+                    break;
+            }
+        } catch (NullPointerException error) {
+            Log.d(TAG, "Null pointer for action received. Will do nothing");
         }
     }
 

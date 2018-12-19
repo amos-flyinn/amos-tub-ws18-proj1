@@ -50,9 +50,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NearbyServerActivity"
-            android:label="NearbyActivity" />
-        <activity
             android:name=".ConnectionSetupServerActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".ServerConnectionConnAuth">
