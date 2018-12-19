@@ -18,7 +18,7 @@ public class ConnectToClientActivity extends WifiHijackBase {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String name = v.getText().toString();
+                    String name = v.getText().toString(); // Get the String
                     onNameEnterFinished(name);
                     return true;
                 }

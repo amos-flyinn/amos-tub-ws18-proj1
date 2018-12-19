@@ -1,13 +1,11 @@
-package com.amos.server;
+package com.amos.flyinn;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
 import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -27,13 +25,11 @@ import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
-import java.security.SecureRandom;
-
 /**
- * Activity that handles connection to clients via nearby connection.
- * Includes permission handling and simple token authentication.
+ * Handles the client-side connection for FlyInn authentication.
+ * Checks permissions and allows all incoming connection requests.
  */
-public class NearbyServerActivity extends Activity {
+public abstract class ClientConnAuthActivity extends Activity {
 
     /** Permissions required for Nearby Connection */
     private static final String[] REQUIRED_PERMISSIONS =
@@ -49,24 +45,21 @@ public class NearbyServerActivity extends Activity {
     /** 1-to-1 since a device will be connected to only one other device at most. */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
-    /** Connection manager for the connection to FlyInn clients.*/
-    protected ConnectionsClient connectionsClient;
+    private ConnectionsClient connectionsClient;
 
-    private final String serverName = generateName(5);
-    private String clientID;
     private String clientName;
+    private String serverID;
+    private String serverName;
 
-    final Handler handler = new Handler();
-
-    /** Toast to publish user notifications */
     private Toast mToast;
+    Handler handler = new Handler();
 
     /** Tag for logging purposes. */
-    private static final String NEARBY_TAG = "ServerNearbyConnection";
+    private static final String CONN_AUTH_TAG = "ClientConnAuth";
 
 
     /**
-     * Obtain data from clientID/clientName and data transfer information via this handle.
+     * Obtain data from server and data transfer information via this handle.
      */
     private final PayloadCallback payloadCallback =
             new PayloadCallback() {
@@ -89,26 +82,9 @@ public class NearbyServerActivity extends Activity {
             new ConnectionLifecycleCallback() {
                 @Override
                 public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                    Log.i(NEARBY_TAG, "Connection initiated by " + endpointId);
-                    clientName = connectionInfo.getEndpointName();
-
-                    // authentication via tokens
-                    // TODO replace token authentication with QR code/manual code input
-                    new AlertDialog.Builder(NearbyServerActivity.this)
-                            .setTitle("Accept connection to " + clientName + "?")
-                            .setMessage("Confirm the code matches on both devices: " +
-                                    connectionInfo.getAuthenticationToken())
-                            .setPositiveButton(android.R.string.yes,
-                                    (DialogInterface dialog, int which) ->
-                                            // accept the connection
-                                            connectionsClient.acceptConnection(endpointId,
-                                                    payloadCallback))
-                            .setNegativeButton(android.R.string.cancel,
-                                    (DialogInterface dialog, int which) ->
-                                            // reject the connection
-                                            connectionsClient.rejectConnection(endpointId))
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+                    Log.i(CONN_AUTH_TAG, "Connection initiated by " + endpointId);
+                    serverName = connectionInfo.getEndpointName();
+                    connectionsClient.acceptConnection(endpointId, payloadCallback);
                 }
 
                 @Override
@@ -116,73 +92,94 @@ public class NearbyServerActivity extends Activity {
                     switch (result.getStatus().getStatusCode()) {
 
                         case ConnectionsStatusCodes.STATUS_OK:
-                            // successful connection with client
-                            Log.i(NEARBY_TAG, "Connected with " + endpointId);
+                            // successful connection with server
+                            Log.i(CONN_AUTH_TAG, "Connected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
                             connectionsClient.stopAdvertising();
-                            clientID = endpointId;
+                            serverID = endpointId;
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                             // connection was rejected by one side (or both)
-                            Log.i(NEARBY_TAG, "Connection rejected with " + endpointId);
+                            Log.i(CONN_AUTH_TAG, "Connection rejected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_rejected);
                             mToast.show();
-                            clearClientData();
+                            clearServerData();
                             break;
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
                             // connection was lost
-                            Log.w(NEARBY_TAG, "Connection lost: " + endpointId);
+                            Log.w(CONN_AUTH_TAG, "Connection lost: " + endpointId);
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
-                            clearClientData();
+                            clearServerData();
                             break;
 
                         default:
                             // unknown status code. we shouldn't be here
-                            Log.e(NEARBY_TAG, "Unknown error when attempting to connect with "
+                            Log.e(CONN_AUTH_TAG, "Unknown error when attempting to connect with "
                                     + endpointId);
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
-                            clearClientData();
+                            clearServerData();
                     }
                 }
 
                 @Override
                 public void onDisconnected(String endpointId) {
-                    // disconnected from client
-                    Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
+                    // disconnected from server
+                    Log.i(CONN_AUTH_TAG, "Disconnected from " + endpointId);
                     mToast.setText(R.string.nearby_disconnected);
                     mToast.show();
 
                     // better be safe
-                    clearClientData();
+                    clearServerData();
                     connectionsClient.stopAdvertising();
                     connectionsClient.stopAllEndpoints();
 
-                    // display toast for 2s, then start advertising again
-                    handler.postDelayed(() -> startAdvertising(), 2000);
+                    // display toast for 2s, then finish
+                    // TODO perhaps recreate instead?
+                    handler.postDelayed(() -> finish(), 2000);
                 }
             };
 
+
     /**
-     * Starts a nearby connectionsClient, checks permissions and calls startAdvertising().
+     * Returns the client's name (this endpoint).
+     *
+     * @return The client's name.
+     */
+    protected String getClient() { return clientName; }
+
+    /**
+     * Returns information about the server we are currently connected to.
+     *
+     * @return 2-entry array, the first entry is the ID of the server, the second its name.
+     */
+    protected String[] getServer() { return new String[]{serverID, serverName}; }
+
+
+    /**
+     * Initialises nearby connectionsClient and Toast instances,
+     * checks permissions and calls startAdvertising().
+     *
      * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nearby_server);
+        clientName = generateName();
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            Log.w(NEARBY_TAG, "Could not check permissions due to version");
+            Log.w(CONN_AUTH_TAG, "Could not check permissions due to version");
         }
 
+
+        Log.i(CONN_AUTH_TAG, "Current name is: " + clientName);
         connectionsClient = Nearby.getConnectionsClient(this);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
@@ -202,62 +199,64 @@ public class NearbyServerActivity extends Activity {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            Log.w(NEARBY_TAG, "Could not check permissions due to version");
+            Log.w(CONN_AUTH_TAG, "Could not check permissions due to version");
         }
     }
 
     /**
-     * Clears client data and stops all advertising and connections from this server
+     * Clears server data and stops all advertising and connections from this client
      * before calling super.onDestroy().
      */
     @Override
     protected void onDestroy() {
         connectionsClient.stopAdvertising();
         connectionsClient.stopAllEndpoints();
-        clearClientData();
+        clearServerData();
         super.onDestroy();
     }
 
 
     /**
-     * Broadcast our presence using Nearby Connection so FlyInn users can find us.
-     * Resets clientID and clientName first.
+     * Broadcast our presence using Nearby Connection so FlyInn servers can find us.
+     * Resets server data first.
      */
     private void startAdvertising() {
-        clearClientData();
+        clearServerData();
 
         AdvertisingOptions advertisingOptions =
                 new AdvertisingOptions.Builder().setStrategy(STRATEGY).build();
 
-        connectionsClient.startAdvertising(serverName, "com.amos.flyinn",
+        connectionsClient.startAdvertising(clientName, "com.amos.flyinn",
                 connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener( (Void unused) -> {
                     // started advertising successfully
-                    Log.i(NEARBY_TAG, "Started advertising " + serverName);
-                    mToast.setText(R.string.nearby_advertising_success);
-                    mToast.show();
+                    Log.i(CONN_AUTH_TAG, "Started advertising " + clientName);
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to advertise
-                    Log.e(NEARBY_TAG, "Unable to start advertising " + serverName);
+                    Log.e(CONN_AUTH_TAG, "Unable to start advertising " + clientName);
                     mToast.setText(R.string.nearby_advertising_error);
                     mToast.show();
-                    finish();
+
+                    // display toast for 2s, then finish
+                    handler.postDelayed(() -> finish(), 2000);
                 });
     }
 
     /**
-     * Resets client ID and client name to null.
+     * Resets server ID and name to null.
      */
-    private void clearClientData() {
-        clientID = null;
-        clientName = null;
+    private void clearServerData() {
+        serverID = null;
+        serverName = null;
     }
 
     /**
-     * Determines whether the FlyInn server app has the necessary permissions to run nearby.
+     * Determines whether we (the FlyInn client app) have the necessary permissions to run nearby.
+     *
      * @param context Checks the permissions against this context/application environment
      * @param permissions The permissions to be checked
+     *
      * @return True if the app was granted all the permissions, false otherwise
      */
     private static boolean hasPermissions(Context context, String[] permissions) {
@@ -272,6 +271,7 @@ public class NearbyServerActivity extends Activity {
 
     /**
      * Handles user acceptance (or denial) of our permission request.
+     *
      * @param requestCode The request code passed in requestPermissions()
      * @param permissions Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
@@ -288,7 +288,7 @@ public class NearbyServerActivity extends Activity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.w(NEARBY_TAG, "Permissions necessary for connections were not granted.");
+                Log.w(CONN_AUTH_TAG, "Permissions necessary for connections were not granted.");
                 mToast.setText(R.string.nearby_missing_permissions);
                 mToast.show();
                 finish();
@@ -298,21 +298,9 @@ public class NearbyServerActivity extends Activity {
     }
 
     /**
-     * Generates a name for the server.
-     * @return The server name, consisting of the build model + a random string
+     * Returns the name of this client, which is final and set at client initialisation.
+     *
+     * @return The name of the client.
      */
-    // TODO Define better name system?
-    private String generateName(int appendixLength){
-        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(appendixLength);
-        for (int i = 0; i < appendixLength; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
-        }
-
-        String name = Build.MODEL + "_" + sb.toString();
-        Log.i(NEARBY_TAG, "Current name is: " + name);
-        return name;
-    }
+    protected abstract String generateName();
 }

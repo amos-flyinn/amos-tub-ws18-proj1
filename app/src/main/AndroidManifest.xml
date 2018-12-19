@@ -28,8 +28,8 @@
         android:required="true" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.record_audio" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -41,34 +41,32 @@
         <activity
             android:name=".WebRTCActivity"
             android:label="WEBRTC Example"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            ></activity>
-        <activity android:name=".MainActivity"></activity>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".ADBActivity"
             android:label="@string/title_activity_adb"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".screenRecording.RecordingActivity" />
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ShowCodeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+
         <service android:name=".summoner.ADBService" />
         <service android:name=".nearbyservice.NearbyService" android:enabled="true" android:exported="true"/>
-        <activity android:name=".ConnectionSetupActivity"></activity>
+        <activity android:name=".ConnectionSetupActivity" />
+        <activity android:name=".NearbyConnectionActivity" />
+        <activity android:name=".ShowCodeConnAuth">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity
-            android:name=".NearbyConnectionActivity"
-            android:label="@string/title_activity_nearby_connection"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.amos.flyinn.MainActivity" />
+            android:name=".ClientConnAuthActivity"
+            android:label="@string/title_activity_client_conn_auth">
         </activity>
     </application>
 
