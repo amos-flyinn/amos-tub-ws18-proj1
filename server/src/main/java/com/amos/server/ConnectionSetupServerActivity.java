@@ -7,10 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -21,11 +19,13 @@ import com.amos.server.signaling.WebServer;
 import com.amos.server.webrtc.PeerWrapper;
 import com.amos.server.webrtc.SetupStates;
 import com.amos.shared.TouchEvent;
+import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.connection.ConnectionsClient;
+import com.google.android.gms.nearby.connection.Payload;
 
 import org.webrtc.SurfaceViewRenderer;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class ConnectionSetupServerActivity extends Activity {
 
@@ -44,6 +44,10 @@ public class ConnectionSetupServerActivity extends Activity {
     private PeerWrapper peerWrapper;
     private SurfaceViewRenderer remoteRender;
 
+    private String endpointId;
+
+    private static final String TAG = "ConnectionSetup";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,39 +58,21 @@ public class ConnectionSetupServerActivity extends Activity {
         connectionInfo = findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
 
-        //setStateText(SetupStates.LOCAL_DESCRIPTOR_CREATE);
-        // create touch listener components
-        msgQueue = new LinkedBlockingQueue<>();
-        uiHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                connectionInfo.setText((String) msg.obj);
+        Intent intent = getIntent();
+        if (intent.hasExtra("endpointId")) {
+            try {
+                endpointId = intent.getStringExtra("endpointId");
+                ConnectionsClient connection = Nearby.getConnectionsClient(this);
+                byte[] message = {0x61, 0x61, 0x61, 0x62};
+                Payload payload = Payload.fromBytes(message);
+                connection.sendPayload(endpointId, payload);
+                Log.d(TAG, "Sent test payload to receiver " + endpointId);
+            } catch (NullPointerException error) {
+                Log.d(TAG, "Failed to get endpointId from intent");
             }
-        };
-        eventSender = new EventServer(msgQueue, uiHandler);
-
-
-        //init WebRTC Signaling server
-        this.initViews();
-        this.peerWrapper = new PeerWrapper(this);
-        this.webSocketServer = new WebServer(this.peerWrapper);
-        this.peerWrapper.setEmitter(this.webSocketServer);
-        this.webSocketServer.start();
-
-
-        senderRunner = new Thread(eventSender);
-        senderRunner.start();
-        view.setOnTouchListener(
-                (View v, MotionEvent e) -> {
-                    e.setLocation(e.getX() / view.getWidth(), e.getY() / view.getHeight());
-                    TouchEvent te = new TouchEvent(e.getX(), e.getY(), e.getAction(), e.getDownTime());
-                    msgQueue.add(te);
-                    return true;
-                }
-        );
-
-
+        } else {
+            Log.d(TAG, "Intent did not specify endpoint");
+        }
     }
 
     /**
@@ -104,7 +90,7 @@ public class ConnectionSetupServerActivity extends Activity {
     }
 
 
-    private void restarAPP() {
+    private void restartApp() {
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -135,7 +121,7 @@ public class ConnectionSetupServerActivity extends Activity {
         builder.setNegativeButton("Restart app", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                restarAPP();
+                restartApp();
             }
         });
 

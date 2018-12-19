@@ -43,19 +43,17 @@
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ConnectToClientActivity"></activity>
-        <activity
-            android:name=".NearbyServerActivity"
-            android:label="NearbyActivity" />
+        <activity android:name=".ConnectToClientActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ConnectionSetupServerActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".ServerConnectionConnAuth">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ServerConnAuthActivity" />
         <activity android:name=".SettingsScreen.SettingsActivity"></activity>

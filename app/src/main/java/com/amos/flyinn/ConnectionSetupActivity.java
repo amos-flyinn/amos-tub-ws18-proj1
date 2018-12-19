@@ -91,25 +91,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
                 switchToHomeScreen();
             }
         });
-
-
-        String addr;
-        //Preparing and initializing the ADB service to listen for incoming connections.
-        try {
-            WifiConnectorSingleton wifiConnector = WifiConnectorSingleton.getInstance();
-            WifiStateMachine stateMachine = wifiConnector.getWifiReceiverP2P();
-            Log.d("IP", stateMachine.getHostAddr());
-            while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-            }
-            adbDaemon = createADBService(stateMachine.getHostAddr());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //Init components for WebRTC and ask permissions for Screen capture functionalities.
-        this.initViewsWebRTC();
-        this.initScreenCapturePermissions();
     }
 
     /**
