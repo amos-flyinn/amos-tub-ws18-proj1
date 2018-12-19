@@ -72,10 +72,10 @@ public class NearbyConnectionActivity extends ListActivity {
     private List<String> servers = new ArrayList<>();
 
     /** Maps server names to their nearby connection IDs. */
-    private HashMap<String, String> serverNamesToIDs = new HashMap<>();
+    private HashMap<String, String> clientNamesToIDs = new HashMap<>();
 
     /** Maps server IDs to their nearby connection names. */
-    private HashMap<String, String> serverIDsToNames = new HashMap<>();
+    private HashMap<String, String> clientIDsToNames = new HashMap<>();
 
     /** Tag for logging purposes. */
     private static final String NEARBY_TAG = "ClientNearbyConnection";
@@ -108,11 +108,11 @@ public class NearbyConnectionActivity extends ListActivity {
                     // discovered a server, add to data maps
                     String endpointName = info.getEndpointName();
 
-                    if (!(serverIDsToNames.containsKey(endpointId)
-                            || serverNamesToIDs.containsKey(endpointName))) {
+                    if (!(clientIDsToNames.containsKey(endpointId)
+                            || clientNamesToIDs.containsKey(endpointName))) {
                         servers.add(endpointName);
-                        serverNamesToIDs.put(endpointName, endpointId);
-                        serverIDsToNames.put(endpointId, endpointName);
+                        clientNamesToIDs.put(endpointName, endpointId);
+                        clientIDsToNames.put(endpointId, endpointName);
                         ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                                 .notifyDataSetChanged();
                         Log.i(NEARBY_TAG, clientName + " digscovered endpoint " + endpointId);
@@ -121,8 +121,8 @@ public class NearbyConnectionActivity extends ListActivity {
                         // this should not happen
                         while (servers.remove(endpointName)) {}
                         servers.add(endpointName);
-                        serverIDsToNames.put(endpointId, endpointName);
-                        serverNamesToIDs.put(endpointName, endpointId);
+                        clientIDsToNames.put(endpointId, endpointName);
+                        clientNamesToIDs.put(endpointName, endpointId);
                         ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                                 .notifyDataSetChanged();
                         Log.w(NEARBY_TAG, clientName + " rediscovered endpoint " + endpointId);
@@ -132,9 +132,9 @@ public class NearbyConnectionActivity extends ListActivity {
                 @Override
                 public void onEndpointLost(String endpointId) {
                     // previously discovered server is no longer reachable, remove from data maps
-                    String lostEndpointName = serverIDsToNames.get(endpointId);
-                    serverIDsToNames.remove(endpointId);
-                    serverNamesToIDs.remove(lostEndpointName);
+                    String lostEndpointName = clientIDsToNames.get(endpointId);
+                    clientIDsToNames.remove(endpointId);
+                    clientNamesToIDs.remove(lostEndpointName);
                     while (servers.remove(lostEndpointName)) {}
                     ((ArrayAdapter) NearbyConnectionActivity.this.getListAdapter())
                             .notifyDataSetChanged();
@@ -340,7 +340,7 @@ public class NearbyConnectionActivity extends ListActivity {
 
         // store user selection
         serverName = servers.get(position);
-        serverID = serverNamesToIDs.get(serverName);
+        serverID = clientNamesToIDs.get(serverName);
 
         //request connection to server selected by user
         connectionsClient.requestConnection(clientName, serverID, connectionLifecycleCallback)
@@ -365,8 +365,8 @@ public class NearbyConnectionActivity extends ListActivity {
     private void clearServerData() {
         servers.clear();
         ((ArrayAdapter) this.getListAdapter()).notifyDataSetChanged();
-        serverIDsToNames.clear();
-        serverNamesToIDs.clear();
+        clientIDsToNames.clear();
+        clientNamesToIDs.clear();
         serverID = null;
         serverName = null;
     }
@@ -377,8 +377,8 @@ public class NearbyConnectionActivity extends ListActivity {
     private void connectedToServer() {
         connectionsClient.stopDiscovery();
         servers.clear();
-        serverNamesToIDs.clear();
-        serverIDsToNames.clear();
+        clientNamesToIDs.clear();
+        clientIDsToNames.clear();
 
         //add close connection button
         servers.add(getResources().getString(R.string.nearby_close_connection) + " " + serverName);
