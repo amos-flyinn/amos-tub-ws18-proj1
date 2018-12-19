@@ -150,11 +150,15 @@ public class NearbyService extends IntentService {
         if (serviceState == NearbyState.STOPPED) {
             Log.d(TAG, "Starting NearbyService");
             if (server == null) {
-                server = new NearbyServer("nearby_server", this);
+                try {
+                    server = new NearbyServer(this);
+                    serviceState = NearbyState.ADVERTISING;
+                    notify("Start advertising nearby service");
+                    server.start();
+                } catch (SecurityException error) {
+                    notify("Insufficient permissions");
+                }
             }
-            server.start();
-            serviceState = NearbyState.ADVERTISING;
-            notify("Start advertising nearby service");
         } else {
             Log.d(TAG, "NearbyService already started");
         }

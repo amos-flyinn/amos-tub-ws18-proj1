@@ -46,7 +46,8 @@ class NearbyServer {
      * Connection manager for the connection to FlyInn clients.
      */
     protected ConnectionsClient connectionsClient;
-    private final String serverName;
+    private final String serviceName = "nearby_server";
+    private final String serviceID = "com.amos.server";
     private String clientID;
     private String clientName;
 
@@ -55,12 +56,23 @@ class NearbyServer {
     /**
      * Create new nearby server with the given name.
      *
-     * @param name
+     * @param service
      */
-    public NearbyServer(String name, NearbyService service) {
-        this.serverName = name;
+    public NearbyServer(NearbyService service) throws SecurityException {
         this.nearbyService = service;
         this.connectionsClient = Nearby.getConnectionsClient(this.nearbyService);
+        // if (this.hasPermissions()) {
+        // } else {
+        //     throw new SecurityException("Insufficient permissions to start nearby service.");
+        // }
+    }
+
+    /**
+     * Server name as combination of name with suffix which is our nearby code
+     * @return
+     */
+    public String getServerName() {
+        return serviceName + this.nearbyService.getNearbyCode();
     }
 
     /**
@@ -82,12 +94,11 @@ class NearbyServer {
     /**
      * Determines whether the FlyInn server app has the necessary permissions to run nearby.
      *
-     * @param context Checks the permissions against this context/application environment
      * @return True if the app was granted all the permissions, false otherwise
      */
-    public static boolean hasPermissions(Context context) {
+    public boolean hasPermissions() {
         for (String permission : REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(context, permission)
+            if (ContextCompat.checkSelfPermission(nearbyService, permission)
                     != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
@@ -105,7 +116,7 @@ class NearbyServer {
         AdvertisingOptions advertisingOptions =
                 new AdvertisingOptions.Builder().setStrategy(STRATEGY).build();
 
-        connectionsClient.startAdvertising(serverName, TAG,
+        connectionsClient.startAdvertising(getServerName(), serviceID,
                 connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener((Void unused) -> {
                     Log.d(TAG, "Start advertising Android nearby");
