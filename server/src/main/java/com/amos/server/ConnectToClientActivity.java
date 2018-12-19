@@ -2,9 +2,8 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,12 +13,10 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amos.server.wifibroadcaster.WifiHijackBase;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
@@ -75,7 +72,7 @@ public class ConnectToClientActivity extends Activity {
     private HashMap<String, String> clientIDsToNames = new HashMap<>();
 
     /** Tag for logging purposes. */
-    private static final String NEARBY_TAG = "ClientNearbyConnection";
+    private static final String TAG = "ClientNearbyConnection";
 
 
 
@@ -87,12 +84,12 @@ public class ConnectToClientActivity extends Activity {
             new PayloadCallback() {
                 @Override
                 public void onPayloadReceived(String endpointId, Payload payload) {
-                    // TODO
+                    Log.d(TAG, "Payload received");
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
-                    // TODO
+                    Log.d(TAG, "Payload transfer update");
                 }
             };
 
@@ -113,7 +110,7 @@ public class ConnectToClientActivity extends Activity {
                         clients.add(endpointName);
                         clientNamesToIDs.put(endpointName, endpointId);
                         clientIDsToNames.put(endpointId, endpointName);
-                        Log.i(NEARBY_TAG, clientName + " digscovered endpoint " + endpointId);
+                        Log.i(TAG, clientName + " discovered endpoint " + endpointId + " with name " + endpointName);
 
                     } else {
                         // this should not happen
@@ -121,7 +118,7 @@ public class ConnectToClientActivity extends Activity {
                         clients.add(endpointName);
                         clientIDsToNames.put(endpointId, endpointName);
                         clientNamesToIDs.put(endpointName, endpointId);
-                        Log.w(NEARBY_TAG, clientName + " rediscovered endpoint " + endpointId);
+                        Log.i(TAG, clientName + " rediscovered endpoint " + endpointId + " with name " + endpointName);
                     }
                 }
 
@@ -131,7 +128,7 @@ public class ConnectToClientActivity extends Activity {
                     String lostEndpointName = clientIDsToNames.get(endpointId);
                     clientIDsToNames.remove(endpointId);
                     clientNamesToIDs.remove(lostEndpointName);
-                    Log.i(NEARBY_TAG, clientName + " lost discovered endpoint " + endpointId);
+                    Log.i(TAG, clientName + " lost discovered endpoint " + endpointId);
                 }
             };
 
@@ -144,34 +141,14 @@ public class ConnectToClientActivity extends Activity {
             new ConnectionLifecycleCallback() {
                 @Override
                 public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                    Log.i(NEARBY_TAG, "Connection initiated to " + endpointId);
+                    Log.i(TAG, "Connection initiated to " + endpointId);
 
                     if (endpointId.equals(clientID)) {
-                        // authentication via tokens
-                        // TODO replace token authentication with QR code/manual code input
-                       /*
-                        new AlertDialog.Builder(ConnectToClientActivity.this)
-                                .setTitle("Accept connection to " + serverName + "?")
-                                .setMessage("Confirm the code matches on both devices: " +
-                                        connectionInfo.getAuthenticationToken())
-                                .setPositiveButton(android.R.string.yes,
-                                        (DialogInterface dialog, int which) ->
-                                                // accept the connection
-                                                connectionsClient.acceptConnection(endpointId,
-                                                        payloadCallback))
-                                .setNegativeButton(android.R.string.cancel,
-                                        (DialogInterface dialog, int which) ->
-                                                // reject the connection
-                                                connectionsClient.rejectConnection(endpointId))
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-
-                                */
-
+                        connectionsClient.acceptConnection(endpointId, payloadCallback);
                     } else {
                         // initiated connection is not with server selected by user
                         connectionsClient.rejectConnection(endpointId);
-                        Log.i(NEARBY_TAG, "Connection rejected to non-selected server "
+                        Log.i(TAG, "Connection rejected to non-selected server "
                                 + endpointId);
                     }
                 }
@@ -182,15 +159,15 @@ public class ConnectToClientActivity extends Activity {
 
                         case ConnectionsStatusCodes.STATUS_OK:
                             // successful connection with server
-                            Log.i(NEARBY_TAG, "Connected with " + endpointId);
+                            Log.i(TAG, "Connected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
-                            connectedToServer();
+                            connectedToApp();
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                             // connection was rejected by one side (or both)
-                            Log.i(NEARBY_TAG, "Connection rejected with " + endpointId);
+                            Log.i(TAG, "Connection rejected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_rejected);
                             mToast.show();
                             clientNameNow = null;
@@ -199,7 +176,7 @@ public class ConnectToClientActivity extends Activity {
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
                             // connection was lost
-                            Log.w(NEARBY_TAG, "Connection lost: " + endpointId);
+                            Log.w(TAG, "Connection lost: " + endpointId);
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
                             clientNameNow = null;
@@ -208,7 +185,7 @@ public class ConnectToClientActivity extends Activity {
 
                         default:
                             // unknown status code. we shouldn't be here
-                            Log.e(NEARBY_TAG, "Unknown error when attempting to connect with "
+                            Log.e(TAG, "Unknown error when attempting to connect with "
                                     + endpointId);
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
@@ -220,7 +197,7 @@ public class ConnectToClientActivity extends Activity {
                 @Override
                 public void onDisconnected(String endpointId) {
                     // disconnected from server
-                    Log.i(NEARBY_TAG, "Disconnected from " + endpointId);
+                    Log.i(TAG, "Disconnected from " + endpointId);
                     mToast.setText(R.string.nearby_disconnected);
                     mToast.show();
                     clearServerData();
@@ -233,15 +210,15 @@ public class ConnectToClientActivity extends Activity {
     private void requestConnectionWithClient(String code){
 
         String searchedClientName = null;
-        for(String clientName : clients){
-            if(clientName.startsWith(code))
+        for (String clientName : clients){
+            if(clientName.endsWith(code))
             {
                 searchedClientName = clientName;
                 break;
             }
         }
 
-        if(searchedClientName == null)
+        if (searchedClientName == null)
         {
             Toast.makeText(this,"The code given was not found. Please try again",Toast.LENGTH_LONG).show();
             return;
@@ -282,7 +259,7 @@ public class ConnectToClientActivity extends Activity {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            Log.w(NEARBY_TAG, "Could not check permissions due to version");
+            Log.w(TAG, "Could not check permissions due to version");
         }
 
         connectionsClient = Nearby.getConnectionsClient(this);
@@ -306,7 +283,7 @@ public class ConnectToClientActivity extends Activity {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            Log.w(NEARBY_TAG, "Could not check permissions due to version");
+            Log.w(TAG, "Could not check permissions due to version");
         }
     }
 
@@ -335,13 +312,13 @@ public class ConnectToClientActivity extends Activity {
                 discoveryOptions)
                 .addOnSuccessListener( (Void unused) -> {
                     // started searching for servers successfully
-                    Log.i(NEARBY_TAG, "Discovering connections on " + clientName);
+                    Log.i(TAG, "Discovering connections on " + clientName);
                     mToast.setText(R.string.nearby_discovering_success);
                     mToast.show();
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to start discovery
-                    Log.e(NEARBY_TAG, "Unable to start discovery on " + clientName);
+                    Log.e(TAG, "Unable to start discovery on " + clientName);
                     mToast.setText(R.string.nearby_discovering_error);
                     mToast.show();
                     finish();
@@ -360,16 +337,20 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
+     * Handle established connection with app.
+     *
      * Clears servers data maps, stops discovery of new servers and adds close connection button
      */
-    private void connectedToServer() {
+    private void connectedToApp() {
         connectionsClient.stopDiscovery();
         clients.clear();
         clientNamesToIDs.clear();
         clientIDsToNames.clear();
 
-        //add close connection button
-        clients.add(getResources().getString(R.string.nearby_close_connection) + " " + clientNameNow);
+        // Start setting up a connection with the other side
+        Intent intent = new Intent(this, ConnectionSetupServerActivity.class);
+        intent.putExtra("endpointId", clientID);
+        startActivity(intent);
     }
 
     /**
@@ -406,7 +387,7 @@ public class ConnectToClientActivity extends Activity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.w(NEARBY_TAG, "Permissions necessary for " +
+                Log.w(TAG, "Permissions necessary for " +
                         "Nearby Connection were not granted.");
                 mToast.setText(R.string.nearby_missing_permissions);
                 mToast.show();
@@ -431,7 +412,7 @@ public class ConnectToClientActivity extends Activity {
         }
 
         String name = Build.MODEL + "_" + sb.toString();
-        Log.i(NEARBY_TAG, "Current name is: " + name);
+        Log.i(TAG, "Current name is: " + name);
         return name;
     }
 

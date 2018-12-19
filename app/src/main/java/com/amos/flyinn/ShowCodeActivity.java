@@ -53,14 +53,15 @@ public class ShowCodeActivity extends AppCompatActivity {
         } else {
             Log.w(TAG, "Could not check permissions due to version");
         }
+
+        nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
+        display.setText(nameNum);
+        setService();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
-        display.setText(nameNum);
-        setService();
     }
 
 

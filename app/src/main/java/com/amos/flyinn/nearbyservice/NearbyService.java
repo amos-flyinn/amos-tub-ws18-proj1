@@ -20,6 +20,8 @@ import android.util.Log;
 import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.R;
 import com.amos.flyinn.ShowCodeActivity;
+import com.google.android.gms.nearby.connection.Payload;
+import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -68,6 +70,30 @@ public class NearbyService extends IntentService {
     }
 
     /**
+     * Create a notification channel.
+     *
+     * Notifications are organized into different channels to theoretically enable the user to
+     * individually set what they want to be informed about.
+     *
+     * This is required since Android 8.
+     */
+    private void createChannel() {
+        NotificationManager mgr=
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O &&
+                mgr.getNotificationChannel(CHANNEL_ID)==null) {
+
+            NotificationChannel c=new NotificationChannel(CHANNEL_ID,
+                    "flyinn_channel", NotificationManager.IMPORTANCE_HIGH);
+
+            c.enableLights(true);
+            c.setLightColor(0xFFFF0000);
+
+            mgr.createNotificationChannel(c);
+        }
+    }
+
+    /**
      * Create a sticky notification that won't go away.
      * @param message String message shown in the notification.
      * @param target Optional target intent to switch to after tapping the notification.
@@ -78,6 +104,7 @@ public class NearbyService extends IntentService {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)  // makes notification pop up
                 .setContentTitle(String.format("Nearby service %s", nearbyCode))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
@@ -127,6 +154,36 @@ public class NearbyService extends IntentService {
     }
 
     /**
+     * Activate the given activity
+     * @param cls Class of the target activity
+     */
+    private void switchActivity(Class<?> cls) {
+        Intent intent = new Intent(this, cls);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    /**
+     * Set state of the nearby service. This is used by the nearby server.
+     * @param state
+     * @param message
+     */
+    public void setState(NearbyState state, @Nullable String message) {
+        // do extra things if we are switching state
+        if (serviceState != state) {
+            switch(serviceState) {
+                case CONNECTING:
+                    switchActivity(ConnectionSetupActivity.class);
+                    break;
+            }
+            serviceState = state;
+        }
+        if (message != null) {
+            notify(message);
+        }
+    }
+
+    /**
      * Create an Intent to control NearbyService.
      *
      * @param state   Defined serviceState for the application as enum.
@@ -147,6 +204,14 @@ public class NearbyService extends IntentService {
         }
     }
 
+    public void handlePayload(Payload payload) {
+        Log.d(TAG, "Received payload");
+    }
+
+    public void handlePayloadTransferUpdate(PayloadTransferUpdate update) {
+        Log.d(TAG, "Received transfer update");
+    }
+
     /**
      * Start advertising Android nearby.
      */
@@ -156,8 +221,6 @@ public class NearbyService extends IntentService {
             if (server == null) {
                 try {
                     server = new NearbyServer(this);
-                    serviceState = NearbyState.ADVERTISING;
-                    notify("Start advertising nearby service");
                     server.start();
                 } catch (SecurityException error) {
                     notify("Insufficient permissions");
@@ -179,30 +242,6 @@ public class NearbyService extends IntentService {
             server.stop();
         } else {
             Log.d(TAG, "NearbyService already stopped");
-        }
-    }
-
-    /**
-     * Create a notification channel.
-     *
-     * Notifications are organized into different channels to theoretically enable the user to
-     * individually set what they want to be informed about.
-     *
-     * This is required since Android 8.
-     */
-    private void createChannel() {
-        NotificationManager mgr=
-                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O &&
-                mgr.getNotificationChannel(CHANNEL_ID)==null) {
-
-            NotificationChannel c=new NotificationChannel(CHANNEL_ID,
-                    "flyinn_channel", NotificationManager.IMPORTANCE_DEFAULT);
-
-            c.enableLights(true);
-            c.setLightColor(0xFFFF0000);
-
-            mgr.createNotificationChannel(c);
         }
     }
 
