@@ -253,8 +253,6 @@ public class ConnectToClientActivity extends Activity {
         });
 
 
-
-
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
@@ -415,9 +413,5 @@ public class ConnectToClientActivity extends Activity {
         Log.i(TAG, "Current name is: " + name);
         return name;
     }
-
-
-
-
 
 }

@@ -55,8 +55,8 @@
         <activity android:name=".ServerConnectionConnAuth">
 
         </activity>
-
-        <activity android:name=".ServerConnAuthActivity"></activity>
+        <activity android:name=".ServerConnAuthActivity" />
+        <activity android:name=".SettingsScreen.SettingsActivity"></activity>
     </application>
 
 </manifest>

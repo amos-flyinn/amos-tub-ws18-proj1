@@ -3,7 +3,9 @@ package com.amos.server;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class BuildInfoActivity extends AppCompatActivity {
 
@@ -19,5 +21,6 @@ public class BuildInfoActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.buildinfo_build_date)).setText(BuildInfo.GIT_BUILD_DATE);
         ((TextView)findViewById(R.id.buildinfo_package)).setText(BuildInfo.GIT_PACKAGE);
     }
+
 
 }
