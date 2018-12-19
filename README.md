@@ -25,10 +25,11 @@ Click the thumbnail to watch the FlyInn app in action!
 ---
 
 ## Prerequisites
-The minimum API level is API 21 (Android 5 Lollipop) for the client device and API 28 (Android 9 Pie) on the server side.
-FlyInn requires the following setting to be enabled on both the client and the server side:
-* ADB over Network
-* USB debugging
+
+* API level: at least 21 (Android 5 Lollipop) for the client, at least 26 (Android 8 Oreo) for the server
+* Google Play Services: version 7.8.0 or higher
+* Enabled settings: ADB over Network, USB debugging (both for client and server)
+* Permissions: access location
 
 ---
 
