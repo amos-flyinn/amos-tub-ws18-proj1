@@ -25,9 +25,16 @@ public class ConnectToClientActivity extends WifiHijackBase {
                 return false;
             }
         });
+
+
     }
+
+
 
     private void onNameEnterFinished(String name) {
         this.changeName(name);
     }
+
+
+
 }

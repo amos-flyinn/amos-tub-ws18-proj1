@@ -43,8 +43,7 @@
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ConnectToClientActivity">
-        </activity>
+        <activity android:name=".ConnectToClientActivity"></activity>
         <activity
             android:name=".NearbyServerActivity"
             android:label="NearbyActivity" />
@@ -58,8 +57,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ServerConnAuthActivity"></activity>
+        <activity android:name=".ServerConnAuthActivity" />
+        <activity android:name=".SettingsScreen.SettingsActivity"></activity>
     </application>
 
 </manifest>
