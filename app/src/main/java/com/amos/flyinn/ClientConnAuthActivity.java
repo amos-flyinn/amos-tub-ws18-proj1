@@ -270,9 +270,35 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
-     * Returns the name of this client, which is final and set at client initialisation.
+     * Handles user acceptance (or denial) of our permission request.
      *
-     * @return The name of the client.
+     * @param requestCode The request code passed in requestPermissions()
+     * @param permissions Permissions that must be granted to run nearby connections
+     * @param grantResults Results of granting permissions
+     */
+    @CallSuper
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode != REQUEST_CODE_REQUIRED_PERMISSIONS) {
+            return;
+        }
+
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                Log.w(CONN_AUTH_TAG, "Permissions necessary for connections were not granted.");
+                mToast.setText(R.string.nearby_missing_permissions);
+                mToast.show();
+                finish();
+            }
+        }
+        recreate();
+    }
+
+    /**
+     * Returns the name of this client, which is set in onCreate().
      */
     protected abstract String generateName();
 }
