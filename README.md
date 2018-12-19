@@ -1,28 +1,18 @@
-![FlyInn Logo](https://i.ibb.co/5nnFp9J/black.png)
+![FlyInn Logo](https://i.ibb.co/5nnFp9J/black.png)  
+
+[![Build Status](https://travis-ci.com/amos-flyinn/amos-tub-ws18-proj1.svg?branch=master)](https://travis-ci.com/amos-flyinn/amos-tub-ws18-proj1) [![MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/amos-flyinn/amos-tub-ws18-proj1/blob/master/LICENSE)
 
 ## Project Description
 Remote control and screen sharing for Android devices with a focus on easy pairing and usage on shared third-party hardware.
-Seamless access to personal mobile device through an external screen integrated into an external screen, which allows comprehensive control of the device.
-
----
+Seamless access to the personal mobile device through an external screen integrated into a bicycle dashboard, which allows comprehensive control of the device.
 
 ## Motivation
 The world of city mobility is transforming to a more flexible environment. Vehicles are not a person owned item, they are rather shared. The technology presented in the FlyInn project shall improve multimodal mobility and traffic safety.
 While using shared bikes, scooters, etc. the user is able to control his mobile without touching it physically at all times. FlyInn allows to put the users in their known habitat instead of putting barriers and unknown interfaces between them and their phone.
 
----
-
-## Build status
-[![Build Status](https://travis-ci.com/amos-flyinn/amos-tub-ws18-proj1.svg?branch=master)](https://travis-ci.com/amos-flyinn/amos-tub-ws18-proj1)
-
----
-
 ## Demo
-Click the thumbnail to watch the FlyInn app in action!  
-[![Click to watch demo video on YouTube](https://img.youtube.com/vi/Vic-glthkUI/0.jpg)](https://www.youtube.com/watch?v=Vic-glthkUI)
-
-
----
+[![Click to watch demo video on YouTube](https://img.youtube.com/vi/Vic-glthkUI/0.jpg)](https://www.youtube.com/watch?v=Vic-glthkUI)  
+Click the thumbnail to watch the FlyInn app in action!
 
 ## Prerequisites
 
@@ -31,12 +21,8 @@ Click the thumbnail to watch the FlyInn app in action!
 * Enabled settings: ADB over Network, USB debugging (both for client and server)
 * Permissions: access location
 
----
-
 ## Installation
 The installation of FlyInn is as easy as copying the desired *.apk file (client or server) to the device and installing it like any other app.
-
----
 
 ## Features
 This section provides an overview of FlyInn's features. It includes features which have not yet been implemented but are scheduled for the final project release. These are marked with a :construction: sign.
@@ -69,25 +55,17 @@ Remote interaction with the smartphone is possible through input mirroring. Touc
 * Proximity sensor: Enable/disable the sensor inside the app
 * UI accessibility aspects: Adapt the color scheme and text size to enhance readability
 
----
-
 ## Contributors
-The FlyInn application is a product of the [AMOS (Agile Methods and Open Source) project](https://www.qds.tu-berlin.de/menue/lehre/wintersemester/pj_das_amos_projekt/) offered for Computer Science students at the Technische Universität Berlin.
+The FlyInn application is a product of the [AMOS (Agile Methods and Open Source) project](https://www.qds.tu-berlin.de/menue/lehre/wintersemester/pj_das_amos_projekt/) offered for Computer Science students at the Technische Universität Berlin. The industry partner for the project is the [IAV Digital Lab](https://www.iav.com/en/digital-lab#overview).
 
 ### Project Team
-Luk Burchard  
-Max Zhao  
-Alejandro Jaramillo  
+Abdulrahim Al Methiab  
 León Viktor Avilés Podgurski  
-Erik Zöllner  
+Sebastian Brito  
+Luk Burchard  
 Eliza Danila  
+Alejandro Jaramillo  
 Steffen Loos  
 Duy Anh Charlie Nguyen  
-Abdulrahim Al Methiab  
-Sebastian Brito  
-
-
----
-
-## LICENSE
-The code is submitted under the MIT License described in the [LICENSE](https://github.com/amos-flyinn/amos-tub-ws18-proj1/blob/master/LICENSE) file.
+Max Zhao  
+Erik Zöllner
