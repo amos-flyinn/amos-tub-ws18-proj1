@@ -18,7 +18,7 @@ While using shared bikes, scooters, etc. the user is able to control his mobile 
 ---
 
 ## Demo
-Click the thumbnail to watch the FlyInn app in action!
+Click the thumbnail to watch the FlyInn app in action!  
 [![Click to watch demo video on YouTube](https://img.youtube.com/vi/Vic-glthkUI/0.jpg)](https://www.youtube.com/watch?v=Vic-glthkUI)
 
 
