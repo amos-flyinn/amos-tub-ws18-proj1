@@ -11,7 +11,7 @@
 /captures
 .externalNativeBuild
 /fakeinput_dist
-app/src/main/res/raw/flyinn_fakeinputlib.jar
+/app/src/main/res/raw/fakeinputlib.jar
 BuildInfo.java
 app/lint-report.html
 server/lint-report.html

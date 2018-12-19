@@ -1,18 +1,14 @@
 package com.amos.flyinn.nearbyservice;
 
 /**
- * Define state of intents for Nearby Service.
+ * Define possible states of the Nearby service. These are set by the service itself or by the
+ * server.
  */
 public enum NearbyState {
-    // Instructions to start and stop NearbyService
-    START,
-    STOP,
     // Default state or state of errors
     UNKNOWN,
-    // State of NearbyServer
-    STARTED,
     STOPPED,
-    // Connection state of nearby
+    ADVERTISING,
+    CONNECTING,
     CONNECTED,
-    DISCONNECTED;
 }
