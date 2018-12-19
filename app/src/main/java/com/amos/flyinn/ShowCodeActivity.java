@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Initial activity showing code used for connection from remote display.
  */
 public class ShowCodeActivity extends AppCompatActivity {
-    private String nameNum = "1234";
+    private String nameNum = "";
     private TextView display;
     private Toast mToast;
 
