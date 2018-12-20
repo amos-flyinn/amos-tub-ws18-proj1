@@ -19,12 +19,12 @@ public class ADBServiceTest {
     }
 
     @Test(expected = IOException.class)
-    public void connectADB() throws IOException{
+    public void connectADB() throws IOException {
         service.connectNetworkADB();
     }
 
     @Test(expected = IOException.class)
-    public void spawnApp() throws IOException{
+    public void spawnApp() throws IOException {
         service.spawnApp(null, "Yolo");
     }
 

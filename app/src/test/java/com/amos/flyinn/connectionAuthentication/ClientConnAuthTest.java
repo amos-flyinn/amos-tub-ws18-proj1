@@ -22,9 +22,9 @@ public class ClientConnAuthTest {
      * Tests whether the code shown to the user on the client's display is numeric
      */
     @Test
-    public void appCodeIsNumeric(){
+    public void appCodeIsNumeric() {
         ShowCodeConnAuth activity = Robolectric.buildActivity(ShowCodeConnAuth.class).create().start().get();
-        String code = (String) ((TextView)activity.findViewById(R.id.textView2)).getText();
+        String code = (String) ((TextView) activity.findViewById(R.id.textView2)).getText();
         boolean codeIsNumber = true;
         try {
             Integer.parseInt(code);

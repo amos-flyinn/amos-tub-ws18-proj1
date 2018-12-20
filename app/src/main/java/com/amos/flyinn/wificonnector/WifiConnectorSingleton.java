@@ -13,6 +13,7 @@ public class WifiConnectorSingleton {
 
     /**
      * Get the global WifiConnector object.
+     *
      * @return
      */
     public static WifiConnectorSingleton getInstance() {
@@ -29,6 +30,7 @@ public class WifiConnectorSingleton {
 
     /**
      * Get Wifi receiver.
+     *
      * @return
      */
     public WifiStateMachine getWifiReceiverP2P() {
@@ -37,6 +39,7 @@ public class WifiConnectorSingleton {
 
     /**
      * Create a new Wifi State machine from given P2P objects.
+     *
      * @param manager
      * @param channel
      * @param activity

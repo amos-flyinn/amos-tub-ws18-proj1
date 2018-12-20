@@ -18,8 +18,9 @@ class WifiServiceManager extends BroadcastReceiver {
 
     /**
      * Create a new WifiService manager.
-     *
+     * <p>
      * This constructor should only be called by the broadcaster.
+     *
      * @param manager
      * @param channel
      * @param activity
@@ -32,8 +33,9 @@ class WifiServiceManager extends BroadcastReceiver {
 
     /**
      * Try to get connection information on connection setup message from Wifi P2P
-     *
+     * <p>
      * Further processing is handled by WifiConnectionService, which acts on the resulting connection information.
+     *
      * @param context
      * @param intent
      */
@@ -45,7 +47,7 @@ class WifiServiceManager extends BroadcastReceiver {
                 NetworkInfo infoNet = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
                 if (infoNet.isConnected()) {
                     try {
-                        Log.d("TestHere","test");
+                        Log.d("TestHere", "test");
                         mManager.requestConnectionInfo(mChannel, this.connectionService);
                     } catch (Exception e) {
                         e.printStackTrace();

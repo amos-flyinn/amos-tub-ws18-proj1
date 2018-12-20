@@ -18,6 +18,7 @@ class PeersListenerService implements WifiP2pManager.PeerListListener {
 
     /**
      * Create a new listener.
+     *
      * @param activity
      */
     PeersListenerService(WifiConnectorBase activity) {
@@ -26,6 +27,7 @@ class PeersListenerService implements WifiP2pManager.PeerListListener {
 
     /**
      * Trigger changes to our list of peers after an update to available peers.
+     *
      * @param wifiP2pDeviceList
      */
     @Override

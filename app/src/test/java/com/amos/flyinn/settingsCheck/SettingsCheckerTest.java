@@ -2,9 +2,6 @@ package com.amos.flyinn.settingsCheck;
 
 import android.content.Context;
 import android.provider.Settings;
-import android.util.Log;
-
-import com.amos.flyinn.summoner.Daemon;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +25,7 @@ public class SettingsCheckerTest {
      */
     @Test
     public void getMissingSettingsDeveloper() {
-        SettingsChecker settingsCheck=new SettingsChecker(context);
+        SettingsChecker settingsCheck = new SettingsChecker(context);
         HashSet<SettingsChecker.SettingsType> settings;
 
         Settings.Secure.putInt(context.getContentResolver(), "development_settings_enabled", 0);
@@ -37,7 +34,7 @@ public class SettingsCheckerTest {
 
         Settings.Secure.putInt(context.getContentResolver(), "development_settings_enabled", 1);
         settings = settingsCheck.GetMissingSettings();
-        assertTrue(settings.contains(SettingsChecker.SettingsType.Developer)==false);
+        assertTrue(settings.contains(SettingsChecker.SettingsType.Developer) == false);
 
     }
 
@@ -46,7 +43,7 @@ public class SettingsCheckerTest {
      */
     @Test
     public void getMissingSettingsADB() {
-        SettingsChecker settingsCheck=new SettingsChecker(context);
+        SettingsChecker settingsCheck = new SettingsChecker(context);
         HashSet<SettingsChecker.SettingsType> settings;
 
         Settings.Secure.putInt(context.getContentResolver(), "adb_enabled", 0);
@@ -55,6 +52,6 @@ public class SettingsCheckerTest {
 
         Settings.Secure.putInt(context.getContentResolver(), "adb_enabled", 1);
         settings = settingsCheck.GetMissingSettings();
-        assertTrue(settings.contains(SettingsChecker.SettingsType.ADBperUSB)==false);
+        assertTrue(settings.contains(SettingsChecker.SettingsType.ADBperUSB) == false);
     }
 }

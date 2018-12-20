@@ -3,14 +3,13 @@ package com.amos.flyinn.summoner;
 import android.content.Context;
 import android.graphics.Point;
 
-
-import androidx.test.core.app.ApplicationProvider;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
+
+import androidx.test.core.app.ApplicationProvider;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -38,6 +37,7 @@ public class DaemonTest {
 
     /**
      * Try to write out the binary to filesystem. This will not work in the local setting.
+     *
      * @throws IOException
      */
     @Test(expected = IOException.class)

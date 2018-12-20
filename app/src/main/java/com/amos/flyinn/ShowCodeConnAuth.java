@@ -12,10 +12,14 @@ import java.security.SecureRandom;
  */
 public class ShowCodeConnAuth extends ClientConnAuthActivity {
 
-    /** Length of the numeric app code displayed to the user, used to connect client and server. */
+    /**
+     * Length of the numeric app code displayed to the user, used to connect client and server.
+     */
     private final int CODE_LENGTH = 4;
 
-    /** The numeric app code displayed to the user, used to connect client and server. */
+    /**
+     * The numeric app code displayed to the user, used to connect client and server.
+     */
     private final String appCode = generateNumber();
 
     private TextView display;
@@ -26,7 +30,9 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
      *
      * @return The number identifying the client with CODE_LENGTH digits as string (e.g., 0000-9999)
      */
-    protected String getAppCode() { return appCode; }
+    protected String getAppCode() {
+        return appCode;
+    }
 
 
     /**

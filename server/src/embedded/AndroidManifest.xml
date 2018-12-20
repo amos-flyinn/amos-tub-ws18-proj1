@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.amos.server">
+
     <application>
-        <uses-library android:name="com.google.android.things"
-            tools:node="merge"/>
+        <uses-library
+            android:name="com.google.android.things"
+            tools:node="merge" />
     </application>
 </manifest>

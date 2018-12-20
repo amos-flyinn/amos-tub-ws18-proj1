@@ -1,7 +1,6 @@
 package com.amos.server.webrtc;
 
 import com.amos.server.signaling.WebServer;
-import com.amos.server.webrtc.IPeer;
 
 import org.java_websocket.WebSocket;
 import org.json.JSONException;
@@ -13,14 +12,10 @@ import org.mockito.Mockito;
 import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
 
-import java.net.URI;
-
 import static org.junit.Assert.assertEquals;
 
 /**
  * Test the signaling server for WebRTC negotiation
- *
- *
  */
 public class SignalingMessagesTest {
 
@@ -30,7 +25,7 @@ public class SignalingMessagesTest {
     private WebSocket socketWeb;
 
     @Before
-    public void initSignalingService(){
+    public void initSignalingService() {
         peer = Mockito.mock(IPeer.class);
         socketSevice = new WebServer(peer);
         socketWeb = Mockito.mock(WebSocket.class);
@@ -41,18 +36,18 @@ public class SignalingMessagesTest {
         ArgumentCaptor<SessionDescription> argument = ArgumentCaptor.forClass(SessionDescription.class);
         JSONObject sessionDescriptorMessage = new JSONObject();
         try {
-            sessionDescriptorMessage.put("type-message","offerClient");
-            sessionDescriptorMessage.put("sdp","TestSDP");
+            sessionDescriptorMessage.put("type-message", "offerClient");
+            sessionDescriptorMessage.put("sdp", "TestSDP");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        this.socketSevice.onMessage(socketWeb,sessionDescriptorMessage.toString());
+        this.socketSevice.onMessage(socketWeb, sessionDescriptorMessage.toString());
 
         Mockito.verify(peer).setRemoteDescriptorPeer(argument.capture());
 
         SessionDescription sessionAfter = argument.getValue();
 
-        assertEquals(sessionAfter.description,"TestSDP");
+        assertEquals(sessionAfter.description, "TestSDP");
         assertEquals(sessionAfter.type, SessionDescription.Type.OFFER);
     }
 
@@ -61,33 +56,33 @@ public class SignalingMessagesTest {
         ArgumentCaptor<IceCandidate> argument = ArgumentCaptor.forClass(IceCandidate.class);
         JSONObject sessionDescriptorMessage = new JSONObject();
         try {
-            sessionDescriptorMessage.put("type-message","candidate-client");
-            sessionDescriptorMessage.put("id","idIceCandidate");
-            sessionDescriptorMessage.put("label",20);
-            sessionDescriptorMessage.put("candidate","IceCandidate");
+            sessionDescriptorMessage.put("type-message", "candidate-client");
+            sessionDescriptorMessage.put("id", "idIceCandidate");
+            sessionDescriptorMessage.put("label", 20);
+            sessionDescriptorMessage.put("candidate", "IceCandidate");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        this.socketSevice.onMessage(socketWeb,sessionDescriptorMessage.toString());
+        this.socketSevice.onMessage(socketWeb, sessionDescriptorMessage.toString());
 
         Mockito.verify(peer).setRemoteIceCandidate(argument.capture());
 
         IceCandidate iceCandidateAfter = argument.getValue();
 
-        assertEquals(iceCandidateAfter.sdp,"IceCandidate");
-        assertEquals(iceCandidateAfter.sdpMid,"idIceCandidate");
-        assertEquals(iceCandidateAfter.sdpMLineIndex,20);
+        assertEquals(iceCandidateAfter.sdp, "IceCandidate");
+        assertEquals(iceCandidateAfter.sdpMid, "idIceCandidate");
+        assertEquals(iceCandidateAfter.sdpMLineIndex, 20);
 
     }
 
 
     @Test
     public void signaling_messages_serialize_session_description() {
-       SessionDescription session = new SessionDescription(SessionDescription.Type.ANSWER,"DescriptionTest");
+        SessionDescription session = new SessionDescription(SessionDescription.Type.ANSWER, "DescriptionTest");
 
-       JSONObject objectSerialize = socketSevice.serializeDescription(session);
+        JSONObject objectSerialize = socketSevice.serializeDescription(session);
         String description = null;
-        String  typeMessage = null;
+        String typeMessage = null;
         String type = null;
         try {
             description = objectSerialize.getString("sdp");
@@ -97,18 +92,18 @@ public class SignalingMessagesTest {
             e.printStackTrace();
         }
 
-        assertEquals(description,session.description);
-        assertEquals(type,session.type.canonicalForm());
-        assertEquals(typeMessage,"answerServer");
+        assertEquals(description, session.description);
+        assertEquals(type, session.type.canonicalForm());
+        assertEquals(typeMessage, "answerServer");
 
     }
 
     @Test
     public void signaling_messages_serialize_ice_candidate() {
-        IceCandidate candidate = new IceCandidate("idIceCandidate",20,"iceCandidate");
+        IceCandidate candidate = new IceCandidate("idIceCandidate", 20, "iceCandidate");
 
         JSONObject objectSerialize = this.socketSevice.serializeIceCandidate(candidate);
-        String  typeMessage = null;
+        String typeMessage = null;
         String type = null;
         int label = 0;
         String id = null;
@@ -125,28 +120,25 @@ public class SignalingMessagesTest {
         }
 
 
-        assertEquals(typeMessage,"candidate-server");
-        assertEquals(type,"candidate");
-        assertEquals(label,candidate.sdpMLineIndex);
-        assertEquals(id,candidate.sdpMid);
-        assertEquals(candidateMessage,candidate.sdp);
+        assertEquals(typeMessage, "candidate-server");
+        assertEquals(type, "candidate");
+        assertEquals(label, candidate.sdpMLineIndex);
+        assertEquals(id, candidate.sdpMid);
+        assertEquals(candidateMessage, candidate.sdp);
 
     }
 
     @Test
     public void fail_signaling_messages_serialize_ice_candidate() {
-       JSONObject candidate = null;
-       assertEquals(candidate,null);
+        JSONObject candidate = null;
+        assertEquals(candidate, null);
     }
 
     @Test
     public void fail_signaling_messages_serialize_session_descriptor() {
         JSONObject sessionObject = null;
-        assertEquals(sessionObject,null);
+        assertEquals(sessionObject, null);
     }
-
-
-
 
 
 }

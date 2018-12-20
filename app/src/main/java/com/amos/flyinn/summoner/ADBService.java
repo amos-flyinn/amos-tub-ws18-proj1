@@ -11,7 +11,6 @@ import com.tananaev.adblib.AdbStream;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Background service controlling the start of fakeinputlib via an adb shell.
@@ -32,9 +31,9 @@ public class ADBService extends IntentService {
 
     /**
      * Create a socket connection to use adb over network with the local phone.
+     *
      * @return
-     * @throws IOException
-     *          All errors resulting in us not being able to connect to ADB over network.
+     * @throws IOException All errors resulting in us not being able to connect to ADB over network.
      */
     protected AdbConnection connectNetworkADB() throws IOException {
         AdbConnection connection;
@@ -56,12 +55,10 @@ public class ADBService extends IntentService {
 
     /**
      * Run a command using adb shell.
-     * @param connection
-     *          ADB connection used to spawn command on.
-     * @param command
-     *          Custom command to run
-     * @throws IOException
-     *          Issues in running the command correctly.
+     *
+     * @param connection ADB connection used to spawn command on.
+     * @param command    Custom command to run
+     * @throws IOException Issues in running the command correctly.
      */
     protected void spawnApp(AdbConnection connection, String command) throws IOException {
         if (connection == null) {
@@ -79,6 +76,7 @@ public class ADBService extends IntentService {
 
     /**
      * Start the adb shell process.
+     *
      * @param workIntent
      */
     @Override
@@ -86,6 +84,7 @@ public class ADBService extends IntentService {
         try {
             AdbConnection connection = connectNetworkADB();
             spawnApp(connection, workIntent.getStringExtra("cmd"));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 }

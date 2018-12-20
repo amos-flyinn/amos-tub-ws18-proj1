@@ -19,10 +19,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class EventSenderDemo extends AppCompatActivity {
+    private static final int COARSE_LOCATION = 1001;
+    private final IntentFilter intentFilter = new IntentFilter();
     View base;
     BlockingQueue<TouchEvent> mq;
-    private final IntentFilter intentFilter = new IntentFilter();
-    private static final int COARSE_LOCATION = 1001;
 
     protected void createP2P(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

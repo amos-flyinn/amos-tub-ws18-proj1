@@ -3,22 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/webrtc_server_activity"
-        app:showAsAction="never"
-        android:title="WebRTCServerActivity">
-    </item>
+        android:title="WebRTCServerActivity"
+        app:showAsAction="never"></item>
     <item
         android:id="@+id/event_grab_activity"
-        app:showAsAction="never"
-        android:title="Event Grab Demo">
-    </item>
+        android:title="Event Grab Demo"
+        app:showAsAction="never"></item>
     <item
         android:id="@+id/event_sender_activity"
-        app:showAsAction="never"
-        android:title="Event Sender Demo">
-    </item>
+        android:title="Event Sender Demo"
+        app:showAsAction="never"></item>
     <item
         android:id="@+id/build_info_activity"
-        app:showAsAction="never"
-        android:title="@string/title_activity_build_info">
-    </item>
+        android:title="@string/title_activity_build_info"
+        app:showAsAction="never"></item>
 </menu>

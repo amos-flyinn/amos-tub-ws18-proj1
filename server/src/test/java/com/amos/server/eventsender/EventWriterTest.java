@@ -4,7 +4,6 @@ import android.graphics.Point;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 
-import static org.junit.Assert.*;
 import com.amos.shared.TouchEvent;
 
 import org.junit.Before;
@@ -16,6 +15,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
 public class EventWriterTest {
@@ -31,8 +32,9 @@ public class EventWriterTest {
 
     /**
      * Test that two events are equal in important parameters.
-     *
+     * <p>
      * This function should be changed to reflect new requirements to MotionEvent accuracy.
+     *
      * @param e1
      * @param e2
      */
@@ -45,8 +47,9 @@ public class EventWriterTest {
 
     /**
      * Get motionevent from our bytestream back for checking.
-     *
+     * <p>
      * Motionevents will be automatically rescaled to screen size.
+     *
      * @return
      * @throws IOException
      */
@@ -56,6 +59,7 @@ public class EventWriterTest {
 
     /**
      * Get motionevent and rescale by size.
+     *
      * @param size
      * @return
      * @throws IOException
@@ -67,12 +71,15 @@ public class EventWriterTest {
         try {
             TouchEvent te = (TouchEvent) objs.readObject();
             me = te.getConstructedMotionEvent(size.x, size.y);
-        } catch (ClassNotFoundException err) { throw new IOException("Wrong object type."); }
+        } catch (ClassNotFoundException err) {
+            throw new IOException("Wrong object type.");
+        }
         return me;
     }
 
     /**
      * Create TouchEvent from MotionEvent rescaled to screen size
+     *
      * @param m
      * @return
      */
@@ -82,6 +89,7 @@ public class EventWriterTest {
 
     /**
      * Create output streams and event writer for testing
+     *
      * @throws Exception
      */
     @Before
@@ -104,7 +112,7 @@ public class EventWriterTest {
      * Test writing touchevents, which are serializable motionevents
      */
     @Test
-    public void writeTouchEvents() throws IOException{
+    public void writeTouchEvents() throws IOException {
         TouchEvent testevent = serializeEvent(test);
         ew.write(testevent);
         MotionEvent result = obtainOutput();

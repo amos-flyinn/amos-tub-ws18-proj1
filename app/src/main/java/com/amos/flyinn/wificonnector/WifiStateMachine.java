@@ -19,6 +19,7 @@ public class WifiStateMachine extends BroadcastReceiver {
 
     /**
      * Create a new state machine object.
+     *
      * @param manager
      * @param channel
      * @param activity
@@ -33,6 +34,7 @@ public class WifiStateMachine extends BroadcastReceiver {
 
     /**
      * Get the server host address from an existing connection.
+     *
      * @return
      * @throws Exception
      */
@@ -42,6 +44,7 @@ public class WifiStateMachine extends BroadcastReceiver {
 
     /**
      * Handle received intents. These are used to trigger state changes.
+     *
      * @param context
      * @param intent
      */

@@ -20,13 +20,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * Initial activity showing code used for connection from remote display.
  */
 public class ShowCodeActivity extends AppCompatActivity {
+    private static final String TAG = "showCode";
+    private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
     private String nameNum = "";
     private TextView display;
     private Toast mToast;
-
-    private static final String TAG = "showCode";
-
-    private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
     /**
      * Set state and information in android service.
@@ -75,8 +73,8 @@ public class ShowCodeActivity extends AppCompatActivity {
     /**
      * Handles user acceptance (or denial) of our permission request.
      *
-     * @param requestCode The request code passed in requestPermissions()
-     * @param permissions Permissions that must be granted to run nearby connections
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
      */
     @CallSuper

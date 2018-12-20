@@ -3,8 +3,6 @@ package com.amos.flyinn.settingsCheck;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.amos.flyinn.summoner.ADBService;
 import com.tananaev.adblib.AdbBase64;
@@ -20,27 +18,8 @@ import java.util.HashSet;
  */
 public class SettingsChecker {
 
-    /**
-     * Different types of settings
-     */
-    public enum SettingsType {
-        /**
-         * Developer settings
-         */
-        Developer,
-        /**
-         * ADB/USB debugging
-         */
-        ADBperUSB,
-        /**
-         * ADB per network debugging
-         */
-        ADBperNetwork
-    }
-
     private Context context;
     private ADBService service = new ADBService();
-
     /**
      * Constructor sets context
      *
@@ -110,7 +89,6 @@ public class SettingsChecker {
         return missingSettings;
     }
 
-
     /**
      * Open menu with Software version for enabling developer settings
      */
@@ -123,6 +101,24 @@ public class SettingsChecker {
      */
     public void FixManualADBperUsbSettings() {
         context.startActivity(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+    }
+
+    /**
+     * Different types of settings
+     */
+    public enum SettingsType {
+        /**
+         * Developer settings
+         */
+        Developer,
+        /**
+         * ADB/USB debugging
+         */
+        ADBperUSB,
+        /**
+         * ADB per network debugging
+         */
+        ADBperNetwork
     }
 
 

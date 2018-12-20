@@ -31,9 +31,11 @@ import com.google.android.gms.nearby.connection.Strategy;
  */
 public abstract class ClientConnAuthActivity extends Activity {
 
-    /** Permissions required for Nearby Connection */
+    /**
+     * Permissions required for Nearby Connection
+     */
     private static final String[] REQUIRED_PERMISSIONS =
-            new String[] {
+            new String[]{
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_WIFI_STATE,
@@ -42,22 +44,14 @@ public abstract class ClientConnAuthActivity extends Activity {
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
-    /** 1-to-1 since a device will be connected to only one other device at most. */
+    /**
+     * 1-to-1 since a device will be connected to only one other device at most.
+     */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
-
-    private ConnectionsClient connectionsClient;
-
-    private String clientName;
-    private String serverID;
-    private String serverName;
-
-    private Toast mToast;
-    Handler handler = new Handler();
-
-    /** Tag for logging purposes. */
+    /**
+     * Tag for logging purposes.
+     */
     private static final String CONN_AUTH_TAG = "ClientConnAuth";
-
-
     /**
      * Obtain data from server and data transfer information via this handle.
      */
@@ -73,7 +67,12 @@ public abstract class ClientConnAuthActivity extends Activity {
                     // TODO
                 }
             };
-
+    Handler handler = new Handler();
+    private ConnectionsClient connectionsClient;
+    private String clientName;
+    private String serverID;
+    private String serverName;
+    private Toast mToast;
     /**
      * Callbacks for connections to other devices.
      * Includes token authentication and connection handling.
@@ -144,21 +143,40 @@ public abstract class ClientConnAuthActivity extends Activity {
                 }
             };
 
+    /**
+     * Determines whether we (the FlyInn client app) have the necessary permissions to run nearby.
+     *
+     * @param context     Checks the permissions against this context/application environment
+     * @param permissions The permissions to be checked
+     * @return True if the app was granted all the permissions, false otherwise
+     */
+    private static boolean hasPermissions(Context context, String[] permissions) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Returns the client's name (this endpoint).
      *
      * @return The client's name.
      */
-    protected String getClient() { return clientName; }
+    protected String getClient() {
+        return clientName;
+    }
 
     /**
      * Returns information about the server we are currently connected to.
      *
      * @return 2-entry array, the first entry is the ID of the server, the second its name.
      */
-    protected String[] getServer() { return new String[]{serverID, serverName}; }
-
+    protected String[] getServer() {
+        return new String[]{serverID, serverName};
+    }
 
     /**
      * Initialises nearby connectionsClient and Toast instances,
@@ -215,7 +233,6 @@ public abstract class ClientConnAuthActivity extends Activity {
         super.onDestroy();
     }
 
-
     /**
      * Broadcast our presence using Nearby Connection so FlyInn servers can find us.
      * Resets server data first.
@@ -228,11 +245,11 @@ public abstract class ClientConnAuthActivity extends Activity {
 
         connectionsClient.startAdvertising(clientName, "com.amos.flyinn",
                 connectionLifecycleCallback, advertisingOptions)
-                .addOnSuccessListener( (Void unused) -> {
+                .addOnSuccessListener((Void unused) -> {
                     // started advertising successfully
                     Log.i(CONN_AUTH_TAG, "Started advertising " + clientName);
                 })
-                .addOnFailureListener( (Exception e) -> {
+                .addOnFailureListener((Exception e) -> {
                     // unable to advertise
                     Log.e(CONN_AUTH_TAG, "Unable to start advertising " + clientName);
                     mToast.setText(R.string.nearby_advertising_error);
@@ -252,28 +269,10 @@ public abstract class ClientConnAuthActivity extends Activity {
     }
 
     /**
-     * Determines whether we (the FlyInn client app) have the necessary permissions to run nearby.
-     *
-     * @param context Checks the permissions against this context/application environment
-     * @param permissions The permissions to be checked
-     *
-     * @return True if the app was granted all the permissions, false otherwise
-     */
-    private static boolean hasPermissions(Context context, String[] permissions) {
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Handles user acceptance (or denial) of our permission request.
      *
-     * @param requestCode The request code passed in requestPermissions()
-     * @param permissions Permissions that must be granted to run nearby connections
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
      */
     @CallSuper

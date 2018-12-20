@@ -2,12 +2,10 @@ package com.amos.flyinn;
 
 import android.Manifest;
 import android.app.Activity;
-import java.net.URI;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
-
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -27,10 +25,6 @@ import org.webrtc.SurfaceViewRenderer;
 
 import java.net.URI;
 
-import org.webrtc.PeerConnection;
-
-import org.webrtc.SurfaceViewRenderer;
-
 
 public class WebRTCActivity extends Activity {
 
@@ -41,7 +35,6 @@ public class WebRTCActivity extends Activity {
     private Button buttonInit;
     private SurfaceViewRenderer render;
     private MediaProjectionManager mProjectionManager;
-
 
 
     @Override
@@ -61,8 +54,6 @@ public class WebRTCActivity extends Activity {
                 initWebRTC();
             }
         });
-
-
 
 
         //not necessary atm
@@ -103,17 +94,17 @@ public class WebRTCActivity extends Activity {
     }
 
 
-    private void initWebRTC(){
-        Log.d("WebRTCActivity","initWEBRTC");
+    private void initWebRTC() {
+        Log.d("WebRTCActivity", "initWEBRTC");
         this.peerWrapper.beginTransactionWithOffer();
     }
 
 
-    public SurfaceViewRenderer getRender(){
+    public SurfaceViewRenderer getRender() {
         return render;
     }
 
-    private void initViews(){
+    private void initViews() {
         render = findViewById(R.id.surface_local_viewer);
     }
 
@@ -122,8 +113,8 @@ public class WebRTCActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         initViews();
-        this.peerWrapper = new PeerWrapper(this,data);
-        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.205:8080"),this.peerWrapper);
+        this.peerWrapper = new PeerWrapper(this, data);
+        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.205:8080"), this.peerWrapper);
         this.clientSocket.connect();
         this.peerWrapper.setEmitter((Emitter) this.clientSocket);
 

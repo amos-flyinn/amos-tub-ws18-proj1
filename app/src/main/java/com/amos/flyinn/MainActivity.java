@@ -1,9 +1,5 @@
 package com.amos.flyinn;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.StrictMode;
-import android.provider.Settings;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -39,6 +35,11 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    // Used to load the 'native-lib' library on application startup.
+    static {
+        System.loadLibrary("native-lib");
+    }
+
     TextView connectionStatus;
     Button adbButton;
     Daemon adbDaemon;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private SurfaceViewRenderer render;
     private Button buttonInit;
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
-
 
     private void initWebRTCScreenCapture() {
         try {
@@ -76,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         this.peerWrapper.setEmitter((Emitter) this.clientSocket);
 
     }
-
 
     private void initScreenCapturePermissions() {
         mProjectionManager = (MediaProjectionManager) getSystemService
@@ -110,11 +108,6 @@ public class MainActivity extends AppCompatActivity {
         }
         startActivity(intent);
         return super.onOptionsItemSelected(item);
-    }
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
     }
 
     protected Daemon createADBService(String addr) {
@@ -167,9 +160,6 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
-
-
-
 
 
     private void checkForDebuggingMode() {

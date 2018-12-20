@@ -24,20 +24,20 @@ import java.util.List;
  * Create a WifiP2P class handling correct P2P intents.
  */
 public abstract class WifiConnectorBase extends AppCompatActivity {
+    private static final int COARSE_LOCATION = 1001;
     private final IntentFilter intentFilter = new IntentFilter();
+    private final Object lock = new Object();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
-    private static final int COARSE_LOCATION = 1001;
-
-    private final Object lock = new Object();
     private boolean connected = false; // Locked
 
     /**
      * Try to listen to existing peers.
-     *
+     * <p>
      * Since we depend on a server network changing its name to something we recognize (via the code
      * entered by the user on the server), we will need to completely empty the cache of the wifimanager
      * on the phone. This is done in a separate thread every 10 seconds.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -133,6 +133,7 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
 
     /**
      * Connect to the given P2P device.
+     *
      * @param deviceToConnect
      */
     protected void connectToPeer(WifiP2pDevice deviceToConnect) {
@@ -215,12 +216,14 @@ public abstract class WifiConnectorBase extends AppCompatActivity {
 
     /**
      * Set list of peers.
+     *
      * @param listOfPeers
      */
     abstract public void setPeers(List<WifiP2pDevice> listOfPeers);
 
     /**
      * Give visual indication if required permissions have been given.
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults

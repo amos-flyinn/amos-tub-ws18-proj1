@@ -33,7 +33,7 @@ class FakeInputReceiver {
                 e.printStackTrace();
 
                 // Exponential backoff
-                Thread.sleep((int) Math.pow(2.5, i)*1000);
+                Thread.sleep((int) Math.pow(2.5, i) * 1000);
                 continue;
             }
             break;
@@ -64,7 +64,7 @@ class FakeInputReceiver {
                 continue;
             }
 
-            Log.d("FakeInput", "Got Event: "+e.toString());
+            Log.d("FakeInput", "Got Event: " + e.toString());
             MotionEvent ev = e.getConstructedMotionEvent(this.maxX, this.maxY);
 
             Log.d("FakeInput", String.format("Event: (%f, %f, %f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));

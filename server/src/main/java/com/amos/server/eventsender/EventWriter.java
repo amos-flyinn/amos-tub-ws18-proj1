@@ -1,12 +1,12 @@
 package com.amos.server.eventsender;
 
+import android.view.MotionEvent;
+
 import com.amos.shared.TouchEvent;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.ObjectOutputStream;
-import android.view.MotionEvent;
-import android.util.Log;
+import java.io.OutputStream;
 
 
 public class EventWriter {

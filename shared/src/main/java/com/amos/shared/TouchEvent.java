@@ -2,7 +2,6 @@ package com.amos.shared;
 
 import android.graphics.Point;
 import android.os.SystemClock;
-import android.text.method.Touch;
 import android.view.MotionEvent;
 
 import java.io.Serializable;
@@ -10,7 +9,7 @@ import java.io.Serializable;
 /**
  * Serializable version of TouchEvents which contain enough information to
  * transfer touch inputs between different devices.
- *
+ * <p>
  * Only MotionEvent information relevant to reconstructing usable MotionEvents are sent.
  * X and Y are expected to be normalized to the range between 0 and 1.
  */
@@ -23,6 +22,7 @@ public class TouchEvent implements Serializable {
 
     /**
      * Create Single Touchpoint event.
+     *
      * @param x
      * @param y
      * @param action
@@ -37,6 +37,7 @@ public class TouchEvent implements Serializable {
 
     /**
      * Create Single Touchpoint event directly from MotionEvent.
+     *
      * @param m
      */
     public TouchEvent(MotionEvent m) {
@@ -48,6 +49,7 @@ public class TouchEvent implements Serializable {
 
     /**
      * Rescale x and y with given screensize before assignment
+     *
      * @param m
      * @param screenSize
      */
@@ -60,6 +62,7 @@ public class TouchEvent implements Serializable {
 
     /**
      * Create MotionEvent from given TouchEvent.
+     *
      * @param maxX
      * @param maxY
      * @return
@@ -70,6 +73,7 @@ public class TouchEvent implements Serializable {
 
     /**
      * Create String representation of TouchEvent.
+     *
      * @return
      */
     @Override

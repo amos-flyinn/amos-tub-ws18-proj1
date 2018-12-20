@@ -1,17 +1,13 @@
 package com.amos.server.webrtc;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
 import com.amos.server.ConnectionSetupServerActivity;
-import com.amos.server.MainActivity;
-import com.amos.server.WebRTCServerActivity;
 import com.amos.server.signaling.Emitter;
 
-import org.webrtc.Camera1Enumerator;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
@@ -21,7 +17,6 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
-import org.webrtc.VideoCapturer;
 import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
@@ -53,12 +48,12 @@ public class PeerWrapper implements IPeer {
         this.initComponents();
     }
 
-    private void initComponents(){
+    private void initComponents() {
         this.activity.getRender().setZOrderMediaOverlay(true);
-        this.activity.getRender().init(this.rootEglBase.getEglBaseContext(),null);
+        this.activity.getRender().init(this.rootEglBase.getEglBaseContext(), null);
     }
 
-    public void setEmitter(Emitter emitter){
+    public void setEmitter(Emitter emitter) {
         this.emitter = emitter;
     }
 
@@ -77,38 +72,35 @@ public class PeerWrapper implements IPeer {
         DefaultVideoEncoderFactory defaultVideoEncoderFactory = new DefaultVideoEncoderFactory(
                 rootEglBase.getEglBaseContext(),  /* enableIntelVp8Encoder */true,  /* enableH264HighProfile */true);
         DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(rootEglBase.getEglBaseContext());
-        peerFactory = new PeerConnectionFactory(options,defaultVideoEncoderFactory,defaultVideoDecoderFactory);
-
+        peerFactory = new PeerConnectionFactory(options, defaultVideoEncoderFactory, defaultVideoDecoderFactory);
 
 
     }
-
 
 
     private void createPeer() {
 
 
         this.connection = peerFactory.createPeerConnection(new ArrayList<>(), new PeerObserver() {
-            @Override
-            public void onIceCandidate(IceCandidate iceCandidate) {
-                super.onIceCandidate(iceCandidate);
-                Log.d("PeerWrapper","Here is the ice Candidate : " + iceCandidate);
-                onIceCandidateReceived(iceCandidate);
-            }
+                    @Override
+                    public void onIceCandidate(IceCandidate iceCandidate) {
+                        super.onIceCandidate(iceCandidate);
+                        Log.d("PeerWrapper", "Here is the ice Candidate : " + iceCandidate);
+                        onIceCandidateReceived(iceCandidate);
+                    }
 
-            @Override
-            public void onAddStream(MediaStream mediaStream) {
-                Log.d("PeerWrapperServer","Get Remote Stream");
-                super.onAddStream(mediaStream);
-                setRemoteStream(mediaStream);
-            }
-        }
+                    @Override
+                    public void onAddStream(MediaStream mediaStream) {
+                        Log.d("PeerWrapperServer", "Get Remote Stream");
+                        super.onAddStream(mediaStream);
+                        setRemoteStream(mediaStream);
+                    }
+                }
 
 
         );
 
     }
-
 
 
     public void setRemoteStream(MediaStream stream) {
@@ -141,9 +133,9 @@ public class PeerWrapper implements IPeer {
     }
 
 
-
     /**
      * This method set the new remote sessions descriptor with the information needed to the peer
+     *
      * @param descriptorPeer remote session descriptor that was sent over the signaling server.
      */
     @Override
@@ -155,6 +147,7 @@ public class PeerWrapper implements IPeer {
     /**
      * This method set the new remote ice candidate with the information needed to the peer.
      * The candidate gives the position and the instructions to connect with the other peer
+     *
      * @param candidate the remote ice candidate that was sent over the signaling server.
      */
     @Override

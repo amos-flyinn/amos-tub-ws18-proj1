@@ -54,10 +54,10 @@ public class FakeInput {
 
     void sendTap(int x, int y) throws Exception {
         long time = SystemClock.uptimeMillis();
-        MotionEvent eventDown = MotionEvent.obtain(time,time, MotionEvent.ACTION_DOWN, x, y, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
+        MotionEvent eventDown = MotionEvent.obtain(time, time, MotionEvent.ACTION_DOWN, x, y, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
         eventDown.setSource(InputDevice.SOURCE_TOUCHSCREEN);
 
-        long nextTime = time+500;
+        long nextTime = time + 500;
         MotionEvent eventUp = MotionEvent.obtain(nextTime, nextTime, MotionEvent.ACTION_UP, x, y, 1.0f, 1.0f, 0, 1.0f, 1.0f, 0, 0);
         eventUp.setSource(InputDevice.SOURCE_TOUCHSCREEN);
 

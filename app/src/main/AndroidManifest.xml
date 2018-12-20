@@ -59,10 +59,13 @@
         </activity>
 
         <service android:name=".summoner.ADBService" />
-        <service android:name=".nearbyservice.NearbyService" android:enabled="true" android:exported="true"/>
+        <service
+            android:name=".nearbyservice.NearbyService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity android:name=".ConnectionSetupActivity" />
-        <activity android:name=".ShowCodeConnAuth">
-        </activity>
+        <activity android:name=".ShowCodeConnAuth"></activity>
     </application>
 
 </manifest>

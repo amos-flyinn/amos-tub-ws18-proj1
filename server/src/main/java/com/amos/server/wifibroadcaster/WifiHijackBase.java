@@ -23,13 +23,14 @@ import java.lang.reflect.Method;
  * Set up Wifimanager and handle Intents. Calls are passed through to the WifiBroadCasterSingleton.
  */
 public abstract class WifiHijackBase extends AppCompatActivity {
+    private static final int COARSE_LOCATION = 1001;
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
-    private static final int COARSE_LOCATION = 1001;
 
     /**
      * Register handled intents and get all required permissions for Wifi P2P
+     *
      * @param savedInstanceState
      */
     @Override
@@ -70,7 +71,6 @@ public abstract class WifiHijackBase extends AppCompatActivity {
         }
 
 
-
         try {
             Method[] methods = WifiP2pManager.class.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -100,7 +100,7 @@ public abstract class WifiHijackBase extends AppCompatActivity {
     /**
      * Set the correct wifi name and initiate peer search. Further actions are handled in the
      * WifiBroadcasterSingleton.
-     *
+     * <p>
      * We change the name of our server network to the one the WifiP2P on the app is expecting.
      * This way we can establish the connection from the server side without further interaction
      * on the client.

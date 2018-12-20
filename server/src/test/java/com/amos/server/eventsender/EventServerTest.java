@@ -1,6 +1,5 @@
 package com.amos.server.eventsender;
 
-import android.text.method.Touch;
 import android.view.MotionEvent;
 
 import com.amos.shared.TouchEvent;
@@ -10,14 +9,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class EventServerTest {
 
@@ -58,6 +54,7 @@ public class EventServerTest {
 
     /**
      * Test a single client connection and connection close.
+     *
      * @throws IOException
      */
     @Test
@@ -71,6 +68,7 @@ public class EventServerTest {
 
     /**
      * Test i/o of touch events
+     *
      * @throws IOException
      * @throws InterruptedException
      * @throws ClassNotFoundException

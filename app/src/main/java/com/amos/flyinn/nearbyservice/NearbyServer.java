@@ -39,36 +39,16 @@ class NearbyServer {
      * 1-to-1 since a device will be connected to only one other device at most.
      */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
-
+    private final String serviceName = "nearby_server";
+    private final String serviceID = "com.amos.server";
     /**
      * Connection manager for the connection to FlyInn clients.
      */
     protected ConnectionsClient connectionsClient;
-    private final String serviceName = "nearby_server";
-    private final String serviceID = "com.amos.server";
     private String clientID;
     private String clientName;
 
     private NearbyService nearbyService;
-
-    /**
-     * Create new nearby server with the given name.
-     *
-     * @param service
-     */
-    public NearbyServer(@NonNull NearbyService service) throws SecurityException {
-        this.nearbyService = service;
-        this.connectionsClient = Nearby.getConnectionsClient(this.nearbyService);
-    }
-
-    /**
-     * Server name as combination of name with suffix which is our nearby code
-     * @return
-     */
-    public String getServerName() {
-        return serviceName + this.nearbyService.getNearbyCode();
-    }
-
     /**
      * Obtain data from clientID/clientName and data transfer information via this handle.
      */
@@ -84,39 +64,6 @@ class NearbyServer {
                     nearbyService.handlePayloadTransferUpdate(update);
                 }
             };
-
-    /**
-     * Broadcast our presence using Nearby Connection so FlyInn users can find us.
-     * Resets clientID and clientName first.
-     */
-    public void start() {
-        clearClientData();
-
-        AdvertisingOptions advertisingOptions =
-                new AdvertisingOptions.Builder().setStrategy(STRATEGY).build();
-
-        connectionsClient.startAdvertising(getServerName(), serviceID,
-                connectionLifecycleCallback, advertisingOptions)
-                .addOnSuccessListener((Void unused) -> {
-                    Log.d(TAG, "Start advertising Android nearby");
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Advertising android nearby");
-                })
-                .addOnFailureListener((Exception e) -> {
-                    Log.d(TAG, "Error trying to advertise Android nearby");
-                    nearbyService.handleResponse(true, e.toString());
-                    nearbyService.setServiceState(NearbyState.STOPPED, "Failed to advertise android nearby");
-                });
-    }
-
-    /**
-     * Stop all things nearby
-     */
-    public void stop() {
-        connectionsClient.stopAllEndpoints();
-        Log.d(TAG, "Stopped all endpoints");
-        nearbyService.setServiceState(NearbyState.STOPPED, "Stopped all endpoints");
-    }
-
     /**
      * Callbacks for connections to other devices.
      * Includes token authentication and connection handling.
@@ -171,6 +118,57 @@ class NearbyServer {
                     nearbyService.setServiceState(NearbyState.ADVERTISING, "Disconnected from " + endpointId);
                 }
             };
+
+    /**
+     * Create new nearby server with the given name.
+     *
+     * @param service
+     */
+    public NearbyServer(@NonNull NearbyService service) throws SecurityException {
+        this.nearbyService = service;
+        this.connectionsClient = Nearby.getConnectionsClient(this.nearbyService);
+    }
+
+    /**
+     * Server name as combination of name with suffix which is our nearby code
+     *
+     * @return
+     */
+    public String getServerName() {
+        return serviceName + this.nearbyService.getNearbyCode();
+    }
+
+    /**
+     * Broadcast our presence using Nearby Connection so FlyInn users can find us.
+     * Resets clientID and clientName first.
+     */
+    public void start() {
+        clearClientData();
+
+        AdvertisingOptions advertisingOptions =
+                new AdvertisingOptions.Builder().setStrategy(STRATEGY).build();
+
+        connectionsClient.startAdvertising(getServerName(), serviceID,
+                connectionLifecycleCallback, advertisingOptions)
+                .addOnSuccessListener((Void unused) -> {
+                    Log.d(TAG, "Start advertising Android nearby");
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Advertising android nearby");
+                })
+                .addOnFailureListener((Exception e) -> {
+                    Log.d(TAG, "Error trying to advertise Android nearby");
+                    nearbyService.handleResponse(true, e.toString());
+                    nearbyService.setServiceState(NearbyState.STOPPED, "Failed to advertise android nearby");
+                });
+    }
+
+    /**
+     * Stop all things nearby
+     */
+    public void stop() {
+        connectionsClient.stopAllEndpoints();
+        Log.d(TAG, "Stopped all endpoints");
+        nearbyService.setServiceState(NearbyState.STOPPED, "Stopped all endpoints");
+    }
 
     /**
      * Resets client ID and client name to null.

@@ -29,9 +29,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class ConnectionSetupServerActivity extends Activity {
 
-    private ProgressBar infiniteBar;
-    private TextView progressText;
-
+    private static final String TAG = "ConnectionSetup";
     TextView connectionInfo;
     Button threadStarter;
     Thread senderRunner;
@@ -39,14 +37,12 @@ public class ConnectionSetupServerActivity extends Activity {
     BlockingQueue<TouchEvent> msgQueue;
     Handler uiHandler;
     SurfaceViewRenderer view;
-
+    private ProgressBar infiniteBar;
+    private TextView progressText;
     private WebServer webSocketServer;
     private PeerWrapper peerWrapper;
     private SurfaceViewRenderer remoteRender;
-
     private String endpointId;
-
-    private static final String TAG = "ConnectionSetup";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -24,6 +24,7 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
     /**
      * Create a new connection service.
+     *
      * @param activity
      * @param manager
      * @param channel
@@ -36,6 +37,7 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
     /**
      * Display information on established connection (ie accepted invitation to P2P network) and trigger activity change.
+     *
      * @param wifiP2pInfo
      */
     @Override
@@ -68,12 +70,12 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
     /**
      * Start ConnectionSetupActivity.
-     *
+     * <p>
      * This function is called after connection information has been made available, which is a callback
      * defined in the WifiP2P library.
      */
-    private void setupNext(){
-        Intent intent = new Intent(activity,ConnectionSetupServerActivity.class);
+    private void setupNext() {
+        Intent intent = new Intent(activity, ConnectionSetupServerActivity.class);
         activity.startActivity(intent);
     }
 }

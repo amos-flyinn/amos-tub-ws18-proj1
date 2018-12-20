@@ -39,7 +39,7 @@ import java.util.List;
 public class ConnectToClientActivity extends Activity {
 
     private static final String[] REQUIRED_PERMISSIONS =
-            new String[] {
+            new String[]{
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_WIFI_STATE,
@@ -49,34 +49,15 @@ public class ConnectToClientActivity extends Activity {
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
-    /** 1-to-1 since a device will be connected to only one other device at most. */
+    /**
+     * 1-to-1 since a device will be connected to only one other device at most.
+     */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
-
-    /** Connection manager for the connection to FlyInn clients. */
-    protected ConnectionsClient connectionsClient;
-
-    private final String clientName = generateName(5);
-    private String clientID;
-    private String clientNameNow;
-
-    /** Toast to publish user notifications */
-    private Toast mToast;
-
-    /** List of all discovered servers by name, continuously updated. */
-    private List<String> clients = new ArrayList<>();
-
-    /** Maps server names to their nearby connection IDs. */
-    private HashMap<String, String> clientNamesToIDs = new HashMap<>();
-
-    /** Maps server IDs to their nearby connection names. */
-    private HashMap<String, String> clientIDsToNames = new HashMap<>();
-
-    /** Tag for logging purposes. */
+    /**
+     * Tag for logging purposes.
+     */
     private static final String TAG = "ClientNearbyConnection";
-
-
-
-
+    private final String clientName = generateName(5);
     /**
      * Obtain data from clientID/clientName and data transfer information via this handle.
      */
@@ -92,8 +73,28 @@ public class ConnectToClientActivity extends Activity {
                     Log.d(TAG, "Payload transfer update");
                 }
             };
-
-
+    /**
+     * Connection manager for the connection to FlyInn clients.
+     */
+    protected ConnectionsClient connectionsClient;
+    private String clientID;
+    private String clientNameNow;
+    /**
+     * Toast to publish user notifications
+     */
+    private Toast mToast;
+    /**
+     * List of all discovered servers by name, continuously updated.
+     */
+    private List<String> clients = new ArrayList<>();
+    /**
+     * Maps server names to their nearby connection IDs.
+     */
+    private HashMap<String, String> clientNamesToIDs = new HashMap<>();
+    /**
+     * Maps server IDs to their nearby connection names.
+     */
+    private HashMap<String, String> clientIDsToNames = new HashMap<>();
     /**
      * Handling of discovered endpoints (servers). Adds new endpoints to servers data maps/list,
      * and removes lost endpoints.
@@ -114,7 +115,8 @@ public class ConnectToClientActivity extends Activity {
 
                     } else {
                         // this should not happen
-                        while (clients.remove(endpointName)) {}
+                        while (clients.remove(endpointName)) {
+                        }
                         clients.add(endpointName);
                         clientIDsToNames.put(endpointId, endpointName);
                         clientNamesToIDs.put(endpointName, endpointId);
@@ -205,22 +207,35 @@ public class ConnectToClientActivity extends Activity {
                 }
             };
 
+    /**
+     * Determines whether the FlyInn server app has the necessary permissions to run nearby.
+     *
+     * @param context     Checks the permissions against this context/application environment
+     * @param permissions The permissions to be checked
+     * @return True if the app was granted all the permissions, false otherwise
+     */
+    private static boolean hasPermissions(Context context, String[] permissions) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-
-    private void requestConnectionWithClient(String code){
+    private void requestConnectionWithClient(String code) {
 
         String searchedClientName = null;
-        for (String clientName : clients){
-            if(clientName.endsWith(code))
-            {
+        for (String clientName : clients) {
+            if (clientName.endsWith(code)) {
                 searchedClientName = clientName;
                 break;
             }
         }
 
-        if (searchedClientName == null)
-        {
-            Toast.makeText(this,"The code given was not found. Please try again",Toast.LENGTH_LONG).show();
+        if (searchedClientName == null) {
+            Toast.makeText(this, "The code given was not found. Please try again", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -229,8 +244,7 @@ public class ConnectToClientActivity extends Activity {
         clientID = endpoint;
 
 
-        connectionsClient.requestConnection(searchedClientName,endpoint,connectionLifecycleCallback);
-
+        connectionsClient.requestConnection(searchedClientName, endpoint, connectionLifecycleCallback);
 
 
     }
@@ -308,13 +322,13 @@ public class ConnectToClientActivity extends Activity {
 
         connectionsClient.startDiscovery("com.amos.server", endpointDiscoveryCallback,
                 discoveryOptions)
-                .addOnSuccessListener( (Void unused) -> {
+                .addOnSuccessListener((Void unused) -> {
                     // started searching for servers successfully
                     Log.i(TAG, "Discovering connections on " + clientName);
                     mToast.setText(R.string.nearby_discovering_success);
                     mToast.show();
                 })
-                .addOnFailureListener( (Exception e) -> {
+                .addOnFailureListener((Exception e) -> {
                     // unable to start discovery
                     Log.e(TAG, "Unable to start discovery on " + clientName);
                     mToast.setText(R.string.nearby_discovering_error);
@@ -336,7 +350,7 @@ public class ConnectToClientActivity extends Activity {
 
     /**
      * Handle established connection with app.
-     *
+     * <p>
      * Clears servers data maps, stops discovery of new servers and adds close connection button
      */
     private void connectedToApp() {
@@ -352,25 +366,10 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
-     * Determines whether the FlyInn server app has the necessary permissions to run nearby.
-     * @param context Checks the permissions against this context/application environment
-     * @param permissions The permissions to be checked
-     * @return True if the app was granted all the permissions, false otherwise
-     */
-    private static boolean hasPermissions(Context context, String[] permissions) {
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Handles user acceptance (or denial) of our permission request.
-     * @param requestCode The request code passed in requestPermissions()
-     * @param permissions Permissions that must be granted to run nearby connections
+     *
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
      */
     @CallSuper
@@ -397,10 +396,11 @@ public class ConnectToClientActivity extends Activity {
 
     /**
      * Generates a name for the server.
+     *
      * @return The server name, consisting of the build model + a random string
      */
     // TODO Define better name system?
-    private String generateName(int appendixLength){
+    private String generateName(int appendixLength) {
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 

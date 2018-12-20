@@ -5,13 +5,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
-import android.view.View;
-import android.view.MotionEvent;
-import android.view.View.OnTouchListener;
-import android.view.View.OnKeyListener;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
+import android.view.View.OnTouchListener;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.Locale;
 
@@ -52,10 +52,10 @@ public class EventGrabDemo extends AppCompatActivity {
 
         scroller = findViewById(R.id.scroller);
 
-        output = new MockOutput((TextView)findViewById(R.id.debug));
+        output = new MockOutput((TextView) findViewById(R.id.debug));
 
         tracker = findViewById(R.id.inputgrab);
-        tracker.setOnTouchListener(new OnTouchListener(){
+        tracker.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent e) {
                 String msg;
@@ -76,13 +76,13 @@ public class EventGrabDemo extends AppCompatActivity {
                                     action,
                                     x + tracker.getHeight(), y,
                                     e.getMetaState()
-                                    )
+                            )
                     );
                 }
                 return true;
             }
         });
-        tracker.setOnKeyListener(new OnKeyListener(){
+        tracker.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int k, KeyEvent e) {
                 String msg;

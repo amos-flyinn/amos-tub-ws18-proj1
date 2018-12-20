@@ -7,7 +7,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
-
 import com.amos.flyinn.ConnectionSetupActivity;
 
 import java.net.InetAddress;
@@ -26,6 +25,7 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
     /**
      * Create a new connection service.
+     *
      * @param activity
      * @param manager
      * @param channel
@@ -38,6 +38,7 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
     /**
      * Get address of the server we are connected to.
+     *
      * @return
      * @throws Exception
      */
@@ -50,6 +51,7 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
 
     /**
      * Display connection information and trigger activity change.
+     *
      * @param wifiP2pInfo
      */
     @Override
@@ -87,8 +89,8 @@ class WifiConnectionService implements WifiP2pManager.ConnectionInfoListener {
     /**
      * Switch to connection setup.
      */
-    private void setupNext(){
-        Intent intent = new Intent(activity,ConnectionSetupActivity.class);
+    private void setupNext() {
+        Intent intent = new Intent(activity, ConnectionSetupActivity.class);
         activity.startActivity(intent);
     }
 

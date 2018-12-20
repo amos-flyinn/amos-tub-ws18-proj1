@@ -3,8 +3,6 @@ package com.amos.flyinn.nearbyservice;
 import android.content.Intent;
 
 import org.junit.After;
-
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -13,6 +11,8 @@ import org.robolectric.android.controller.ServiceController;
 
 import androidx.annotation.Nullable;
 import androidx.test.core.app.ApplicationProvider;
+
+import static org.junit.Assert.*;
 
 /**
  * Wrap Nearby service in a way to test its functions individually

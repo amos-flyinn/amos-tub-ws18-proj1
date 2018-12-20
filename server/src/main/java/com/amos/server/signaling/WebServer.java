@@ -7,7 +7,6 @@ import com.amos.server.webrtc.IPeer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
@@ -18,9 +17,9 @@ public class WebServer extends WebSocketServer implements Emitter {
 
     private IPeer peer;
 
-    public WebServer(IPeer peer){
+    public WebServer(IPeer peer) {
 
-        super( new InetSocketAddress( 8080 ));
+        super(new InetSocketAddress(8080));
         this.peer = peer;
     }
 
@@ -36,30 +35,26 @@ public class WebServer extends WebSocketServer implements Emitter {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        Log.d("WebServer","I received this : " + message);
-        try{
+        Log.d("WebServer", "I received this : " + message);
+        try {
             JSONObject receivedObject = new JSONObject(message);
 
             String typeMessage = receivedObject.getString("type-message");
 
-            if(typeMessage.equals("offerClient"))
-            {
+            if (typeMessage.equals("offerClient")) {
                 String sdp = receivedObject.getString("sdp");
-                SessionDescription offerSessionDescriptionClient = new SessionDescription(SessionDescription.Type.OFFER,sdp);
+                SessionDescription offerSessionDescriptionClient = new SessionDescription(SessionDescription.Type.OFFER, sdp);
                 this.peer.setRemoteDescriptorPeer(offerSessionDescriptionClient);
-            }
-            else if(typeMessage.equals("candidate-client")) {
-                Log.d("WebServer","Getting candidate from client : " + receivedObject.toString());
+            } else if (typeMessage.equals("candidate-client")) {
+                Log.d("WebServer", "Getting candidate from client : " + receivedObject.toString());
                 String id = receivedObject.getString("id");
                 int label = receivedObject.getInt("label");
                 String candidate = receivedObject.getString("candidate");
-                IceCandidate newCandidate = new IceCandidate(id,label,candidate);
+                IceCandidate newCandidate = new IceCandidate(id, label, candidate);
                 this.peer.setRemoteIceCandidate(newCandidate);
             }
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -76,16 +71,15 @@ public class WebServer extends WebSocketServer implements Emitter {
     }
 
 
-    public JSONObject serializeDescription(SessionDescription session){
-        try{
+    public JSONObject serializeDescription(SessionDescription session) {
+        try {
             JSONObject sessionObject = new JSONObject();
-            sessionObject.put("type-message","answerServer");
+            sessionObject.put("type-message", "answerServer");
             sessionObject.put("type", session.type.canonicalForm());
             sessionObject.put("sdp", session.description);
-            Log.d("WebServer","simulating the description message sending answer : " + sessionObject);
+            Log.d("WebServer", "simulating the description message sending answer : " + sessionObject);
             return sessionObject;
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -94,24 +88,23 @@ public class WebServer extends WebSocketServer implements Emitter {
 
     @Override
     public void shareSessionDescription(SessionDescription session) {
-        Log.d("WebServer","Sending session answer : " + session);
+        Log.d("WebServer", "Sending session answer : " + session);
         JSONObject sessionObject = this.serializeDescription(session);
-        Log.d("WebServer","simulating the description message sending answer : " + sessionObject);
+        Log.d("WebServer", "simulating the description message sending answer : " + sessionObject);
         this.broadcast(sessionObject.toString());
     }
 
 
-    public JSONObject serializeIceCandidate(IceCandidate candidate){
-        try{
+    public JSONObject serializeIceCandidate(IceCandidate candidate) {
+        try {
             JSONObject jsonIceCandidate = new JSONObject();
-            jsonIceCandidate.put("type-message","candidate-server");
+            jsonIceCandidate.put("type-message", "candidate-server");
             jsonIceCandidate.put("type", "candidate");
             jsonIceCandidate.put("label", candidate.sdpMLineIndex);
             jsonIceCandidate.put("id", candidate.sdpMid);
             jsonIceCandidate.put("candidate", candidate.sdp);
             return jsonIceCandidate;
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -120,11 +113,11 @@ public class WebServer extends WebSocketServer implements Emitter {
 
     @Override
     public void shareIceCandidate(IceCandidate candidate) {
-        Log.d("WebServer","I am sharing this candidate : " + candidate);
-        Log.d("WebServer","Sending icecandidate! -- " + candidate);
+        Log.d("WebServer", "I am sharing this candidate : " + candidate);
+        Log.d("WebServer", "Sending icecandidate! -- " + candidate);
         JSONObject jsonIceCandidate = this.serializeIceCandidate(candidate);
-        Log.d("WebServer","simulating the icecandidate message sending : " + jsonIceCandidate);
+        Log.d("WebServer", "simulating the icecandidate message sending : " + jsonIceCandidate);
         this.broadcast(jsonIceCandidate.toString());
-        }
     }
+}
 

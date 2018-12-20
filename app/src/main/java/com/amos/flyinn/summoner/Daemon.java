@@ -16,7 +16,7 @@ import java.util.Locale;
 
 /**
  * Handles deployment of the fakeinputlib package.
- *
+ * <p>
  * fakeinputlib is a separate java binary which is run with adb debugging permissions to
  * allow injection of input events into other applications. This daemon controls copying the
  * fakeinputlib binary to a specified location and its execution over adb over network.
@@ -34,12 +34,9 @@ public class Daemon {
     /**
      * Create a new Daemon instance.
      *
-     * @param context
-     *          Application context. Used to get application binary.
-     * @param addr
-     *          Server address. This will be passed as a commandline argument to the fakeinputlib binary.
-     * @param screenDimensions
-     *          Screen size including status bar and navbar.
+     * @param context          Application context. Used to get application binary.
+     * @param addr             Server address. This will be passed as a commandline argument to the fakeinputlib binary.
+     * @param screenDimensions Screen size including status bar and navbar.
      */
     public Daemon(Context context, String addr, Point screenDimensions) {
         execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, addr, screenDimensions.x, screenDimensions.y);
@@ -49,6 +46,7 @@ public class Daemon {
 
     /**
      * Copy fakeinputlib binary from APK to local directory.
+     *
      * @throws IOException
      */
     public void writeFakeInputToFilesystem() throws IOException {
@@ -73,6 +71,7 @@ public class Daemon {
     /**
      * Start ADBService, which will call fakeinputlib on commandline. This is necessary in order to
      * keep fakeinputlib alive even when the application itself is closed.
+     *
      * @throws Exception
      */
     public void spawn_adb() {

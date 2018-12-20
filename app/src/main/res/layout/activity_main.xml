@@ -32,22 +32,18 @@
         app:layout_constraintTop_toBottomOf="@+id/connectionStatus" />
 
 
-
     <org.webrtc.SurfaceViewRenderer
-        android:visibility="gone"
         android:id="@+id/surface_local_viewer"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom|end"
-        android:layout_height="match_parent" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/webrtc_init"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Init WebRTC"
-        />
-
-  
+        android:text="Init WebRTC" />
 
 
 </android.support.constraint.ConstraintLayout>
