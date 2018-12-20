@@ -64,6 +64,7 @@ public class NearbyService extends IntentService {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        startForeground(FOREGROUND_ID, buildForegroundNotification("Nearby Action running", null));
         Log.d(TAG, "Creating channel");
         createChannel();
         return super.onStartCommand(intent, flags, startId);
@@ -121,7 +122,6 @@ public class NearbyService extends IntentService {
 
     private void raiseNotification(Notification notification) {
         NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        startForeground(FOREGROUND_ID, buildForegroundNotification("Nearby Action running", null));
         mgr.notify(NOTIFY_ID, notification);
     }
 
