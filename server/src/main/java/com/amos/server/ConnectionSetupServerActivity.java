@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amos.server.eventsender.EventServer;
+import com.amos.server.nearby.ServerConnection;
 import com.amos.server.signaling.WebServer;
 import com.amos.server.webrtc.PeerWrapper;
 import com.amos.server.webrtc.SetupStates;
@@ -31,6 +32,8 @@ public class ConnectionSetupServerActivity extends Activity {
 
     private ProgressBar infiniteBar;
     private TextView progressText;
+
+    private ServerConnection connection;
 
     TextView connectionInfo;
     Button threadStarter;
@@ -58,21 +61,8 @@ public class ConnectionSetupServerActivity extends Activity {
         connectionInfo = findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
 
-        Intent intent = getIntent();
-        if (intent.hasExtra("endpointId")) {
-            try {
-                endpointId = intent.getStringExtra("endpointId");
-                ConnectionsClient connection = Nearby.getConnectionsClient(this);
-                byte[] message = {0x61, 0x61, 0x61, 0x62};
-                Payload payload = Payload.fromBytes(message);
-                connection.sendPayload(endpointId, payload);
-                Log.d(TAG, "Sent test payload to receiver " + endpointId);
-            } catch (NullPointerException error) {
-                Log.d(TAG, "Failed to get endpointId from intent");
-            }
-        } else {
-            Log.d(TAG, "Intent did not specify endpoint");
-        }
+        connection = ServerConnection.getInstance();
+        connection.sendStream();
     }
 
     /**
