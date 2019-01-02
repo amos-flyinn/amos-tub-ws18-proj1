@@ -158,11 +158,9 @@ public class ConnectionSetupServerActivity extends Activity {
                 progressText.setText("Remote descriptor setted Successfully");
                 progressText.setVisibility(View.INVISIBLE);
                 remoteRender.setVisibility(View.VISIBLE);
-
                 break;
 
             case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
-
                 builder.setMessage("Creating local descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
@@ -171,7 +169,6 @@ public class ConnectionSetupServerActivity extends Activity {
 
 
             case SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR:
-
                 builder.setMessage("Creating remote descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
@@ -180,7 +177,6 @@ public class ConnectionSetupServerActivity extends Activity {
 
 
             case SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION:
-
                 builder.setMessage("Setting local descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);

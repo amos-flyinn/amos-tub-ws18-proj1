@@ -74,9 +74,6 @@ public class ConnectToClientActivity extends Activity {
     /** Tag for logging purposes. */
     private static final String TAG = "ClientNearbyConnection";
 
-
-
-
     /**
      * Obtain data from clientID/clientName and data transfer information via this handle.
      */
