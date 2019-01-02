@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.amos.server.ConnectionSetupServerActivity;
-import com.amos.server.MainActivity;
 import com.amos.server.WebRTCServerActivity;
 import com.amos.server.signaling.Emitter;
 
