@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amos.server.eventsender.EventServer;
+import com.amos.server.eventsender.EventWriter;
 import com.amos.server.nearby.ServerConnection;
 import com.amos.server.signaling.WebServer;
 import com.amos.server.webrtc.PeerWrapper;
@@ -26,6 +27,7 @@ import com.google.android.gms.nearby.connection.Payload;
 
 import org.webrtc.SurfaceViewRenderer;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
 public class ConnectionSetupServerActivity extends Activity {
@@ -46,6 +48,7 @@ public class ConnectionSetupServerActivity extends Activity {
     private WebServer webSocketServer;
     private PeerWrapper peerWrapper;
     private SurfaceViewRenderer remoteRender;
+    private EventWriter writer;
 
     private String endpointId;
 
@@ -62,7 +65,9 @@ public class ConnectionSetupServerActivity extends Activity {
         connectionInfo.setVisibility(View.INVISIBLE);
 
         connection = ServerConnection.getInstance();
-        connection.sendStream();
+        try {
+            writer = new EventWriter(connection.sendStream());
+        } catch (IOException err) {}
     }
 
     /**

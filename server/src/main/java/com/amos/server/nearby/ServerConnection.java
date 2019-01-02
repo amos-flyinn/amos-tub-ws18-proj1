@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.os.Build;
 import android.util.Log;
 
+import com.amos.server.eventsender.EventWriter;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
@@ -134,19 +135,13 @@ public class ServerConnection {
     public void abort() {
     }
 
-    public void sendStream() {
-        byte[] message = {0x61, 0x61, 0x61, 0x62};
-        // InputStream stream = new ByteArrayInputStream(message);
+    public PipedOutputStream sendStream() throws IOException {
         PipedInputStream stream  = new PipedInputStream();
-        try {
-            PipedOutputStream data = new PipedOutputStream(stream);
-            data.write(message);
-            data.close();
-        } catch (IOException err) {};
+        PipedOutputStream data = new PipedOutputStream(stream);
         Payload payload = Payload.fromStream(stream);
-        // Payload payload = Payload.fromBytes(message);
         connectionsClient.sendPayload(clientID, payload);
         Log.d(TAG, "Sent test payload to receiver " + clientID);
+        return data;
     }
 
     /**
