@@ -11,14 +11,14 @@ import java.io.OutputStream;
 
 
 public class EventWriter {
-    private OutputStream ostream;
+    private OutputStream outputStream;
     private ObjectOutputStream output;
     private Point screenSize;
 
     public EventWriter(OutputStream os, Point screen) throws IOException {
-        ostream = os;
+        outputStream = os;
         screenSize = screen;
-        output = new ObjectOutputStream(ostream);
+        output = new ObjectOutputStream(outputStream);
     }
 
     public void write(MotionEvent e) throws IOException {
@@ -26,13 +26,13 @@ public class EventWriter {
         write(te);
     }
 
-    public void write(TouchEvent e) throws IOException {
+    void write(TouchEvent e) throws IOException {
         output.writeObject(e);
         output.flush();
     }
 
     public void close() throws IOException {
         output.close();
-        ostream.close();
+        outputStream.close();
     }
 }

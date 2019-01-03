@@ -29,32 +29,44 @@ import java.util.List;
 
 /**
  * Singleton managing Android nearby connection on the server side
- *
+ * <p>
  * The server needs to send input events to the client and correctly receive the recorded screen.
  */
 public class ServerConnection {
 
     private static final ServerConnection ourInstance = new ServerConnection();
 
-    /** 1-to-1 since a device will be connected to only one other device at most. */
+    /**
+     * 1-to-1 since a device will be connected to only one other device at most.
+     */
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
-    private final String serverName = generateName(5);
+    private final String serverName = generateName();
     private String clientID;
 
-    /** List of all discovered servers by name, continuously updated. */
+    /**
+     * List of all discovered servers by name, continuously updated.
+     */
     private List<String> clients = new ArrayList<>();
 
-    /** Maps server names to their nearby connection IDs. */
+    /**
+     * Maps server names to their nearby connection IDs.
+     */
     private HashMap<String, String> clientNamesToIDs = new HashMap<>();
 
-    /** Maps server IDs to their nearby connection names. */
+    /**
+     * Maps server IDs to their nearby connection names.
+     */
     private HashMap<String, String> clientIDsToNames = new HashMap<>();
 
-    /** Tag for logging purposes. */
+    /**
+     * Tag for logging purposes.
+     */
     private static final String TAG = "NearbyServer";
 
-    /** Connection manager for the connection to FlyInn clients. */
+    /**
+     * Connection manager for the connection to FlyInn clients.
+     */
     private ConnectionsClient connectionsClient;
 
     public static ServerConnection getInstance() {
@@ -88,11 +100,11 @@ public class ServerConnection {
 
         connectionsClient.startDiscovery("com.amos.server", endpointDiscoveryCallback,
                 discoveryOptions)
-                .addOnSuccessListener( (Void unused) -> {
+                .addOnSuccessListener((Void unused) -> {
                     // started searching for servers successfully
                     Log.i(TAG, "Discovering connections on " + serverName);
                 })
-                .addOnFailureListener( (Exception e) -> {
+                .addOnFailureListener((Exception e) -> {
                     // unable to start discovery
                     Log.e(TAG, e.toString());
                     Log.e(TAG, "Unable to start discovery on " + serverName);
@@ -102,22 +114,20 @@ public class ServerConnection {
     /**
      * Connect to nearby service with client name ending with our required code.
      *
-     * @param code Suffix of connection target
+     * @param code     Suffix of connection target
      * @param callback Callbacks on connection success and failure
      */
-    public void connectTo(String code, ConnectCallback callback){
+    public void connectTo(String code, ConnectCallback callback) {
         String searchedClientName = null;
-        for (String clientName : clients){
-            if(clientName.endsWith(code))
-            {
+        for (String clientName : clients) {
+            if (clientName.endsWith(code)) {
                 searchedClientName = clientName;
                 break;
             }
         }
 
         String endpoint = clientNamesToIDs.get(searchedClientName);
-        if (endpoint != null && searchedClientName != null)
-        {
+        if (endpoint != null && searchedClientName != null) {
             clientID = endpoint;
             // callback success will be called in the subsequent function
             connectionsClient.requestConnection(searchedClientName, endpoint, buildConnectionLifecycleCallback(callback));
@@ -131,7 +141,7 @@ public class ServerConnection {
     }
 
     public PipedOutputStream sendStream() throws IOException {
-        PipedInputStream stream  = new PipedInputStream();
+        PipedInputStream stream = new PipedInputStream();
         PipedOutputStream data = new PipedOutputStream(stream);
         Payload payload = Payload.fromStream(stream);
         connectionsClient.sendPayload(clientID, payload);
@@ -177,7 +187,9 @@ public class ServerConnection {
 
                     } else {
                         // this should not happen
-                        while (clients.remove(endpointName)) {}
+                        while (true) {
+                            if (!clients.remove(endpointName)) break;
+                        }
                         clients.add(endpointName);
                         clientIDsToNames.put(endpointId, endpointName);
                         clientNamesToIDs.put(endpointName, endpointId);
@@ -198,7 +210,7 @@ public class ServerConnection {
     private ConnectionLifecycleCallback buildConnectionLifecycleCallback(ConnectCallback callback) {
         return new ConnectionLifecycleCallback() {
             @Override
-            public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+            public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
                 Log.i(TAG, "Connection initiated to " + endpointId);
 
                 if (endpointId.equals(clientID)) {
@@ -212,7 +224,7 @@ public class ServerConnection {
             }
 
             @Override
-            public void onConnectionResult(String endpointId, ConnectionResolution result) {
+            public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution result) {
                 switch (result.getStatus().getStatusCode()) {
                     case ConnectionsStatusCodes.STATUS_OK:
                         // successful connection with server
@@ -243,7 +255,7 @@ public class ServerConnection {
             }
 
             @Override
-            public void onDisconnected(String endpointId) {
+            public void onDisconnected(@NonNull String endpointId) {
                 // disconnected from server
                 Log.i(TAG, "Disconnected from " + endpointId);
                 resetClientData();
@@ -253,17 +265,17 @@ public class ServerConnection {
 
     /**
      * Generates a name for the server.
-     *
+     * <p>
      * TODO: Create a better name for the server
      *
      * @return The server name, consisting of the build model + a random string
      */
-    private String generateName(int appendixLength){
+    private String generateName() {
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
-        StringBuilder sb = new StringBuilder(appendixLength);
-        for (int i = 0; i < appendixLength; i++) {
+        StringBuilder sb = new StringBuilder(5);
+        for (int i = 0; i < 5; i++) {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
 
@@ -281,7 +293,7 @@ public class ServerConnection {
 
     /**
      * Handle established connection with app.
-     *
+     * <p>
      * Clears servers data maps, stops discovery of new servers and adds close connection button
      */
     private void resetDiscovery() {
