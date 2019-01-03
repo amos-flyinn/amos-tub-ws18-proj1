@@ -11,6 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import androidx.test.core.app.ApplicationProvider;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(RobolectricTestRunner.class)
 public class ServerConnectionTest {
@@ -35,21 +36,26 @@ public class ServerConnectionTest {
     public void init() {
         ServerConnection connection = ServerConnection.getInstance();
         connection.init(ApplicationProvider.getApplicationContext());
+        fail("Nearbyconnection needs to be mocked");
     }
 
     @Test
     public void discover() {
+        fail();
     }
 
     @Test
     public void connectTo() {
+        fail();
     }
 
     @Test
     public void abort() {
+        fail();
     }
 
     @Test
     public void sendStream() {
+        fail();
     }
 }
