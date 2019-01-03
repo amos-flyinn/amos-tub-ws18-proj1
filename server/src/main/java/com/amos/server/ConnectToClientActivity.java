@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amos.server.nearby.ConnectCallback;
 import com.amos.server.nearby.ServerConnection;
 
 public class ConnectToClientActivity extends Activity {
@@ -52,18 +51,7 @@ public class ConnectToClientActivity extends Activity {
                 (TextView v, int actionId, KeyEvent event) -> {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         String name = v.getText().toString(); // Get the String
-                        toast("Connecting to " + name);
-                        connection.connectTo(name, new ConnectCallback() {
-                            @Override
-                            public void success() {
-                                connectionSuccess(name);
-                            }
-
-                            @Override
-                            public void failure() {
-                                connectionFailure(name);
-                            }
-                        });
+                        toConnectionSetup(name);
                         return true;
                     }
                     return false;
@@ -71,20 +59,13 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
-     * Switch to activity handling an established connection.
+     * Switch to connection setup activity
      */
-    private void connectionSuccess(String name) {
-        toast(String.format("Successfully connected to %s", name));
+    private void toConnectionSetup(String name) {
         Intent intent = new Intent(this, ConnectionSetupServerActivity.class);
+        intent.setAction("connect");
+        intent.putExtra("name", name);
         startActivity(intent);
-    }
-
-    /**
-     * Handle failure to connection to given code
-     * @param name
-     */
-    private void connectionFailure(String name) {
-        toast(String.format("Failed to connect to %s", name));
     }
 
     /**
@@ -110,7 +91,7 @@ public class ConnectToClientActivity extends Activity {
 
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
+            if (!hasPermissions(this)) {
                 requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
             } else {
                 Log.d(TAG, "Permissions are ok.");
@@ -124,11 +105,10 @@ public class ConnectToClientActivity extends Activity {
     /**
      * Determines whether the FlyInn server app has the necessary permissions to run nearby.
      * @param context Checks the permissions against this context/application environment
-     * @param permissions The permissions to be checked
      * @return True if the app was granted all the permissions, false otherwise
      */
-    private static boolean hasPermissions(Context context, String[] permissions) {
-        for (String permission : permissions) {
+    private static boolean hasPermissions(Context context) {
+        for (String permission : ConnectToClientActivity.REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(context, permission)
                     != PackageManager.PERMISSION_GRANTED) {
                 return false;

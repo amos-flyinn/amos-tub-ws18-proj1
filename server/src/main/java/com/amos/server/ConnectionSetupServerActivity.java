@@ -1,56 +1,39 @@
 package com.amos.server;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.amos.server.eventsender.EventServer;
 import com.amos.server.eventsender.EventWriter;
+import com.amos.server.nearby.ConnectCallback;
 import com.amos.server.nearby.ServerConnection;
-import com.amos.server.signaling.WebServer;
-import com.amos.server.webrtc.PeerWrapper;
-import com.amos.server.webrtc.SetupStates;
-import com.amos.shared.TouchEvent;
-import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
-import com.google.android.gms.nearby.connection.Payload;
 
 import org.webrtc.SurfaceViewRenderer;
 
 import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
 
 public class ConnectionSetupServerActivity extends Activity {
 
     private ProgressBar infiniteBar;
     private TextView progressText;
 
+    /**
+     * Connection singleton managing nearby connection
+     */
     private ServerConnection connection;
-
-    TextView connectionInfo;
-    Button threadStarter;
-    Thread senderRunner;
-    EventServer eventSender;
-    BlockingQueue<TouchEvent> msgQueue;
-    Handler uiHandler;
-    SurfaceViewRenderer view;
-
-    private WebServer webSocketServer;
-    private PeerWrapper peerWrapper;
-    private SurfaceViewRenderer remoteRender;
     private EventWriter writer;
 
-    private String endpointId;
+    TextView connectionInfo;
+    SurfaceViewRenderer view;
 
     private static final String TAG = "ConnectionSetup";
 
@@ -65,142 +48,77 @@ public class ConnectionSetupServerActivity extends Activity {
         connectionInfo.setVisibility(View.INVISIBLE);
 
         connection = ServerConnection.getInstance();
-        try {
-            writer = new EventWriter(connection.sendStream());
-        } catch (IOException err) {}
-    }
 
-    /**
-     * This method returns the SurfaceViewRender instance that
-     * the client is using for the screen capture streaming
-     *
-     * @return SurfaceViewRenderer return instance of SurfaceView component
-     */
-    public SurfaceViewRenderer getRender() {
-        return remoteRender;
-    }
-
-    private void initViews() {
-        remoteRender = findViewById(R.id.surface_remote_viewer);
-    }
-
-
-    private void restartApp() {
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
-    }
-
-    /**
-     * This method should be use to update the TextView description state.
-     * It will write a description about the current state of the WebRTC stream.
-     * This method is going to handle all possible error states that the App could reach.
-     * <p>
-     * Please see {@link com.amos.server.webrtc.SetupStates} for the states list.
-     *
-     * @param state the identification number to identify correct or error states.
-     */
-    public void setStateText(int state) {
-
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        // only correct actions will be processed
+        Intent intent = getIntent();
+        if ("connect".equals(intent.getAction())) {
+            buildConnection(intent.getStringExtra("name"));
         } else {
-            builder = new AlertDialog.Builder(this);
+            toInitialActivity();
         }
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
-                .setCancelable(false)
-                .setTitle("Setup error");
+    }
 
-        builder.setNegativeButton("Restart app", new DialogInterface.OnClickListener() {
+    private void toInitialActivity() {
+        Intent intent = new Intent(this, ConnectToClientActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Create connection to the given destination server
+     */
+    private void buildConnection(String name) {
+        setProgressText("Connecting to " + name);
+        connection.connectTo(name, new ConnectCallback() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                restartApp();
+            public void success() {
+                Log.d(TAG, "Successfully connected to " + name);
+                toast(String.format("Successfully connected to %s", name));
+                infiniteBar.setVisibility(View.INVISIBLE);
+                progressText.setVisibility(View.INVISIBLE);
+                view.setVisibility(View.VISIBLE);
+                connectionInfo.setVisibility(View.VISIBLE);
+                transmitInputEvents();
+            }
+
+            @Override
+            public void failure() {
+                Log.d(TAG, "Failed to connect to " + name);
+                toast(String.format("Failed to connect to %s", name));
+                toInitialActivity();
             }
         });
-
-        switch (state) {
-
-            case SetupStates.PERMISSIONS_FOR_SCREENCAST_DENIED:
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                builder.setMessage("Error getting permissions for screen capture");
-                builder.show();
-                break;
-
-            case SetupStates.ASKING_PERMISSIONS:
-                progressText.setText("Asking permissions for screen capture");
-                break;
-
-            case SetupStates.SETUP_SCREEN_CONNECTION:
-                progressText.setText("Setup screen share connection with server");
-                break;
-
-            case SetupStates.LOCAL_DESCRIPTOR_CREATE:
-                progressText.setText("Local descriptor created Successfully");
-                break;
-
-            case SetupStates.REMOTE_DESCRIPTOR_CREATE:
-                progressText.setText("Remote descriptor created Successfully");
-                break;
-
-            case SetupStates.LOCAL_DESCRIPTOR_SETTED:
-                progressText.setText("Local descriptor setted Successfully");
-                break;
-
-            case SetupStates.REMOTE_DESCRIPTOR_SETTED:
-                progressText.setText("Remote descriptor setted Successfully");
-                progressText.setVisibility(View.INVISIBLE);
-                remoteRender.setVisibility(View.VISIBLE);
-                break;
-
-            case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
-                builder.setMessage("Creating local descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-
-            case SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR:
-                builder.setMessage("Creating remote descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-
-            case SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION:
-                builder.setMessage("Setting local descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-            case SetupStates.FAIL_SETTED_REMOTE_DESCRIPTION:
-                builder.setMessage("Setting remote descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-
-            case SetupStates.FAIL_SENDING_SESSION_DESCRIPTOR:
-                builder.setMessage("Sending remote descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-            case SetupStates.ERROR_CONNECTING_SERVER:
-                builder.setMessage("Error connecting server. Please restart the app and make sure you are connected");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-        }
     }
 
+    /**
+     * Send touch events over established connection
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    private void transmitInputEvents() {
+        Log.d(TAG, "Trying to transmit input events");
+        toast("Trying to transmit input events");
+        try {
+            writer = new EventWriter(connection.sendStream(), new Point(view.getWidth(), view.getHeight()));
+        } catch (IOException ignored) {
+        }
+        view.setOnTouchListener((View v, MotionEvent event) -> {
+            Log.d(TAG, event.toString());
+            if (writer != null) {
+                try {
+                    writer.write(event);
+                } catch (IOException ignored) {
+                    Log.d(TAG, "Failed to write touch event to EventWriter");
+                }
+            }
+            return true;
+        });
+    }
 
+    private void toast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    private void setProgressText(String message) {
+        progressText.setText(message);
+    }
 }
