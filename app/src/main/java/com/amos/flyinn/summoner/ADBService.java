@@ -55,7 +55,7 @@ public class ADBService extends IntentService {
             });
             Log.d("ADBService", "Acquiring connection to port :5555");
             connection = AdbConnection.create(socket, crypto);
-            Log.d("ADBService", "Connect to ADB session");
+            Log.d("ADBService", "Trying to connect to ADB session");
             connection.connect();
         } catch (Exception err) {
             Log.d("ADBService", "Failed to connect to ADB");
@@ -80,15 +80,22 @@ public class ADBService extends IntentService {
         Log.d("AppDaemon", "Spawning the app");
         try {
             AdbStream stream = connection.open(command);
-            for (; ; ) {
-                Log.d("AppDaemon", "Read loop");
-                stream.read();
-            }
+            new Thread(() -> {
+                try {
+                    for (; ; ) {
+                        Log.d("AppDaemon", "Read loop");
+                        stream.read();
+                    }
+                } catch (Exception e) {
+                    Log.d("AppDaemon", "Failed the read loop");
+                    e.printStackTrace();
+                }
+                Log.d("AppDaemon", "Stopping the App");
+            }).start();
         } catch (Exception e) {
-            Log.d("AppDaemon", "Failed the read loop");
-            e.printStackTrace();
+            Log.d("AppDaemon", "Failed to satart listener", e);
+            throw e;
         }
-        Log.d("AppDaemon", "Stopping the App");
     }
 
     /**
@@ -99,31 +106,39 @@ public class ADBService extends IntentService {
     @Override
     protected void onHandleIntent(Intent workIntent) {
         Log.d("ADBService", "Got intent");
-        if (!workIntent.getStringExtra("cmd").equals("")) {
+        if (workIntent.getStringExtra("cmd") != null && !"".equals(workIntent.getStringExtra("cmd"))) {
             try {
                 Log.d("ADBService", "Got create intent");
                 AdbConnection connection = connectNetworkADB();
-
                 spawnApp(connection, workIntent.getStringExtra("cmd"));
                 Log.d("ADBService", "Launched adb connection");
-
             } catch (Exception e) {
-                Log.d("ADBService", "Failed to start the adb service");
-                e.printStackTrace();
+                Log.d("ADBService", "Failed to start the adb service", e);
             }
             return;
         }
 
+        Log.d("ADBService", "Get action");
         try {
+            Log.d("ADBService", workIntent.getAction());
             switch (Objects.requireNonNull(workIntent.getAction())) {
                 case "stream":
+                    Log.d("ADBService", "Start proxy...");
                     Socket s = new Socket("127.0.0.1", 1337);
+                    Log.d("ADBService", "Proxy connected");
                     InputStream ss = ConnectionSigleton.getInstance().inputStream;
-                    IOUtils.copyStream(ss, s.getOutputStream());
+                    new Thread(() -> {
+                        try {
+                            Log.d("ADBService", "Proxy piping...");
+                            IOUtils.copyStream(ss, s.getOutputStream());
+                            Log.d("ADBService", "Proxy done piping");
+                        } catch (Exception e) {
+                            Log.d("ADBService", "Failed to pipe", e);
+                        }
+                    }).start();
             }
         } catch (Exception e) {
-            Log.d("ADBService", "Failed to connect to ADB");
-            e.printStackTrace();
+            Log.d("ADBService", "Failed to connect to ADB", e);
         }
     }
 }
