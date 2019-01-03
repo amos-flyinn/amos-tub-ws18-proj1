@@ -15,6 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amos.server.eventsender.EventServer;
+import com.amos.server.eventsender.EventWriter;
+import com.amos.server.nearby.ServerConnection;
 import com.amos.server.signaling.WebServer;
 import com.amos.server.webrtc.PeerWrapper;
 import com.amos.server.webrtc.SetupStates;
@@ -25,12 +27,15 @@ import com.google.android.gms.nearby.connection.Payload;
 
 import org.webrtc.SurfaceViewRenderer;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
 public class ConnectionSetupServerActivity extends Activity {
 
     private ProgressBar infiniteBar;
     private TextView progressText;
+
+    private ServerConnection connection;
 
     TextView connectionInfo;
     Button threadStarter;
@@ -43,6 +48,7 @@ public class ConnectionSetupServerActivity extends Activity {
     private WebServer webSocketServer;
     private PeerWrapper peerWrapper;
     private SurfaceViewRenderer remoteRender;
+    private EventWriter writer;
 
     private String endpointId;
 
@@ -58,21 +64,10 @@ public class ConnectionSetupServerActivity extends Activity {
         connectionInfo = findViewById(R.id.connectionInfo);
         connectionInfo.setVisibility(View.INVISIBLE);
 
-        Intent intent = getIntent();
-        if (intent.hasExtra("endpointId")) {
-            try {
-                endpointId = intent.getStringExtra("endpointId");
-                ConnectionsClient connection = Nearby.getConnectionsClient(this);
-                byte[] message = {0x61, 0x61, 0x61, 0x62};
-                Payload payload = Payload.fromBytes(message);
-                connection.sendPayload(endpointId, payload);
-                Log.d(TAG, "Sent test payload to receiver " + endpointId);
-            } catch (NullPointerException error) {
-                Log.d(TAG, "Failed to get endpointId from intent");
-            }
-        } else {
-            Log.d(TAG, "Intent did not specify endpoint");
-        }
+        connection = ServerConnection.getInstance();
+        try {
+            writer = new EventWriter(connection.sendStream());
+        } catch (IOException err) {}
     }
 
     /**
@@ -158,11 +153,9 @@ public class ConnectionSetupServerActivity extends Activity {
                 progressText.setText("Remote descriptor setted Successfully");
                 progressText.setVisibility(View.INVISIBLE);
                 remoteRender.setVisibility(View.VISIBLE);
-
                 break;
 
             case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
-
                 builder.setMessage("Creating local descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
@@ -171,7 +164,6 @@ public class ConnectionSetupServerActivity extends Activity {
 
 
             case SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR:
-
                 builder.setMessage("Creating remote descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
@@ -180,7 +172,6 @@ public class ConnectionSetupServerActivity extends Activity {
 
 
             case SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION:
-
                 builder.setMessage("Setting local descriptor failed. Please restart the app");
                 builder.show();
                 progressText.setVisibility(View.INVISIBLE);
