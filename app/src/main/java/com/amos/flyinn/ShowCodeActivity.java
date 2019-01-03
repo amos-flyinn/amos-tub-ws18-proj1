@@ -1,7 +1,9 @@
 package com.amos.flyinn;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amos.flyinn.nearbyservice.NearbyService;
+import com.amos.flyinn.summoner.Daemon;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -47,16 +50,38 @@ public class ShowCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_code);
         display = findViewById(R.id.textView2);
 
-        if (!hasPermissions(NearbyService.getRequiredPermissions()) &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (!hasPermissions(NearbyService.getRequiredPermissions()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
             Log.w(TAG, "Could not check permissions due to version");
         }
 
+        String[] perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (!hasPermissions(perms) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        }
+
+        try {
+            createADBService();
+        } catch (Exception e) {
+            Log.d("ShowCodeActivity", "Failed to start ADB service");
+            e.printStackTrace();
+        }
         nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
         display.setText(nameNum);
         setService();
+    }
+
+    protected Daemon createADBService() throws Exception {
+        Point p = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(p);
+        Daemon d = new Daemon(getApplicationContext(), p);
+        d.writeFakeInputToFilesystem();
+        Log.d("ShowCodeActivity", "Wrote to FS");
+        Log.d("ShowCodeActivity", "Going to spawn ADB service");
+        d.spawn_adb();
+        Log.d("ShowCodeActivity", "Spawned ADB service");
+        return d;
     }
 
     @Override
@@ -75,8 +100,8 @@ public class ShowCodeActivity extends AppCompatActivity {
     /**
      * Handles user acceptance (or denial) of our permission request.
      *
-     * @param requestCode The request code passed in requestPermissions()
-     * @param permissions Permissions that must be granted to run nearby connections
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  Permissions that must be granted to run nearby connections
      * @param grantResults Results of granting permissions
      */
     @CallSuper

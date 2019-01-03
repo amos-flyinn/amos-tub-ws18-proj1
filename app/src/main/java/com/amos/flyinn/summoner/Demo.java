@@ -23,13 +23,13 @@ public class Demo {
     }
 
 
-    public static void start(Context context, String addr, Point p) {
-        Daemon d = new Daemon(context, addr, p);
+    public static void start(Context context,  Point p) {
+        Daemon d = new Daemon(context, p);
         FakeInputSender s = new FakeInputSender();
         try {
             d.writeFakeInputToFilesystem();
             d.spawn_adb();
-            s.connect(addr);
+            s.connect();
             periodicNagging(s);
         } catch (Exception e) {
             e.printStackTrace();

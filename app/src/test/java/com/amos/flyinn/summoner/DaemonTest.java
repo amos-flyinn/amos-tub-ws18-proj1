@@ -23,7 +23,7 @@ public class DaemonTest {
      */
     @Test
     public void spawn_adbHappypathTest() {
-        Daemon d = new Daemon(context, "127.0.0.1", new Point(0, 0));
+        Daemon d = new Daemon(context,  new Point(0, 0));
         d.spawn_adb();
     }
 
@@ -32,7 +32,7 @@ public class DaemonTest {
      */
     @Test(expected = NullPointerException.class)
     public void spawn_adbNoContextTest() {
-        Daemon d = new Daemon(null, "127.0.0.1", new Point(0, 0));
+        Daemon d = new Daemon(null, new Point(0, 0));
         d.spawn_adb();
     }
 
@@ -42,7 +42,7 @@ public class DaemonTest {
      */
     @Test(expected = IOException.class)
     public void writeFakeInputToFilesystem() throws IOException {
-        Daemon d = new Daemon(context, "127.0.0.1", new Point(0, 0));
+        Daemon d = new Daemon(context,  new Point(0, 0));
         d.writeFakeInputToFilesystem();
     }
 }

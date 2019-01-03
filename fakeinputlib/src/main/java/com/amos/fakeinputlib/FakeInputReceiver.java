@@ -7,6 +7,7 @@ import com.amos.shared.TouchEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 class FakeInputReceiver {
@@ -23,17 +24,19 @@ class FakeInputReceiver {
         this.maxY = maxY;
     }
 
-    void connectToHost(String addr) throws Exception {
+    void connectToHost() throws Exception {
+        ServerSocket ss;
         Socket fd = null;
         for (int i = 0; i < 5; i++) {
-            Log.d("FakeInput", "Trying to connect to the host " + addr);
+            Log.d("FakeInput", "Listening to peers");
             try {
-                fd = new Socket(addr, 1337);
+                ss = new ServerSocket(1337);
+                fd = ss.accept();
             } catch (Exception e) {
                 e.printStackTrace();
 
                 // Exponential backoff
-                Thread.sleep((int) Math.pow(2.5, i)*1000);
+                Thread.sleep((int) Math.pow(2.5, i) * 1000);
                 continue;
             }
             break;
@@ -64,7 +67,7 @@ class FakeInputReceiver {
                 continue;
             }
 
-            Log.d("FakeInput", "Got Event: "+e.toString());
+            Log.d("FakeInput", "Got Event: " + e.toString());
             MotionEvent ev = e.getConstructedMotionEvent(this.maxX, this.maxY);
 
             Log.d("FakeInput", String.format("Event: (%f, %f, %f, %f)", ev.getX(), ev.getY(), ev.getRawX(), ev.getRawX()));

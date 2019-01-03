@@ -194,13 +194,12 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     /**
      * This method is to create an ADB service
      *
-     * @param addr the address where the ADB service is going to listen for connections
      * @return returns Daemon service to work with the ADB service
      */
-    protected Daemon createADBService(String addr) {
+    protected Daemon createADBService() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        Daemon d = new Daemon(getApplicationContext(), addr, p);
+        Daemon d = new Daemon(getApplicationContext(), p);
         try {
             d.writeFakeInputToFilesystem();
             d.spawn_adb();
