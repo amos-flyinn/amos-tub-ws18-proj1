@@ -30,13 +30,13 @@ class FakeInputReceiver {
         for (int i = 0; i < 5; i++) {
             Log.d("FakeInput", "Listening to peers");
             try {
-                ss = new ServerSocket(1337);
+                ss = new ServerSocket( 1337);
                 fd = ss.accept();
             } catch (Exception e) {
                 e.printStackTrace();
 
                 // Exponential backoff
-                Thread.sleep((int) Math.pow(2.5, i) * 1000);
+                Thread.sleep((int) Math.pow(2.5, i)*1000);
                 continue;
             }
             break;
