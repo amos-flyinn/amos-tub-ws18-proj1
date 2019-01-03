@@ -42,6 +42,7 @@ public class ServerConnection {
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
     private final String serverName = generateName();
+
     private String clientID;
 
     /**
@@ -93,6 +94,10 @@ public class ServerConnection {
      * Clears all servers map data as well as serverName/serverID and starts discovery
      */
     public void discover() {
+        if (connectionsClient == null) {
+            Log.e(TAG, "connectionsClient is null, cannot discover.");
+            return;
+        }
         resetDiscovery();
 
         DiscoveryOptions discoveryOptions =
@@ -111,6 +116,14 @@ public class ServerConnection {
                 });
     }
 
+    public List<String> getClients() {
+        return clients;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
     /**
      * Connect to nearby service with client name ending with our required code.
      *
@@ -118,6 +131,10 @@ public class ServerConnection {
      * @param callback Callbacks on connection success and failure
      */
     public void connectTo(String code, ConnectCallback callback) {
+        if (connectionsClient == null) {
+            Log.e(TAG, "connectionsClient is null, cannot discover.");
+            return;
+        }
         String searchedClientName = null;
         for (String clientName : clients) {
             if (clientName.endsWith(code)) {
@@ -138,9 +155,15 @@ public class ServerConnection {
     }
 
     public void abort() {
+        resetDiscovery();
+        resetClientData();
     }
 
     public PipedOutputStream sendStream() throws IOException {
+        if (connectionsClient == null) {
+            Log.e(TAG, "connectionsClient is null, cannot create stream.");
+            throw new IOException("connectionsClient is null, cannot create stream.");
+        }
         PipedInputStream stream = new PipedInputStream();
         PipedOutputStream data = new PipedOutputStream(stream);
         Payload payload = Payload.fromStream(stream);
@@ -201,6 +224,7 @@ public class ServerConnection {
                 public void onEndpointLost(@NonNull String endpointId) {
                     // previously discovered server is no longer reachable, remove from data maps
                     String lostEndpointName = clientIDsToNames.get(endpointId);
+                    clients.remove(lostEndpointName);
                     clientIDsToNames.remove(endpointId);
                     clientNamesToIDs.remove(lostEndpointName);
                     Log.i(TAG, serverName + " lost discovered endpoint " + endpointId);
