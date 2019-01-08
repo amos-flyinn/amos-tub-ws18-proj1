@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -25,6 +26,7 @@ import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.Payload;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,6 +38,8 @@ public class ScreenSharingClient extends Activity {
     private ToggleButton mToggleButton;
     private static final int REQUEST_PERMISSIONS = 10;
 
+    private Button sendFilePOC;
+
     ParcelFileDescriptor readFD;
     ParcelFileDescriptor writeFD;
     private ScreenRecordingHelper helper;
@@ -46,6 +50,9 @@ public class ScreenSharingClient extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recodring);
+
+        this.sendFilePOC = (Button) findViewById(R.id.send_file_button);
+        this.sendFilePOC.setOnClickListener(view -> sendFileToServer());
 
         try {
             tempFileVideo = File.createTempFile("videoStream",".mp4",Environment
@@ -71,9 +78,6 @@ public class ScreenSharingClient extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
 
 
         helper = new ScreenRecordingHelper(this, writeFD);
@@ -157,9 +161,9 @@ public class ScreenSharingClient extends Activity {
             helper.initRecorder();
             helper.shareScreen();
 
-            Payload filePayload = Payload.fromStream(readFD);
-            String endPoint = getIntent().getExtras().getString("endPoint");
-            Nearby.getConnectionsClient(getApplicationContext()).sendPayload(endPoint, filePayload);
+            //Payload filePayload = Payload.fromStream(readFD);
+            //String endPoint = getIntent().getExtras().getString("endPoint");
+            //Nearby.getConnectionsClient(getApplicationContext()).sendPayload(endPoint, filePayload);
 
         } else {
             helper.resetMediaRecorder();
@@ -167,6 +171,41 @@ public class ScreenSharingClient extends Activity {
         }
     }
 
+
+    private void sendFileToServer(){
+
+        try {
+            Log.d(TAG, "sendFileToServer: Sending file to the Server");
+
+            Payload filePayload = Payload.fromFile(this.tempFileVideo);
+            String endPoint = getIntent().getExtras().getString("endPoint");
+            Nearby.getConnectionsClient(getApplicationContext()).sendPayload(endPoint, filePayload);
+            Log.d(TAG, "sendFileToServer: FileSended to the Server");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+    /*
+        try {
+            Log.d(TAG, "sendFileToServer: Sending file to the Server");
+            Payload filePayload = Payload.fromBytes("Test String send".getBytes());
+            String endPoint = getIntent().getExtras().getString("endPoint");
+            Nearby.getConnectionsClient(getApplicationContext()).sendPayload(endPoint, filePayload);
+            Log.d(TAG, "sendFileToServer: FileSended to the Server");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        */
+
+
+
+        //String endPoint = getIntent().getExtras().getString("endPoint");
+        //Nearby.getConnectionsClient(getApplicationContext()).sendPayload(endPoint, filePayload);
+
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

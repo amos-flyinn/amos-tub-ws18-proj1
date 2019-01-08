@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -16,9 +18,14 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import android.view.SurfaceHolder.Callback;
 
@@ -39,7 +46,13 @@ public class ScreensharingServer extends Activity {
 
                     Log.d("ScreensharingServer", "onPayloadReceived: Received from here :  " + endpointId);
 
-                    if (payload.getType() == Payload.Type.STREAM) {
+                    if(payload.getType() == Payload.Type.BYTES)
+                    {
+                        incomingStreamPayloads.put(payload.getId(),payload);
+                    }
+
+                    if (payload.getType() == Payload.Type.FILE) {
+                        Log.d("ScreensharingServer", "onPayloadReceived: Received with id  :  " + payload.getId());
                         incomingStreamPayloads.put(payload.getId(), payload);
                     }
                 }
@@ -50,10 +63,73 @@ public class ScreensharingServer extends Activity {
                     Log.d("onPayloadTransferUpdate", "onPayloadReceived: Received from here :  " + endpointId);
                     if (update.getStatus() == PayloadTransferUpdate.Status.SUCCESS) {
                         //
-                        Payload payload = incomingStreamPayloads.get(update.getPayloadId());
-                        Payload.Stream is = payload.asStream();
 
-                        InitMediaPlayer(is.asParcelFileDescriptor().getFileDescriptor());
+
+                        Log.d("ReceivedTransfer", "onPayloadTransferUpdate: The id of payload is : " + update.getPayloadId());
+
+                        Payload payload = incomingStreamPayloads.get(update.getPayloadId());
+                        //Payload.Stream is = payload.asFile();
+
+                        if(payload.getType() == Payload.Type.BYTES)
+                        {
+                            String text = new String(payload.asBytes(), StandardCharsets.UTF_8);
+                            Log.d("ReceivedPayloadBytes", "onPayloadTransferUpdate: " + text);
+                        }
+
+                        if(payload.getType() == Payload.Type.FILE)
+                        {
+                            //File sendedFile = payload.asFile().asParcelFileDescriptor();
+                            ParcelFileDescriptor sendedFile = payload.asFile().asParcelFileDescriptor();
+
+                            Log.d("ParcelReader", "onPayloadTransferUpdate: " + (sendedFile == null));
+
+                            InputStream fileStream = new FileInputStream(sendedFile.getFileDescriptor());
+
+
+
+                            try {
+                                File tempFileVideo = File.createTempFile("GettedFile",".mp4",Environment
+                                         .getExternalStoragePublicDirectory(Environment
+                                                 .DIRECTORY_DOWNLOADS));
+
+                                OutputStream newDatabase = new FileOutputStream(tempFileVideo);
+
+                                byte[] buffer = new byte[1024];
+                                int length;
+
+                                while((length = fileStream.read(buffer)) > 0)
+                                {
+                                    newDatabase.write(buffer, 0, length);
+                                }
+
+                                newDatabase.flush();
+                                fileStream.close();
+                                newDatabase.close();
+
+                                String path = Environment
+                                        .getExternalStoragePublicDirectory(Environment
+                                                .DIRECTORY_DOWNLOADS) + "/" + tempFileVideo.getName();
+
+                                Log.d("NameReaderoutput", "onPayloadTransferUpdate: " + path);
+
+                                InitMediaPlayer(((FileInputStream) fileStream).getFD(),path);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+                            //Log.d("FileReceivedPayload", "onPayloadTransferUpdate: The path is :  " + sendedFile.getAbsolutePath());
+
+
+                        }
+
+
+
+
+
+                        //InitMediaPlayer(is.asParcelFileDescriptor().getFileDescriptor());
                     }
                 }
             };
@@ -73,20 +149,21 @@ public class ScreensharingServer extends Activity {
     }
 
     // Setup media player
-    private void InitMediaPlayer(FileDescriptor fd) {
+    private void InitMediaPlayer(FileDescriptor fd,String path) {
         // Init media player
         mediaPlayer = new MediaPlayer();
+        mediaPlayer.setVolume(50,50);
         try {
-            mediaPlayer.setDataSource(fd);
+            mediaPlayer.setDataSource(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
-            mediaPlayer.prepare();
+            mediaPlayer.prepareAsync();
             InitMediaPlayerView();
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
     }
 
