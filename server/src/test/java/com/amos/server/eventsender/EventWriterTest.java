@@ -4,7 +4,6 @@ import android.graphics.Point;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 
-import static org.junit.Assert.*;
 import com.amos.shared.TouchEvent;
 
 import org.junit.Before;
@@ -16,6 +15,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
 public class EventWriterTest {
@@ -87,7 +88,7 @@ public class EventWriterTest {
     @Before
     public void setUp() throws Exception {
         output = new ByteArrayOutputStream();
-        ew = new EventWriter(output);
+        ew = new EventWriter(output, new Point(1, 1));
     }
 
     /**

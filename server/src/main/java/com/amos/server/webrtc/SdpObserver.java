@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.amos.server.ConnectionSetupServerActivity;
-import com.amos.server.webrtc.SetupStates;
 
 import org.webrtc.SessionDescription;
-
-import java.util.Set;
 /**
  * <h1>SdpObserver Class</h1>
  *
@@ -30,7 +27,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
      *
      * @param nameObserver the observer name to recognize the ObserverObject in the logs
      * @param activity the activity to access the TextView
-     * @param type the type of the Observer. Remote or Local. Please look at the constants at {@link com.amos.flyinn.webrtc.SdpObserver }
+     * @param type the type of the Observer. Remote or Local. Please look at the constants at
      */
     public SdpObserver(String nameObserver, Activity activity,int type)
     {
@@ -61,7 +58,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.LOCAL_DESCRIPTOR_CREATE);
+                  //  activity.setStateText(SetupStates.LOCAL_DESCRIPTOR_CREATE);
                 }
             });
         }
@@ -71,7 +68,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.REMOTE_DESCRIPTOR_CREATE);
+                    // activity.setStateText(SetupStates.REMOTE_DESCRIPTOR_CREATE);
                 }
             });
         }
@@ -94,7 +91,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.LOCAL_DESCRIPTOR_SETTED);
+                    // activity.setStateText(SetupStates.LOCAL_DESCRIPTOR_SETTED);
                 }
             });
         }
@@ -104,7 +101,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.REMOTE_DESCRIPTOR_SETTED);
+                    // activity.setStateText(SetupStates.REMOTE_DESCRIPTOR_SETTED);
                 }
             });
         }
@@ -126,7 +123,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR);
+                    // activity.setStateText(SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR);
                 }
             });
         }
@@ -136,7 +133,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR);
+                    // activity.setStateText(SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR);
                 }
             });
         }
@@ -158,7 +155,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION);
+                    // activity.setStateText(SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION);
                 }
             });
         }
@@ -168,7 +165,7 @@ public class SdpObserver implements org.webrtc.SdpObserver {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.setStateText(SetupStates.FAIL_SETTED_REMOTE_DESCRIPTION);
+                    // activity.setStateText(SetupStates.FAIL_SETTED_REMOTE_DESCRIPTION);
                 }
             });
         }
