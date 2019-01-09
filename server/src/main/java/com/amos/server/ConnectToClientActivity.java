@@ -2,6 +2,9 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,6 +21,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.Notification;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -74,8 +84,8 @@ public class ConnectToClientActivity extends Activity {
     /** Tag for logging purposes. */
     private static final String TAG = "ClientNearbyConnection";
 
-
-
+    public static final String CHANNEL_ID = "server nearby";
+    private static final int NOTIFY_ID = 1;
 
     /**
      * Obtain data from clientID/clientName and data transfer information via this handle.
@@ -163,6 +173,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
                             connectedToApp();
+                            raiseNotification(buildNotification("Connection established."));
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
@@ -172,6 +183,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.show();
                             clientNameNow = null;
                             clientID = null;
+                            raiseNotification(buildNotification("Connection was rejected."));
                             break;
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
@@ -181,6 +193,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.show();
                             clientNameNow = null;
                             clientID = null;
+                            raiseNotification(buildNotification("Failed to establish connection."));
                             break;
 
                         default:
@@ -191,6 +204,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.show();
                             clientNameNow = null;
                             clientID = null;
+                            raiseNotification(buildNotification("Failed to establish connection."));
                     }
                 }
 
@@ -199,6 +213,8 @@ public class ConnectToClientActivity extends Activity {
                     // disconnected from server
                     Log.i(TAG, "Disconnected from " + endpointId);
                     mToast.setText(R.string.nearby_disconnected);
+                    raiseNotification(buildNotification("Connection closed."));
+
                     mToast.show();
                     clearServerData();
                     finish();
@@ -221,6 +237,7 @@ public class ConnectToClientActivity extends Activity {
         if (searchedClientName == null)
         {
             Toast.makeText(this,"The code given was not found. Please try again",Toast.LENGTH_LONG).show();
+            raiseNotification(buildNotification("The code given was not found. Please try again"));
             return;
         }
 
@@ -231,13 +248,49 @@ public class ConnectToClientActivity extends Activity {
 
         connectionsClient.requestConnection(searchedClientName,endpoint,connectionLifecycleCallback);
 
-
-
     }
+
+
+    private void createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationChannel c = new NotificationChannel(CHANNEL_ID,
+                    "server_channel", NotificationManager.IMPORTANCE_HIGH);
+
+            c.setDescription("Server Channel checks for Connection.");
+            c.enableLights(true);
+            c.setLightColor(0xFFFF0000);
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(c);
+        }
+    }
+
+    private Notification buildNotification(String message) {
+        NotificationCompat.Builder b =
+                new NotificationCompat.Builder(this, CHANNEL_ID);
+
+        b.setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)  // makes notification pop up
+                .setContentTitle(String.format("Nearby service on Server"))
+                .setContentText(message)
+                .setSmallIcon(android.R.drawable.stat_notify_sync);
+
+        return (b.build());
+    }
+
+    private void raiseNotification(Notification notification) {
+        NotificationManagerCompat mgr = NotificationManagerCompat.from(this);
+        mgr.notify(NOTIFY_ID, notification);
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createChannel();
         setContentView(R.layout.activity_connect_to_client);
         EditText text = findViewById(R.id.connect_editText);
         text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
