@@ -46,6 +46,10 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         prefs = this.getSharedPreferences("com.amos.flyinn", Context.MODE_PRIVATE);
 
+        Init();
+    }
+
+    private void Init() {
         // Init ui
         Spinner dropdown = findViewById(R.id.spinner1);
         String[] items = new String[]{"Pad", "Crop", "Stretch"};
@@ -83,7 +87,6 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         SubmitConfiguration();
     }
-
 
     private void setSelectedScreenRatio(String screenRatio) {
         String screenRatioKey = "com.amos.flyinn.screenratio";
@@ -132,10 +135,26 @@ public class ConfigurationActivity extends AppCompatActivity {
         return prefJson.toString();
     }
 
+    /**
+     * Send config String through nearby to server
+     */
+    private String lastSendPrefs="";
     public void SubmitConfiguration() {
         String jsonPrefStr=GenerateConfigurationStr();
+
+        // Prevent double sending same values
+        if(lastSendPrefs.equals(jsonPrefStr)) return;
+        lastSendPrefs=jsonPrefStr;
+
         /*
         Todo: Transfer String to server
          */
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 }
