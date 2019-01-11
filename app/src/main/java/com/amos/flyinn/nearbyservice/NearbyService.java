@@ -9,11 +9,11 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.amos.flyinn.ConnectedActivity;
 import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.ShowCodeActivity;
 import com.amos.flyinn.summoner.ADBService;
@@ -32,17 +32,14 @@ import java.util.Objects;
  */
 public class NearbyService extends IntentService {
     public static final String TAG = NearbyService.class.getPackage().getName();
-
     public static final String ACTION_START = "nearby_start";
     public static final String ACTION_STOP = "nearby_stop";
-
-    private NearbyServer server;
-
+    private static final String CHANNEL_ID = "flyinn_nearby";
     private static final int FOREGROUND_ID = 1;
     private static final int NOTIFY_ID = 2;
-    private static final String CHANNEL_ID = "flyinn_nearby";
 
     private String nearbyCode = "";
+    private NearbyServer server;
 
     /**
      * Define the serviceState of our service.
@@ -97,8 +94,7 @@ public class NearbyService extends IntentService {
      * @return
      */
     private Notification buildForegroundNotification(String message, @Nullable Intent target) {
-        NotificationCompat.Builder b =
-                new NotificationCompat.Builder(this, CHANNEL_ID);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)  // makes notification pop up
@@ -208,15 +204,16 @@ public class NearbyService extends IntentService {
 
     public void handlePayload(Payload payload) {
         Log.d(TAG, "Received payload");
-        if (payload.asStream() == null) {
-            Log.wtf("AAAAAAAAAAAAAAAAAAA", "Payload is null!");
-            return;
+        switch (payload.getType()) {
+            case Payload.Type.STREAM:
+                Log.d(TAG, "Payload is of type stream");
+                Intent i = new Intent(this, ADBService.class);
+                i.setAction("stream");
+                ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
+                startService(i);
+                switchActivity(ConnectedActivity.class);
+                Log.d(TAG, "Send payload to activity");
         }
-        Intent i = new Intent(this, ADBService.class);
-        i.setAction("stream");
-        ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
-        startService(i);
-        Log.d(TAG, "Send payload to activity");
     }
 
     public void handlePayloadTransferUpdate(PayloadTransferUpdate update) {
@@ -273,7 +270,6 @@ public class NearbyService extends IntentService {
                 Log.d(TAG, "Could not get code from intent.");
             }
         }
-
         try {
             switch (intent.getAction()) {
                 case ACTION_START:
