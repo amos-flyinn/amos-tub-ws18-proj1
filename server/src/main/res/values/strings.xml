@@ -22,4 +22,5 @@
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
     <string name="title_activity_nearby_server">NearbyServerActivity</string>
+    <string name="title_activity_connected">ConnectedActivity</string>
 </resources>

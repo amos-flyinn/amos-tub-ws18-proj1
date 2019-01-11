@@ -74,6 +74,8 @@ public class ServerConnection {
         return ourInstance;
     }
 
+    private PayloadHandler handler;
+
     /**
      * Create a new server connection.
      */
@@ -88,6 +90,7 @@ public class ServerConnection {
      */
     public void init(Context ctx) {
         connectionsClient = Nearby.getConnectionsClient(ctx);
+        handler = PayloadHandler.getInstance();
     }
 
     /**
@@ -180,13 +183,13 @@ public class ServerConnection {
                 @Override
                 public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
                     Log.d(TAG, "Payload received from " + endpointId);
-                    Log.d(TAG, payload.toString());
+                    handler.handlePayloadReceived(payload);
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate update) {
                     Log.d(TAG, "Payload transfer update from " + endpointId);
-                    Log.d(TAG, update.toString());
+                    handler.handlePayloadUpdate(update);
                 }
             };
 
