@@ -63,6 +63,7 @@ class NearbyServer {
 
     /**
      * Server name as combination of name with suffix which is our nearby code
+     *
      * @return
      */
     public String getServerName() {
