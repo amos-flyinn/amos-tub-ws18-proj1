@@ -34,6 +34,7 @@ public class NearbyService extends IntentService {
     public static final String TAG = NearbyService.class.getPackage().getName();
     public static final String ACTION_START = "nearby_start";
     public static final String ACTION_STOP = "nearby_stop";
+    public static final String VIDEO_START = "video_start";
     private static final String CHANNEL_ID = "flyinn_nearby";
     private static final int FOREGROUND_ID = 1;
     private static final int NOTIFY_ID = 2;
@@ -277,6 +278,10 @@ public class NearbyService extends IntentService {
                     break;
                 case ACTION_STOP:
                     stop();
+                    break;
+                case VIDEO_START:
+                    Payload payload = Payload.fromStream(VideoStreamSingleton.getInstance().os);
+                    server.connectionsClient.sendPayload(server.clientID, payload);
                     break;
                 default:
                     Log.d(TAG, "Unknown intent received. Will do nothing");
