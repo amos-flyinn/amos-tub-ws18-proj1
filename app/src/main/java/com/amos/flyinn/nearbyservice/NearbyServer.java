@@ -46,7 +46,7 @@ class NearbyServer {
     protected ConnectionsClient connectionsClient;
     private final String serviceName = "nearby_server";
     private final String serviceID = "com.amos.server";
-    private String clientID;
+    public String clientID;
     private String clientName;
 
     private NearbyService nearbyService;

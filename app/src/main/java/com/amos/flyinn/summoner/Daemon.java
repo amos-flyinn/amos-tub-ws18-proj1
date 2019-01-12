@@ -30,7 +30,6 @@ public class Daemon {
     private final String FILE_LOCATION = "/sdcard/Android/data/flyinn_fakeinput.jar";
     // NOTE: cant use the FAKE_INPUT_SERVER_PATH as this will lead to permission issues, use "/sdcard/", which is a symlink.
     private final String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar app_process / com.amos.fakeinputlib.Main %d %d";
-    //private final String CMD = "shell:CLASSPATH=%%s nohup app_process / com.amos.fakeinputlib.Main %s %d %d";
     private final String execCMD;
     private Context context;
 
