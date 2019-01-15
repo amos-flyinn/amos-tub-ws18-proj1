@@ -13,7 +13,7 @@
     <string name="nearby_advertising_success">Started broadcasting connection.</string>
     <string name="nearby_connection_success">Connection established.</string>
     <string name="nearby_connection_rejected">Connection was rejected.</string>
-    <string name="nearby_connection_error">Failed to establish connection.</string>
+    <string name="nearby_connection_error">Connection lost.</string>
     <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
     <string name="nearby_disconnected">Connection closed.</string>
 
@@ -22,4 +22,5 @@
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
     <string name="title_activity_nearby_server">NearbyServerActivity</string>
+    <string name="connection_rejected_version">Connection impossible due to version.</string>
 </resources>

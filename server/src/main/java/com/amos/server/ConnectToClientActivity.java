@@ -173,7 +173,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
                             connectedToApp();
-                            raiseNotification(buildNotification("Connection established."));
+                            raiseNotification(buildNotification("Connection status: CONNECTED"));
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
@@ -183,7 +183,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.show();
                             clientNameNow = null;
                             clientID = null;
-                            raiseNotification(buildNotification("Connection was rejected."));
+                            //raiseNotification(buildNotification("Connection was rejected."));
                             break;
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
@@ -193,7 +193,7 @@ public class ConnectToClientActivity extends Activity {
                             mToast.show();
                             clientNameNow = null;
                             clientID = null;
-                            raiseNotification(buildNotification("Failed to establish connection."));
+                            //raiseNotification(buildNotification("Failed to establish connection."));
                             break;
 
                         default:
@@ -237,7 +237,7 @@ public class ConnectToClientActivity extends Activity {
         if (searchedClientName == null)
         {
             Toast.makeText(this,"The code given was not found. Please try again",Toast.LENGTH_LONG).show();
-            raiseNotification(buildNotification("The code given was not found. Please try again"));
+            //raiseNotification(buildNotification("The code given was not found. Please try again"));
             return;
         }
 
@@ -334,6 +334,7 @@ public class ConnectToClientActivity extends Activity {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
+            mToast.setText(R.string.connection_rejected_version);
             Log.w(TAG, "Could not check permissions due to version");
         }
     }
@@ -364,8 +365,9 @@ public class ConnectToClientActivity extends Activity {
                 .addOnSuccessListener( (Void unused) -> {
                     // started searching for servers successfully
                     Log.i(TAG, "Discovering connections on " + clientName);
-                    mToast.setText(R.string.nearby_discovering_success);
-                    mToast.show();
+                    raiseNotification(buildNotification("Connection status: DISCOVERY"));
+                    //mToast.setText(R.string.nearby_discovering_success);
+                    //mToast.show();
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to start discovery
