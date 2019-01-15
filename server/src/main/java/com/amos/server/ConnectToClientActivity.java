@@ -313,7 +313,6 @@ public class ConnectToClientActivity extends Activity {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            mToast.setText(R.string.connection_rejected_version);
             Log.w(TAG, "Could not check permissions due to version");
         }
     }
