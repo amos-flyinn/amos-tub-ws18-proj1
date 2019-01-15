@@ -13,6 +13,10 @@
     <string name="nearby_connection_error">Failed to establish connection.</string>
     <string name="nearby_disconnected">Connection closed.</string>
 
+    <string name="notification_initialising">Initialising application.</string>
+    <string name="notification_advertising">Searching for FlyInn servers.</string>
+    <string name="notification_connected">Connected to server.</string>
+
     <string name="flyinn_name">FlyInn-</string>
 
     <string name="buildinfo_git_tag_name">Git Tag: </string>

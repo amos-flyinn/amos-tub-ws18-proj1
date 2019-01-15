@@ -12,9 +12,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import com.amos.flyinn.ConnectionSetupActivity;
@@ -64,7 +66,8 @@ public class NearbyService extends IntentService {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        startForeground(FOREGROUND_ID, buildForegroundNotification("Nearby Action running", null));
+        startForeground(FOREGROUND_ID, buildForegroundNotification(
+                getResources().getString(R.string.notification_initialising), null));
         Log.d(TAG, "Creating channel");
         createChannel();
         return super.onStartCommand(intent, flags, startId);
@@ -104,8 +107,8 @@ public class NearbyService extends IntentService {
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
-        b.setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)  // makes notification pop up
+        b.setOngoing(true) // persistent notification
+                .setPriority(NotificationCompat.PRIORITY_MIN)  // notification won't pop up
                 .setContentTitle(String.format("Nearby service %s", nearbyCode))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
@@ -226,7 +229,9 @@ public class NearbyService extends IntentService {
                     server = new NearbyServer(this);
                     server.start();
                 } catch (SecurityException error) {
-                    notify("Insufficient permissions");
+                    (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                            this.getApplicationContext(),
+                            R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show());
                 }
             }
         } else {
@@ -241,7 +246,7 @@ public class NearbyService extends IntentService {
         if (serviceState != NearbyState.STOPPED) {
             Log.d(TAG, "Stopping NearbyService");
             serviceState = NearbyState.STOPPED;
-            notify("Stopping nearby advertising");
+            // notify("Stopping nearby advertising");
             server.stop();
         } else {
             Log.d(TAG, "NearbyService already stopped");

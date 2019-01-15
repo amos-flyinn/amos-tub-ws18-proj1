@@ -22,7 +22,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ShowCodeActivity extends AppCompatActivity {
     private String nameNum = "";
     private TextView display;
-    private Toast mToast;
 
     private static final String TAG = "showCode";
 
@@ -92,8 +91,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
                 Log.w("flyinn.ShowCode", "Permissions necessary for connections were not granted.");
-                mToast.setText(R.string.nearby_missing_permissions);
-                mToast.show();
+                Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
                 finish();
             }
         }
