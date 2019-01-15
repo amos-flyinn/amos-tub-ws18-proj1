@@ -65,9 +65,8 @@ public class ConnectToClientActivity extends Activity {
     /** Connection manager for the connection to FlyInn clients. */
     protected ConnectionsClient connectionsClient;
 
-    private final String clientName = generateName(5);
+    private final String serverName = generateName(5);
     private String clientID;
-    private String clientNameNow;
 
     /** Toast to publish user notifications */
     private Toast mToast;
@@ -82,9 +81,9 @@ public class ConnectToClientActivity extends Activity {
     private HashMap<String, String> clientIDsToNames = new HashMap<>();
 
     /** Tag for logging purposes. */
-    private static final String TAG = "ClientNearbyConnection";
+    private static final String TAG = "ServerNearbyConnection";
 
-    public static final String CHANNEL_ID = "server nearby";
+    public static final String CHANNEL_ID = "server_nearby";
     private static final int NOTIFY_ID = 1;
 
     /**
@@ -94,12 +93,12 @@ public class ConnectToClientActivity extends Activity {
             new PayloadCallback() {
                 @Override
                 public void onPayloadReceived(String endpointId, Payload payload) {
-                    Log.d(TAG, "Payload received");
+                    Log.i(TAG, "Payload received");
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
-                    Log.d(TAG, "Payload transfer update");
+                    Log.i(TAG, "Payload transfer update");
                 }
             };
 
@@ -120,7 +119,7 @@ public class ConnectToClientActivity extends Activity {
                         clients.add(endpointName);
                         clientNamesToIDs.put(endpointName, endpointId);
                         clientIDsToNames.put(endpointId, endpointName);
-                        Log.i(TAG, clientName + " discovered endpoint " + endpointId + " with name " + endpointName);
+                        Log.i(TAG, serverName + " discovered endpoint " + endpointId + " with name " + endpointName);
 
                     } else {
                         // this should not happen
@@ -128,7 +127,7 @@ public class ConnectToClientActivity extends Activity {
                         clients.add(endpointName);
                         clientIDsToNames.put(endpointId, endpointName);
                         clientNamesToIDs.put(endpointName, endpointId);
-                        Log.i(TAG, clientName + " rediscovered endpoint " + endpointId + " with name " + endpointName);
+                        Log.i(TAG, serverName + " rediscovered endpoint " + endpointId + " with name " + endpointName);
                     }
                 }
 
@@ -138,7 +137,7 @@ public class ConnectToClientActivity extends Activity {
                     String lostEndpointName = clientIDsToNames.get(endpointId);
                     clientIDsToNames.remove(endpointId);
                     clientNamesToIDs.remove(lostEndpointName);
-                    Log.i(TAG, clientName + " lost discovered endpoint " + endpointId);
+                    Log.i(TAG, serverName + " lost discovered endpoint " + endpointId);
                 }
             };
 
@@ -156,9 +155,9 @@ public class ConnectToClientActivity extends Activity {
                     if (endpointId.equals(clientID)) {
                         connectionsClient.acceptConnection(endpointId, payloadCallback);
                     } else {
-                        // initiated connection is not with server selected by user
+                        // initiated connection is not with client selected by user
                         connectionsClient.rejectConnection(endpointId);
-                        Log.i(TAG, "Connection rejected to non-selected server "
+                        Log.i(TAG, "Connection rejected to non-selected client "
                                 + endpointId);
                     }
                 }
@@ -172,8 +171,8 @@ public class ConnectToClientActivity extends Activity {
                             Log.i(TAG, "Connected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_success);
                             mToast.show();
+                            raiseNotification(buildNotification(getResources().getString(R.string.notification_connected)));
                             connectedToApp();
-                            raiseNotification(buildNotification("Connection status: CONNECTED"));
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
@@ -181,9 +180,7 @@ public class ConnectToClientActivity extends Activity {
                             Log.i(TAG, "Connection rejected with " + endpointId);
                             mToast.setText(R.string.nearby_connection_rejected);
                             mToast.show();
-                            clientNameNow = null;
                             clientID = null;
-                            //raiseNotification(buildNotification("Connection was rejected."));
                             break;
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
@@ -191,9 +188,7 @@ public class ConnectToClientActivity extends Activity {
                             Log.w(TAG, "Connection lost: " + endpointId);
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
-                            clientNameNow = null;
                             clientID = null;
-                            //raiseNotification(buildNotification("Failed to establish connection."));
                             break;
 
                         default:
@@ -202,52 +197,41 @@ public class ConnectToClientActivity extends Activity {
                                     + endpointId);
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
-                            clientNameNow = null;
                             clientID = null;
-                            raiseNotification(buildNotification("Failed to establish connection."));
                     }
                 }
 
                 @Override
                 public void onDisconnected(String endpointId) {
-                    // disconnected from server
+                    // disconnected from client
                     Log.i(TAG, "Disconnected from " + endpointId);
                     mToast.setText(R.string.nearby_disconnected);
-                    raiseNotification(buildNotification("Connection closed."));
-
                     mToast.show();
+
                     clearServerData();
-                    finish();
+                    recreate();
                 }
             };
 
 
-
-    private void requestConnectionWithClient(String code){
-
+    private boolean requestConnectionWithClient(String code){
         String searchedClientName = null;
-        for (String clientName : clients){
-            if(clientName.endsWith(code))
-            {
-                searchedClientName = clientName;
+        for (String client : clients) {
+            if (client.endsWith(code)) {
+                searchedClientName = client;
                 break;
             }
         }
 
-        if (searchedClientName == null)
-        {
-            Toast.makeText(this,"The code given was not found. Please try again",Toast.LENGTH_LONG).show();
-            //raiseNotification(buildNotification("The code given was not found. Please try again"));
-            return;
+        if (searchedClientName == null) {
+            mToast.setText(R.string.nearby_connection_unreachable);
+            mToast.show();
+            return false;
         }
 
-
-        String endpoint = clientNamesToIDs.get(searchedClientName);
-        clientID = endpoint;
-
-
-        connectionsClient.requestConnection(searchedClientName,endpoint,connectionLifecycleCallback);
-
+        clientID = clientNamesToIDs.get(searchedClientName);
+        connectionsClient.requestConnection(searchedClientName, clientID, connectionLifecycleCallback);
+        return true;
     }
 
 
@@ -257,7 +241,7 @@ public class ConnectToClientActivity extends Activity {
             NotificationChannel c = new NotificationChannel(CHANNEL_ID,
                     "server_channel", NotificationManager.IMPORTANCE_HIGH);
 
-            c.setDescription("Server Channel checks for Connection.");
+            c.setDescription("Server channel checks for connection.");
             c.enableLights(true);
             c.setLightColor(0xFFFF0000);
 
@@ -270,9 +254,9 @@ public class ConnectToClientActivity extends Activity {
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
-        b.setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)  // makes notification pop up
-                .setContentTitle(String.format("Nearby service on Server"))
+        b.setOngoing(true) // notification will be persistent
+                .setPriority(NotificationCompat.PRIORITY_MIN) // notification won't pop up
+                .setContentTitle(String.format("FlyInn server"))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
 
@@ -285,12 +269,12 @@ public class ConnectToClientActivity extends Activity {
     }
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createChannel();
+        raiseNotification(buildNotification(getResources().getString(R.string.notification_initialising)));
+
         setContentView(R.layout.activity_connect_to_client);
         EditText text = findViewById(R.id.connect_editText);
         text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -298,13 +282,11 @@ public class ConnectToClientActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String name = v.getText().toString(); // Get the String
-                    requestConnectionWithClient(name);
-                    return true;
+                    return requestConnectionWithClient(name);
                 }
                 return false;
             }
         });
-
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -316,10 +298,7 @@ public class ConnectToClientActivity extends Activity {
         connectionsClient = Nearby.getConnectionsClient(this);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
-
         startDiscovering();
-
-
     }
 
     /**
@@ -363,15 +342,13 @@ public class ConnectToClientActivity extends Activity {
         connectionsClient.startDiscovery("com.amos.server", endpointDiscoveryCallback,
                 discoveryOptions)
                 .addOnSuccessListener( (Void unused) -> {
-                    // started searching for servers successfully
-                    Log.i(TAG, "Discovering connections on " + clientName);
-                    raiseNotification(buildNotification("Connection status: DISCOVERY"));
-                    //mToast.setText(R.string.nearby_discovering_success);
-                    //mToast.show();
+                    // started searching for clients successfully
+                    Log.i(TAG, "Discovering connections on " + serverName);
+                    raiseNotification(buildNotification(getResources().getString(R.string.notification_discovery)));
                 })
                 .addOnFailureListener( (Exception e) -> {
                     // unable to start discovery
-                    Log.e(TAG, "Unable to start discovery on " + clientName);
+                    Log.e(TAG, "Unable to start discovery on " + serverName);
                     mToast.setText(R.string.nearby_discovering_error);
                     mToast.show();
                     finish();
@@ -386,7 +363,6 @@ public class ConnectToClientActivity extends Activity {
         clientIDsToNames.clear();
         clientNamesToIDs.clear();
         clientID = null;
-        clientNameNow = null;
     }
 
     /**
