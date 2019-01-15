@@ -65,7 +65,7 @@
         </activity>
         <activity
             android:name=".configuration.ConfigurationActivity"
-            android:label="ConfigurationActivity">
+            android:label="@string/title_activity_configuration">
         </activity>
     </application>
 
