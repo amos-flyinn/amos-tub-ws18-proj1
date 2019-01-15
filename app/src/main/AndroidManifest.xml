@@ -63,6 +63,10 @@
         <activity android:name=".ConnectionSetupActivity" />
         <activity android:name=".ShowCodeConnAuth">
         </activity>
+        <activity
+            android:name=".configuration.ConfigurationActivity"
+            android:label="ConfigurationActivity">
+        </activity>
     </application>
 
 </manifest>
