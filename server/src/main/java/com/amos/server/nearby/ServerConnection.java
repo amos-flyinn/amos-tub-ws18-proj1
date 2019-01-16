@@ -308,10 +308,10 @@ public class ServerConnection {
     }
 
     /**
-     * Call function for making a toast
+     * Create toast using myActivity (stored ConnectToClientActivity)
+     *
      * @param message String message which should be shown as a toast
      */
-
     private void toast (int message) {
         if (myActivity == null) {
             return;
@@ -320,8 +320,9 @@ public class ServerConnection {
     }
 
     /**
-     * Call function to make a notification
-     * @param notification notification should be shown
+     * Update status notification using myActivity (stored ConnectToClientActivity)
+     *
+     * @param notification notification update which should be shown
      */
     private void notification (int notification) {
         if (myActivity == null) {

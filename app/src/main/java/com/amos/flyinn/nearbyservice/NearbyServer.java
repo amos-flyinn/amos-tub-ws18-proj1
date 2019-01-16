@@ -114,7 +114,6 @@ class NearbyServer {
                             nearbyService.getApplicationContext(),
                             R.string.nearby_advertising_error, Toast.LENGTH_LONG).show());
 
-                    // TODO do we restart the app if this happens (?)
                     nearbyService.setServiceState(NearbyState.STOPPED,
                             nearbyService.getString(R.string.notification_stopped));
                 });

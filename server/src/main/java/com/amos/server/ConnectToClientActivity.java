@@ -36,7 +36,7 @@ public class ConnectToClientActivity extends Activity {
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
     private static final int NOTIFY_ID = 2;
-    private final String CHANNEL_ID = "FlyInn server nearby";
+    private static final String CHANNEL_ID = "FlyInn server nearby";
 
     private Toast mToast;
 
@@ -102,7 +102,7 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
-     * Checks if Permissions is OK
+     * Checks whether FlyInn has the required permissions
      */
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -161,7 +161,9 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
-     * Simply creates a toast
+     * Shows the message as toast (length: long).
+     * Toasts will replace each other, and not overlap/stack.
+     *
      * @param message String message which should be shown as a Toast
      */
     public void toast(String message) {
@@ -170,7 +172,8 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
-     * Simply creates a notification
+     * Simply creates a persistent notification with default priority (no pop-up).
+     *
      * @param message String message which should be shown as a notification
      */
     public void notification(String message) {
