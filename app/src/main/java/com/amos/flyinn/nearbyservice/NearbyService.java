@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.amos.flyinn.ConnectionSetupActivity;
+import com.amos.flyinn.R;
 import com.amos.flyinn.ShowCodeActivity;
 import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.ConnectionSigleton;
@@ -63,7 +64,7 @@ public class NearbyService extends IntentService {
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         startForeground(FOREGROUND_ID, buildForegroundNotification(
-                getResources().getString(R.string.notification_initialising), null));
+                getString(R.string.notification_initialising), null));
         Log.d(TAG, "Creating channel");
         createChannel();
         return super.onStartCommand(intent, flags, startId);
@@ -255,7 +256,7 @@ public class NearbyService extends IntentService {
         if (serviceState != NearbyState.STOPPED) {
             Log.d(TAG, "Stopping NearbyService");
             serviceState = NearbyState.STOPPED;
-            // notify("Stopping nearby advertising");
+            notify(getString(R.string.notification_stopped));
             server.stop();
         } else {
             Log.d(TAG, "NearbyService already stopped");

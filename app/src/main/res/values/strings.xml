@@ -11,11 +11,12 @@
     <string name="nearby_connection_success">Connection established.</string>
     <string name="nearby_connection_rejected">Connection was rejected.</string>
     <string name="nearby_connection_error">Failed to establish connection.</string>
-    <string name="nearby_disconnected">Connection closed.</string>
+    <string name="nearby_disconnected">Disconnected from server.</string>
 
     <string name="notification_initialising">Initialising application.</string>
     <string name="notification_advertising">Searching for FlyInn servers.</string>
     <string name="notification_connected">Connected to server.</string>
+    <string name="notification_stopped">Application shutting down.</string>
 
     <string name="flyinn_name">FlyInn-</string>
 

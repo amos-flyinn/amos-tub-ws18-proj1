@@ -115,7 +115,8 @@ class NearbyServer {
                             R.string.nearby_advertising_error, Toast.LENGTH_LONG).show());
 
                     // TODO do we restart the app if this happens (?)
-                    nearbyService.setServiceState(NearbyState.STOPPED, "Failed to advertise android nearby");
+                    nearbyService.setServiceState(NearbyState.STOPPED,
+                            nearbyService.getString(R.string.notification_stopped));
                 });
     }
 
