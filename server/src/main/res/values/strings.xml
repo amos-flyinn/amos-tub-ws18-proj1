@@ -6,6 +6,7 @@
     <string name="thread_button_label">Manually start event server thread</string>
 
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
+    <string name="nearby_wrong_version_permissions">Could not check permissions due to version.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>
     <string name="nearby_discovering_error">Could not start searching for connections.</string>
@@ -17,6 +18,7 @@
     <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
     <string name="nearby_disconnected">Connection closed.</string>
 
+    <string name="notification_channel_id">FlyInn server nearby</string>
     <string name="notification_initialising">Initialising application.</string>
     <string name="notification_discovery">Open to FlyInn clients.</string>
     <string name="notification_connected">Connected to client.</string>

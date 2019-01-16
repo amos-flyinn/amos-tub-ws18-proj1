@@ -5,6 +5,9 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.amos.server.ConnectToClientActivity;
+import com.amos.server.ConnectionSetupServerActivity;
+import com.amos.server.R;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
@@ -74,6 +77,12 @@ public class ServerConnection {
         return ourInstance;
     }
 
+
+    private ConnectToClientActivity myActivity;
+
+    public void setActivity (ConnectToClientActivity activity) { myActivity = activity; }
+
+
     /**
      * Create a new server connection.
      */
@@ -108,11 +117,14 @@ public class ServerConnection {
                 .addOnSuccessListener((Void unused) -> {
                     // started searching for servers successfully
                     Log.i(TAG, "Discovering connections on " + serverName);
+                    toast(R.string.nearby_discovering_success);
+                    notification(R.string.notification_discovery);
                 })
                 .addOnFailureListener((Exception e) -> {
                     // unable to start discovery
                     Log.e(TAG, e.toString());
                     Log.e(TAG, "Unable to start discovery on " + serverName);
+                    toast(R.string.nearby_discovering_error);
                 });
     }
 
@@ -149,6 +161,7 @@ public class ServerConnection {
             // callback success will be called in the subsequent function
             connectionsClient.requestConnection(searchedClientName, endpoint, buildConnectionLifecycleCallback(callback));
         } else {
+            toast(R.string.nearby_connection_unreachable);
             callback.failure();
         }
 
@@ -253,18 +266,22 @@ public class ServerConnection {
                     case ConnectionsStatusCodes.STATUS_OK:
                         // successful connection with server
                         Log.i(TAG, "Connected with " + endpointId);
+                        toast(R.string.nearby_connection_success);
+                        notification(R.string.notification_connected);
                         resetDiscovery();
                         callback.success();
                         break;
                     case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                         // connection was rejected by one side (or both)
                         Log.i(TAG, "Connection rejected with " + endpointId);
+                        toast(R.string.nearby_connection_rejected);
                         clientID = null;
                         callback.failure();
                         break;
                     case ConnectionsStatusCodes.STATUS_ERROR:
                         // connection was lost
                         Log.w(TAG, "Connection lost: " + endpointId);
+                        toast(R.string.nearby_connection_error);
                         clientID = null;
                         callback.failure();
                         break;
@@ -272,6 +289,7 @@ public class ServerConnection {
                         // unknown status code. we shouldn't be here
                         Log.e(TAG, "Unknown error when attempting to connect with "
                                 + endpointId);
+                        toast(R.string.nearby_connection_error);
                         clientID = null;
                         callback.failure();
                         break;
@@ -282,9 +300,25 @@ public class ServerConnection {
             public void onDisconnected(@NonNull String endpointId) {
                 // disconnected from server
                 Log.i(TAG, "Disconnected from " + endpointId);
+                toast(R.string.nearby_disconnected);
+                notification(R.string.notification_discovery);
                 resetClientData();
             }
         };
+    }
+
+    private void toast (int message) {
+        if (myActivity == null) {
+            return;
+        }
+        myActivity.toast(myActivity.getString(message));
+    }
+
+    private void notification (int notification) {
+        if (myActivity == null) {
+            return;
+        }
+        myActivity.notification(myActivity.getString(notification));
     }
 
     /**

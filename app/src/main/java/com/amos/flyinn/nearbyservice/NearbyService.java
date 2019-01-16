@@ -44,7 +44,7 @@ public class NearbyService extends IntentService {
 
     private static final int FOREGROUND_ID = 1;
     private static final int NOTIFY_ID = 2;
-    private static final String CHANNEL_ID = "flyinn_nearby";
+    private final String CHANNEL_ID = getString(R.string.notification_channel_id);
 
     private String nearbyCode = "";
 

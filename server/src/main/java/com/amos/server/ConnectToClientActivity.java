@@ -2,6 +2,8 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -32,16 +35,25 @@ public class ConnectToClientActivity extends Activity {
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
+    private static final int NOTIFY_ID = 2;
+    private final String CHANNEL_ID = getString(R.string.notification_channel_id);
+
+    private Toast mToast;
+
     private ServerConnection connection = ServerConnection.getInstance();
 
     /** Tag for logging purposes. */
-    private static final String TAG = "ClientNearbyConnection";
+    private static final String TAG = "ServerNearbyConnection";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_to_client);
         EditText text = findViewById(R.id.connect_editText);
+
+        notification(getString(R.string.notification_initialising));
+        mToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
+        connection.setActivity(this);
 
         checkPermissions();
         // Ensure survival for life of entire application
@@ -97,8 +109,9 @@ public class ConnectToClientActivity extends Activity {
                 Log.d(TAG, "Permissions are ok.");
             }
         } else {
-            Log.w(TAG, "Could not check permissions due to version");
-            toast("Could not check permissions due to version");
+            Log.e(TAG, "Could not check permissions due to version");
+            toast(getString(R.string.nearby_wrong_version_permissions));
+            // TODO finish/recreate (?)
         }
     }
 
@@ -115,11 +128,6 @@ public class ConnectToClientActivity extends Activity {
             }
         }
         return true;
-    }
-
-    private void toast(String message) {
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        toast.show();
     }
 
     /**
@@ -142,11 +150,29 @@ public class ConnectToClientActivity extends Activity {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
                 Log.w(TAG, "Permissions necessary for " +
                         "Nearby Connection were not granted.");
-                toast("Permissions are missing for nearby");
+                toast(getString(R.string.nearby_missing_permissions));
                 finish();
             }
         }
         recreate();
     }
 
+    public void toast(String message) {
+        mToast.setText(message);
+        mToast.show();
+    }
+
+    public void notification(String message) {
+        NotificationCompat.Builder b =
+                new NotificationCompat.Builder(this, CHANNEL_ID);
+
+        b.setOngoing(true) // persistent notification
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentTitle("Nearby server")
+                .setContentText(message)
+                .setSmallIcon(android.R.drawable.stat_notify_sync);
+
+        NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mgr.notify(NOTIFY_ID, b.build());
+    }
 }
