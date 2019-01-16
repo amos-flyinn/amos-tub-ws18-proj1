@@ -255,7 +255,7 @@ public class ConnectToClientActivity extends Activity {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // notification will be persistent
-                .setPriority(NotificationCompat.PRIORITY_MIN) // notification won't pop up
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentTitle(String.format("FlyInn server"))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);

@@ -108,7 +108,7 @@ public class NearbyService extends IntentService {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
-                .setPriority(NotificationCompat.PRIORITY_MIN)  // notification won't pop up
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentTitle(String.format("Nearby service %s", nearbyCode))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
