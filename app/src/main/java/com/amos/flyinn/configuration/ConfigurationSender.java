@@ -11,7 +11,9 @@ import com.google.android.gms.nearby.connection.Payload;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+/**
+ * Sends the configuration loaded from SharedPrefs to the server
+ */
 public class ConfigurationSender {
     private static final String TAG="ConfigurationSender";
     /**

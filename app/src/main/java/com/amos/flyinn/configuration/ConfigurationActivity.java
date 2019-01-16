@@ -60,8 +60,10 @@ public class ConfigurationActivity extends AppCompatActivity {
         Init();
     }
 
+    /**
+     * Setup ui and load/apply settings from configuration
+     */
     private void Init() {
-        // Init ui
         Spinner dropdown = findViewById(R.id.spinner1);
         String[] items = new String[]{"Pad", "Crop", "Stretch"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
