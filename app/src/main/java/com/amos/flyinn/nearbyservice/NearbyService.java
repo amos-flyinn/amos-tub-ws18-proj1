@@ -1,7 +1,5 @@
 package com.amos.flyinn.nearbyservice;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,21 +11,20 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-
 import com.amos.flyinn.ConnectionSetupActivity;
-import com.amos.flyinn.R;
 import com.amos.flyinn.ShowCodeActivity;
+import com.amos.flyinn.summoner.ADBService;
+import com.amos.flyinn.summoner.ConnectionSigleton;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Objects;
 
 /**
  * Manage nearby connections with a server.
@@ -37,7 +34,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * initiate a connection over nearby.
  */
 public class NearbyService extends IntentService {
-
     public static final String TAG = NearbyService.class.getPackage().getName();
 
     public static final String ACTION_START = "nearby_start";
@@ -75,19 +71,19 @@ public class NearbyService extends IntentService {
 
     /**
      * Create a notification channel.
-     *
+     * <p>
      * Notifications are organized into different channels to theoretically enable the user to
      * individually set what they want to be informed about.
-     *
+     * <p>
      * This is required since Android 8.
      */
     private void createChannel() {
-        NotificationManager mgr=
-                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O &&
-                mgr.getNotificationChannel(CHANNEL_ID)==null) {
+        NotificationManager mgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                mgr.getNotificationChannel(CHANNEL_ID) == null) {
 
-            NotificationChannel c=new NotificationChannel(CHANNEL_ID,
+            NotificationChannel c = new NotificationChannel(CHANNEL_ID,
                     "flyinn_channel", NotificationManager.IMPORTANCE_HIGH);
 
             c.enableLights(true);
@@ -99,8 +95,9 @@ public class NearbyService extends IntentService {
 
     /**
      * Create a sticky notification that won't go away.
+     *
      * @param message String message shown in the notification.
-     * @param target Optional target intent to switch to after tapping the notification.
+     * @param target  Optional target intent to switch to after tapping the notification.
      * @return
      */
     private Notification buildForegroundNotification(String message, @Nullable Intent target) {
@@ -130,6 +127,7 @@ public class NearbyService extends IntentService {
 
     /**
      * Create or update shown notification.
+     *
      * @param message
      */
     public void notify(String message) {
@@ -157,6 +155,7 @@ public class NearbyService extends IntentService {
 
     /**
      * Activate the given activity
+     *
      * @param cls Class of the target activity
      */
     private void switchActivity(Class<?> cls) {
@@ -171,13 +170,14 @@ public class NearbyService extends IntentService {
 
     /**
      * Set state of the nearby service. This is used by the nearby server.
+     *
      * @param state
      * @param message
      */
     public void setServiceState(NearbyState state, @Nullable String message) {
         // do extra things if we are switching state
         if (serviceState != state) {
-            switch(serviceState) {
+            switch (serviceState) {
                 case CONNECTING:
                     switchActivity(ConnectionSetupActivity.class);
                     break;
@@ -212,6 +212,15 @@ public class NearbyService extends IntentService {
 
     public void handlePayload(Payload payload) {
         Log.d(TAG, "Received payload");
+        if (payload.asStream() == null) {
+            Log.wtf("AAAAAAAAAAAAAAAAAAA", "Payload is null!");
+            return;
+        }
+        Intent i = new Intent(this, ADBService.class);
+        i.setAction("stream");
+        ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
+        startService(i);
+        Log.d(TAG, "Send payload to activity");
     }
 
     public void handlePayloadTransferUpdate(PayloadTransferUpdate update) {

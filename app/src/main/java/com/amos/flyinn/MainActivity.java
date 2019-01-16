@@ -1,9 +1,5 @@
 package com.amos.flyinn;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.StrictMode;
-import android.provider.Settings;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -117,10 +113,10 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    protected Daemon createADBService(String addr) {
+    protected Daemon createADBService() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        Daemon d = new Daemon(getApplicationContext(), addr, p);
+        Daemon d = new Daemon(getApplicationContext(), p);
         try {
             d.writeFakeInputToFilesystem();
             d.spawn_adb();
@@ -146,13 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Example of a call to a native method
         connectionStatus = findViewById(R.id.connectionStatus);
-        String addr;
         try {
-            addr = "127.0.0.1";
             while (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             }
-            adbDaemon = createADBService(addr);
+            adbDaemon = createADBService();
 
         } catch (Exception e) {
         }
@@ -167,9 +161,6 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
-
-
-
 
 
     private void checkForDebuggingMode() {

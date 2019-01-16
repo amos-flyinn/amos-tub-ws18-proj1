@@ -22,7 +22,7 @@ public class ADBActivity extends AppCompatActivity {
             try {
                 Point p = new Point();
                 getWindowManager().getDefaultDisplay().getRealSize(p);
-                Demo.start(getApplicationContext(), "127.0.0.1", p);
+                Demo.start(getApplicationContext(), p);
             } catch (Exception e) {
                 e.printStackTrace();
             }

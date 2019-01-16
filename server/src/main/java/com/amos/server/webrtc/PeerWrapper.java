@@ -1,17 +1,12 @@
 package com.amos.server.webrtc;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import com.amos.server.ConnectionSetupServerActivity;
-import com.amos.server.MainActivity;
-import com.amos.server.WebRTCServerActivity;
 import com.amos.server.signaling.Emitter;
 
-import org.webrtc.Camera1Enumerator;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
@@ -21,7 +16,6 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
-import org.webrtc.VideoCapturer;
 import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
@@ -54,8 +48,8 @@ public class PeerWrapper implements IPeer {
     }
 
     private void initComponents(){
-        this.activity.getRender().setZOrderMediaOverlay(true);
-        this.activity.getRender().init(this.rootEglBase.getEglBaseContext(),null);
+        // this.activity.getRender().setZOrderMediaOverlay(true);
+        // this.activity.getRender().init(this.rootEglBase.getEglBaseContext(),null);
     }
 
     public void setEmitter(Emitter emitter){
@@ -116,8 +110,8 @@ public class PeerWrapper implements IPeer {
         this.activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                activity.getRender().setVisibility(View.VISIBLE);
-                trackRemoteCamera.addSink(activity.getRender());
+                // activity.getRender().setVisibility(View.VISIBLE);
+                // trackRemoteCamera.addSink(activity.getRender());
             }
         });
     }
