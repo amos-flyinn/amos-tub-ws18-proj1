@@ -101,12 +101,19 @@ public class ConfigurationActivity extends AppCompatActivity {
         if(endPoint!=null) new ConfigurationSender(endPoint, this);
     }
 
+    /**
+     * select screenratio
+     * @param screenRatio - which screenratio
+     */
     private void setSelectedScreenRatio(String screenRatio) {
         String screenRatioKey = "com.amos.flyinn.screenratio";
         prefs.edit().putString(screenRatioKey, screenRatio).apply();
     }
 
-
+    /**
+     * Select ProximitySensor
+     * @param useProximitySensor - on or off
+     */
     private void setUseProximitySensor(boolean useProximitySensor) {
         String proximityKey = "com.amos.flyinn.proximitysensor";
         prefs.edit().putBoolean(proximityKey, useProximitySensor).apply();
