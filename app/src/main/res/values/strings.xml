@@ -21,4 +21,8 @@
     <string name="buildinfo_package">Package: </string>
     <string name="title_activity_nearby_connection">NearbyConnectionActivity</string>
     <string name="title_activity_client_conn_auth">ClientConnAuth</string>
+    <string name="title_activity_configuration">ConfigurationActivity</string>
+	
+	<string name="configuration_screen_ratio">Screen ratio:</string>
+    <string name="configuration_proximitysensor">Use proximity sensor</string>
 </resources>
