@@ -101,6 +101,9 @@ public class ConnectToClientActivity extends Activity {
         connection.abort();
     }
 
+    /**
+     * Checks if Permissions is OK
+     */
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!hasPermissions(this)) {
@@ -157,11 +160,19 @@ public class ConnectToClientActivity extends Activity {
         recreate();
     }
 
+    /**
+     * Simply creates a toast
+     * @param message String message which should be shown as a Toast
+     */
     public void toast(String message) {
         mToast.setText(message);
         mToast.show();
     }
 
+    /**
+     * Simply creates a notification
+     * @param message String message which should be shown as a notification
+     */
     public void notification(String message) {
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(this, CHANNEL_ID);

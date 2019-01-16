@@ -307,6 +307,11 @@ public class ServerConnection {
         };
     }
 
+    /**
+     * Call function for making a toast
+     * @param message String message which should be shown as a toast
+     */
+
     private void toast (int message) {
         if (myActivity == null) {
             return;
@@ -314,6 +319,10 @@ public class ServerConnection {
         myActivity.toast(myActivity.getString(message));
     }
 
+    /**
+     * Call function to make a notification
+     * @param notification notification should be shown
+     */
     private void notification (int notification) {
         if (myActivity == null) {
             return;
