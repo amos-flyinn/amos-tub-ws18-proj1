@@ -13,7 +13,6 @@
     <string name="nearby_connection_error">Failed to establish connection.</string>
     <string name="nearby_disconnected">Disconnected from server.</string>
 
-    <string name="notification_channel_id">FlyInn client nearby</string>
     <string name="notification_initialising">Initialising application.</string>
     <string name="notification_advertising">Searching for FlyInn servers.</string>
     <string name="notification_connecting">Connecting to FlyInn server.</string>
