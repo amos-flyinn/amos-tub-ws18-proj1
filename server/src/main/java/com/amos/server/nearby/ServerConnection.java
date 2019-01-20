@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.amos.server.ConnectToClientActivity;
 import com.amos.server.ConnectionSetupServerActivity;
@@ -194,6 +195,19 @@ public class ServerConnection {
                 public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
                     Log.d(TAG, "Payload received from " + endpointId);
                     Log.d(TAG, payload.toString());
+
+                    byte[] receivedBytes = payload.asBytes();
+
+                    // Get configuration
+                    if(payload.getType()==Payload.Type.BYTES) {
+                        /**
+                         * Todo: Use and apply received configuration JSON string
+                         */
+                        Log.d(TAG, "Received configuration: " +new String(receivedBytes));
+                        Toast.makeText(connectionsClient.getApplicationContext(), "Received configuration: " +new String(receivedBytes), Toast.LENGTH_LONG).show();
+                    }
+
+
                 }
 
                 @Override

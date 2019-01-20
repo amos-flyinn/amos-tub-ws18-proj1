@@ -11,9 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amos.flyinn.configuration.ConfigurationActivity;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
@@ -135,6 +139,29 @@ public class ShowCodeActivity extends AppCompatActivity {
                 return false;
             }
         }
+        return true;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.btn_settings:
+                startActivity(new Intent(this, ConfigurationActivity.class));
+                break;
+
+            default:
+                Log.e(TAG, "unimplemented option selected");
+                return false;
+        }
+
         return true;
     }
 }

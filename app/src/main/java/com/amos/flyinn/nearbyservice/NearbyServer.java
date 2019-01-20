@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.amos.flyinn.R;
+import com.amos.flyinn.configuration.ConfigurationSender;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -151,8 +152,12 @@ class NearbyServer {
                             Log.i(TAG, "Connected with " + endpointId);
                             connectionsClient.stopAdvertising();
                             clientID = endpointId;
+
                             nearbyService.setServiceState(NearbyState.CONNECTED,
                                     nearbyService.getString(R.string.notification_connected));
+                            
+                            // Send configuration
+                            new ConfigurationSender(endpointId, nearbyService);
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
