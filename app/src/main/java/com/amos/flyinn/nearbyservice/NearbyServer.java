@@ -116,7 +116,8 @@ class NearbyServer {
                             R.string.nearby_advertising_error, Toast.LENGTH_LONG).show());
 
                     nearbyService.setServiceState(NearbyState.STOPPED,
-                            nearbyService.getString(R.string.notification_stopped));
+                            nearbyService.getString(R.string.notification_finish));
+                    // TODO close app
                 });
     }
 
@@ -140,8 +141,7 @@ class NearbyServer {
                     clientName = connectionInfo.getEndpointName();
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                     Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.CONNECTING,
-                            nearbyService.getString(R.string.notification_connecting));
+                    nearbyService.setServiceState(NearbyState.CONNECTING, null);
                 }
 
                 @Override
@@ -155,7 +155,7 @@ class NearbyServer {
 
                             nearbyService.setServiceState(NearbyState.CONNECTED,
                                     nearbyService.getString(R.string.notification_connected));
-                            
+
                             // Send configuration
                             new ConfigurationSender(endpointId, nearbyService);
                             break;
@@ -210,6 +210,7 @@ class NearbyServer {
                     (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
                             nearbyService.getApplicationContext(),
                             R.string.nearby_disconnected, Toast.LENGTH_LONG).show());
+                    nearbyService.sendBroadcastMessage("com.flyinn.restart");
                 }
             };
 

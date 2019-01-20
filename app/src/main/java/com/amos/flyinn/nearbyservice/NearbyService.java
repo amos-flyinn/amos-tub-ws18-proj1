@@ -11,9 +11,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -242,6 +242,7 @@ public class NearbyService extends IntentService {
                     (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
                             this.getApplicationContext(),
                             R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show());
+                    sendBroadcastMessage("com.flyinn.exit");
                 }
             }
         } else {
@@ -256,7 +257,6 @@ public class NearbyService extends IntentService {
         if (serviceState != NearbyState.STOPPED) {
             Log.d(TAG, "Stopping NearbyService");
             serviceState = NearbyState.STOPPED;
-            notify(getString(R.string.notification_stopped));
             server.stop();
         } else {
             Log.d(TAG, "NearbyService already stopped");
@@ -304,5 +304,17 @@ public class NearbyService extends IntentService {
 
     public String getNearbyCode() {
         return nearbyCode;
+    }
+
+    /**
+     * Sends a message (to the start activity) via a LocalBroadcastManager.
+     * Used to close or restart the app.
+     *
+     * @param message The message sent to the activity as boolean.
+     */
+    public void sendBroadcastMessage (String message) {
+        Intent intent = new Intent ("msg-flyinn");
+        intent.putExtra(message, true);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

@@ -2,8 +2,9 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Notification;
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,6 +49,19 @@ public class ConnectToClientActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // close or restart application
+        if (getIntent().getBooleanExtra("exit", false)) {
+            finish();
+        } else if (getIntent().getBooleanExtra("restart", false)) {
+            Intent restartActivity = new Intent(this, ConnectToClientActivity.class);
+            PendingIntent mPendingIntent = PendingIntent.getActivity(this, 0,
+                    restartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            finish();
+        }
+
         setContentView(R.layout.activity_connect_to_client);
         EditText text = findViewById(R.id.connect_editText);
 
@@ -114,7 +128,7 @@ public class ConnectToClientActivity extends Activity {
         } else {
             Log.e(TAG, "Could not check permissions due to version");
             toast(getString(R.string.nearby_wrong_version_permissions));
-            // TODO finish/recreate (?)
+            closeApp();
         }
     }
 
@@ -154,7 +168,7 @@ public class ConnectToClientActivity extends Activity {
                 Log.w(TAG, "Permissions necessary for " +
                         "Nearby Connection were not granted.");
                 toast(getString(R.string.nearby_missing_permissions));
-                finish();
+                closeApp();
             }
         }
         recreate();
@@ -188,5 +202,25 @@ public class ConnectToClientActivity extends Activity {
 
         NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mgr.notify(NOTIFY_ID, b.build());
+    }
+
+    /**
+     * Closes the app (kills all activities)
+     */
+    public void closeApp() {
+        Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("exit", true);
+        startActivity(intent);
+    }
+
+    /**
+     * Finishes all activities and then restarts the app
+     */
+    public void restartApp() {
+        Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("restart", true);
+        startActivity(intent);
     }
 }

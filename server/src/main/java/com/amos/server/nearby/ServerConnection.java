@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.amos.server.ConnectToClientActivity;
-import com.amos.server.ConnectionSetupServerActivity;
 import com.amos.server.R;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -74,12 +73,11 @@ public class ServerConnection {
      */
     private ConnectionsClient connectionsClient;
 
+    private ConnectToClientActivity myActivity;
+
     public static ServerConnection getInstance() {
         return ourInstance;
     }
-
-
-    private ConnectToClientActivity myActivity;
 
     public void setActivity (ConnectToClientActivity activity) { myActivity = activity; }
 
@@ -126,6 +124,7 @@ public class ServerConnection {
                     Log.e(TAG, e.toString());
                     Log.e(TAG, "Unable to start discovery on " + serverName);
                     toast(R.string.nearby_discovering_error);
+                    myActivity.closeApp();
                 });
     }
 
@@ -315,8 +314,9 @@ public class ServerConnection {
                 // disconnected from server
                 Log.i(TAG, "Disconnected from " + endpointId);
                 toast(R.string.nearby_disconnected);
-                notification(R.string.notification_discovery);
+                notification(R.string.notification_initialising);
                 resetClientData();
+                myActivity.restartApp();
             }
         };
     }
