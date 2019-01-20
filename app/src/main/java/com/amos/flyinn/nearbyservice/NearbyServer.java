@@ -117,7 +117,7 @@ class NearbyServer {
 
                     nearbyService.setServiceState(NearbyState.STOPPED,
                             nearbyService.getString(R.string.notification_finish));
-                    // TODO close app
+                    nearbyService.sendBroadcastMessage("exit");
                 });
     }
 
@@ -210,7 +210,7 @@ class NearbyServer {
                     (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
                             nearbyService.getApplicationContext(),
                             R.string.nearby_disconnected, Toast.LENGTH_LONG).show());
-                    nearbyService.sendBroadcastMessage("com.flyinn.restart");
+                    nearbyService.sendBroadcastMessage("restart");
                 }
             };
 

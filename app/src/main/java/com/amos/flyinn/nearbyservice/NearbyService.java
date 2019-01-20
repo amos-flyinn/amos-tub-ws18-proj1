@@ -308,13 +308,13 @@ public class NearbyService extends IntentService {
 
     /**
      * Sends a message (to the start activity) via a LocalBroadcastManager.
-     * Used to close or restart the app.
+     * Used to close or restart the app. Prepends package prefix.
      *
      * @param message The message sent to the activity as boolean.
      */
     public void sendBroadcastMessage (String message) {
         Intent intent = new Intent ("msg-flyinn");
-        intent.putExtra(message, true);
+        intent.putExtra("com.amos.flyinn" + message, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

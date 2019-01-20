@@ -44,9 +44,9 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getBooleanExtra("com.flyinn.exit", false)) {
+            if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
                 closeApp();
-            } else if (intent.getBooleanExtra("com.flyinn.restart", false)) {
+            } else if (intent.getBooleanExtra("com.amos.flyinn.restart", false)) {
                 restartApp();
             }
         }
