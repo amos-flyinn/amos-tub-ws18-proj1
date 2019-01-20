@@ -314,7 +314,7 @@ public class NearbyService extends IntentService {
      */
     public void sendBroadcastMessage (String message) {
         Intent intent = new Intent ("msg-flyinn");
-        intent.putExtra("com.amos.flyinn" + message, true);
+        intent.putExtra("com.amos.flyinn." + message, true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
