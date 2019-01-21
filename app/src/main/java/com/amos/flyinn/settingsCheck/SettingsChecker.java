@@ -3,8 +3,6 @@ package com.amos.flyinn.settingsCheck;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.amos.flyinn.summoner.ADBService;
 import com.tananaev.adblib.AdbBase64;

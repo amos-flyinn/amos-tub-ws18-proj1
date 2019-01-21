@@ -25,12 +25,6 @@ import com.amos.flyinn.webrtc.PeerWrapper;
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
 
-import java.net.URI;
-
-import org.webrtc.PeerConnection;
-
-import org.webrtc.SurfaceViewRenderer;
-
 
 public class WebRTCActivity extends Activity {
 

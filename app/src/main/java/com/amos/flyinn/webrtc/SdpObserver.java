@@ -7,7 +7,6 @@ import com.amos.flyinn.ConnectionSetupActivity;
 
 import org.webrtc.SessionDescription;
 
-import java.util.Set;
 
 /**
  * <h1>SdpObserver Class</h1>

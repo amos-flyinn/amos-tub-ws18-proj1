@@ -2,7 +2,6 @@ package com.amos.shared;
 
 import android.graphics.Point;
 import android.os.SystemClock;
-import android.text.method.Touch;
 import android.view.MotionEvent;
 
 import java.io.Serializable;
