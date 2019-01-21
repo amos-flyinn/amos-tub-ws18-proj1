@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * <h1>ConnectionSetup</h1>
@@ -46,8 +47,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1000;
     private int mScreenDensity;
     private MediaProjectionManager mProjectionManager;
-    private static final int DISPLAY_WIDTH = 720;
-    private static final int DISPLAY_HEIGHT = 1280;
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private MediaProjectionCallback mMediaProjectionCallback;
@@ -175,6 +174,8 @@ public class ConnectionSetupActivity extends AppCompatActivity {
 //                    if (sendFrameMeta) {
 //                        writeFrameMeta(fd, bufferInfo, codecBuffer.remaining());
 //                    }
+                    fd.write(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(codecBuffer.array().length).array());
+                    fd.write(ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(1).array());
                     fd.write(codecBuffer.array());
                 }
             } finally {
