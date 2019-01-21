@@ -6,7 +6,6 @@
     <string name="thread_button_label">Manually start event server thread</string>
 
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
-    <string name="nearby_wrong_version_permissions">Could not check permissions due to version.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>
     <string name="nearby_discovering_error">Could not start searching for connections.</string>

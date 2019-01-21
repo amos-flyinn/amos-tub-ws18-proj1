@@ -87,21 +87,21 @@ public class ShowCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_code);
         display = findViewById(R.id.textView2);
 
-        if (!hasPermissions(NearbyService.getRequiredPermissions()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
-        } else {
-            Log.e(TAG, "Could not check permissions due to version");
-            Toast.makeText(this, R.string.nearby_wrong_version_permissions, Toast.LENGTH_LONG).show();
-            closeApp();
+        if (!hasPermissions(NearbyService.getRequiredPermissions())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
+            } else {
+                Log.w(TAG, "Could not check permissions due to version");
+            }
         }
 
         String[] perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (!hasPermissions(perms) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
-        } else {
-            Log.e(TAG, "Could not check permissions due to version");
-            Toast.makeText(this, R.string.nearby_wrong_version_permissions, Toast.LENGTH_LONG).show();
-            closeApp();
+        if (!hasPermissions(perms)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
+            } else {
+                Log.w(TAG, "Could not check permissions due to version");
+            }
         }
 
         try {
@@ -215,7 +215,7 @@ public class ShowCodeActivity extends AppCompatActivity {
     public void closeApp() {
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("EXIT", true);
+        intent.putExtra("exit", true);
         startActivity(intent);
     }
 
@@ -225,7 +225,7 @@ public class ShowCodeActivity extends AppCompatActivity {
     public void restartApp() {
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("RESTART", true);
+        intent.putExtra("restart", true);
         startActivity(intent);
     }
 }

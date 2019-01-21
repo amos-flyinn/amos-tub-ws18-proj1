@@ -2,8 +2,7 @@
     <string name="app_name">FlyInn</string>
     <string name="title_activity_adb">ADBActivity</string>
     <string name="title_activity_build_info">BuildInfoActivity</string>
-
-    <string name="nearby_wrong_version_permissions">Could not check permissions due to version.</string>
+    
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_error">Could not start searching for connections.</string>

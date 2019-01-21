@@ -126,9 +126,7 @@ public class ConnectToClientActivity extends Activity {
                 Log.d(TAG, "Permissions are ok.");
             }
         } else {
-            Log.e(TAG, "Could not check permissions due to version");
-            toast(getString(R.string.nearby_wrong_version_permissions));
-            closeApp();
+            Log.w(TAG, "Could not check permissions due to version");
         }
     }
 
