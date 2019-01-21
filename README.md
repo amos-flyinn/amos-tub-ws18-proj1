@@ -16,10 +16,10 @@ Click the thumbnail to watch the FlyInn app in action!
 
 ## Prerequisites
 
-* API level: at least 21 (Android 5 Lollipop) for the client, at least 26 (Android 8 Oreo) for the server
-* Google Play Services: version 7.8.0 or higher
-* Enabled settings: ADB over Network, USB debugging (both for client and server)
-* Permissions: access location
+  * API level: at least 21 (Android 5 Lollipop) for the client, at least 26 (Android 8 Oreo) for the server
+  * Google Play Services: version 7.8.0 or higher
+  * Enabled settings: ADB over Network, USB debugging (both for client and server)
+  * Permissions: access location
 
 ## Installation
 The installation of FlyInn is as easy as copying the desired *.apk file (client or server) to the device and installing it like any other app.
@@ -28,8 +28,8 @@ The installation of FlyInn is as easy as copying the desired *.apk file (client 
 This section provides an overview of FlyInn's features. It includes features which have not yet been implemented but are scheduled for the final project release. These are marked with a :construction: sign.
 ### Device Connection
 FlyInn implements a client-server architecture:
-* Client: user's smartphone
-* Server: bicycle's embedded screen (can be another Android smartphone or an Android Things device)
+  * Client: user's smartphone
+  * Server: bicycle's embedded screen (can be another Android smartphone or an Android Things device)
 
 The connection is established as follows:
 1. Searching for peers: After starting the app, if there is no established connection yet, both devices search for peers to connect to. If the user's smartphone has identified servers in its vicinity, it provides a list of unique server names to the user.
@@ -51,9 +51,9 @@ Remote interaction with the smartphone is possible through input mirroring. Touc
 
 ### Configuration
 :construction: Some aspects of the app can be configured to fit the user's personal taste:
-* Screen ratio: Crop, stretch or pad the image of the smartphone screen on the embedded device
-* Proximity sensor: Enable/disable the sensor inside the app
-* UI accessibility aspects: Adapt the color scheme and text size to enhance readability
+  * Screen ratio: Crop, stretch or pad the image of the smartphone screen on the embedded device
+  * Proximity sensor: Enable/disable the sensor inside the app
+  * UI accessibility aspects: Adapt the color scheme and text size to enhance readability
 
 ## Contributors
 The FlyInn application is a product of the [AMOS (Agile Methods and Open Source) project](https://www.qds.tu-berlin.de/menue/lehre/wintersemester/pj_das_amos_projekt/) offered for Computer Science students at the Technische Universität Berlin. The industry partner for the project is the [IAV Digital Lab](https://www.iav.com/en/digital-lab#overview).
