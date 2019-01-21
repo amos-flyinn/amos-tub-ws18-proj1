@@ -52,9 +52,12 @@ public class ConnectToClientActivity extends Activity {
         if (getIntent().getBooleanExtra("exit", false)) {
             Log.d(TAG, "Intent contains exit command.");
             finish();
-        } else if (getIntent().getBooleanExtra("restart", false)) {
+            return;
+        }
+        if (getIntent().getBooleanExtra("restart", false)) {
             Log.d(TAG, "Intent contains restart command.");
             recreate();
+            return;
         }
 
         setContentView(R.layout.activity_connect_to_client);

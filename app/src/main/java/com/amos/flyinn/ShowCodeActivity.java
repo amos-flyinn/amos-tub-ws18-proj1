@@ -41,7 +41,6 @@ public class ShowCodeActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
@@ -75,9 +74,12 @@ public class ShowCodeActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("exit", false)) {
             Log.d(TAG, "Intent contains exit command.");
             finish();
-        } else if (getIntent().getBooleanExtra("restart", false)) {
+            return;
+        }
+        if (getIntent().getBooleanExtra("restart", false)) {
             Log.d(TAG, "Intent contains restart command.");
             recreate();
+            return;
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
