@@ -2,9 +2,7 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -52,14 +50,11 @@ public class ConnectToClientActivity extends Activity {
 
         // close or restart application
         if (getIntent().getBooleanExtra("exit", false)) {
+            Log.d(TAG, "Intent contains exit command.");
             finish();
         } else if (getIntent().getBooleanExtra("restart", false)) {
-            Intent restartActivity = new Intent(this, ConnectToClientActivity.class);
-            PendingIntent mPendingIntent = PendingIntent.getActivity(this, 0,
-                    restartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            finish();
+            Log.d(TAG, "Intent contains restart command.");
+            recreate();
         }
 
         setContentView(R.layout.activity_connect_to_client);
@@ -189,6 +184,7 @@ public class ConnectToClientActivity extends Activity {
      * @param message String message which should be shown as a notification
      */
     public void notification(String message) {
+        Log.d(TAG, "Notification status: " + message);
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
@@ -206,6 +202,7 @@ public class ConnectToClientActivity extends Activity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
+        Log.d(TAG, "Closing server via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("exit", true);
@@ -216,6 +213,7 @@ public class ConnectToClientActivity extends Activity {
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
+        Log.d(TAG, "Restarting server via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("restart", true);

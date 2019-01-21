@@ -45,8 +45,10 @@ public class ShowCodeActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
+                Log.i(TAG, "Received exit message via BroadcastReceiver.");
                 closeApp();
             } else if (intent.getBooleanExtra("com.amos.flyinn.restart", false)) {
+                Log.i(TAG, "Received restart message via BroadcastReceiver.");
                 restartApp();
             }
         }
@@ -71,14 +73,11 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         // close or restart application
         if (getIntent().getBooleanExtra("exit", false)) {
+            Log.d(TAG, "Intent contains exit command.");
             finish();
         } else if (getIntent().getBooleanExtra("restart", false)) {
-            Intent restartActivity = new Intent(this, ShowCodeActivity.class);
-            PendingIntent mPendingIntent = PendingIntent.getActivity(this, 0,
-                    restartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            finish();
+            Log.d(TAG, "Intent contains restart command.");
+            recreate();
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
@@ -115,6 +114,7 @@ public class ShowCodeActivity extends AppCompatActivity {
             nameNum = "0" + nameNum;
         }
         display.setText(nameNum);
+        Log.i(TAG, "App code is set to " + nameNum);
         setService();
     }
 
@@ -163,7 +163,7 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.w("flyinn.ShowCode", "Permissions necessary for connections were not granted.");
+                Log.w(TAG, "Permissions necessary for connections were not granted.");
                 Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
                 closeApp();
             }
@@ -213,6 +213,7 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
+        Log.d(TAG, "Closing app via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("exit", true);
@@ -223,6 +224,7 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
+        Log.d(TAG, "Restarting app via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("restart", true);

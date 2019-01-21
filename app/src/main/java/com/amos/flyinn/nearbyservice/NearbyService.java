@@ -35,7 +35,7 @@ import java.util.Objects;
  * initiate a connection over nearby.
  */
 public class NearbyService extends IntentService {
-    public static final String TAG = NearbyService.class.getPackage().getName();
+    public static final String TAG = "NearbyService";
 
     public static final String ACTION_START = "nearby_start";
     public static final String ACTION_STOP = "nearby_stop";
@@ -242,6 +242,7 @@ public class NearbyService extends IntentService {
                     (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
                             this.getApplicationContext(),
                             R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show());
+                    Log.e(TAG, "SecurityException when starting NearbyServer in NearbyService");
                     sendBroadcastMessage("com.flyinn.exit");
                 }
             }
@@ -315,6 +316,7 @@ public class NearbyService extends IntentService {
     public void sendBroadcastMessage (String message) {
         Intent intent = new Intent ("msg-flyinn");
         intent.putExtra("com.amos.flyinn." + message, true);
+        Log.i(TAG, "NearbyService broadcasting message com.amos.flyinn." + message);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

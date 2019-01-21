@@ -26,7 +26,7 @@ import com.google.android.gms.nearby.connection.Strategy;
  * incoming connections.
  */
 class NearbyServer {
-    public static final String TAG = NearbyServer.class.getPackage().getName();
+    public static final String TAG = "NearbyServer";
     /**
      * Required permissions for Nearby connections
      */
@@ -108,7 +108,7 @@ class NearbyServer {
                             nearbyService.getString(R.string.notification_advertising));
                 })
                 .addOnFailureListener((Exception e) -> {
-                    Log.d(TAG, "Error trying to advertise Android nearby");
+                    Log.e(TAG, "Error trying to advertise Android nearby");
                     nearbyService.handleResponse(true, e.toString());
 
                     (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
