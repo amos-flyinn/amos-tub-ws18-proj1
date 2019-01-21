@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+mkdir -p "app/src/main/java/com/amos/flyinn/buildinfo/"
 cat > "app/src/main/java/com/amos/flyinn/buildinfo/BuildInfo.java" << EOF
 package com.amos.flyinn.buildinfo;
 
