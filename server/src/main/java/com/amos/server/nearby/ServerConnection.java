@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
+import android.util.SparseArray;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -33,7 +33,7 @@ import java.util.List;
  * <p>
  * The server needs to send input events to the client and correctly receive the recorded screen.
  */
-public class ServerConnection {
+public class ServerConnection implements PayloadHandling {
 
     private static final ServerConnection ourInstance = new ServerConnection();
 
@@ -75,7 +75,7 @@ public class ServerConnection {
         return ourInstance;
     }
 
-    private PayloadHandler handler;
+    private SparseArray<HandlePayload> handleMap = new SparseArray<>();
 
     /**
      * Create a new server connection.
@@ -91,7 +91,39 @@ public class ServerConnection {
      */
     public void init(Context ctx) {
         connectionsClient = Nearby.getConnectionsClient(ctx);
-        handler = PayloadHandler.getInstance();
+    }
+
+    @Override
+    public void addHandle(int type, HandlePayload handle) {
+        handleMap.put(type, handle);
+    }
+
+    @Override
+    public HandlePayload getHandle(int type) {
+        return handleMap.get(type);
+    }
+
+    @Override
+    public void handlePayload(Payload payload) {
+        HandlePayload handle = getHandle(payload.getType());
+        if (handle != null) {
+            handle.receive(payload);
+        } else {
+            switch(payload.getType()) {
+                case Payload.Type.BYTES:
+                    /* Todo: Use and apply received configuration JSON string */
+                    Log.d(TAG, "Received configuration");
+                    break;
+                case Payload.Type.STREAM:
+                    Log.d(TAG, "Received unregistered stream");
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void handlePayloadUpdate(PayloadTransferUpdate update) {
+
     }
 
     /**
@@ -184,25 +216,13 @@ public class ServerConnection {
                 @Override
                 public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
                     Log.d(TAG, "Payload received from " + endpointId);
-                    handler.handlePayloadReceived(payload);
-                    Log.d(TAG, payload.toString());
-
-                    byte[] receivedBytes = payload.asBytes();
-
-                    // Get configuration
-                    if(payload.getType()==Payload.Type.BYTES) {
-                        /**
-                         * Todo: Use and apply received configuration JSON string
-                         */
-                        Log.d(TAG, "Received configuration: " +new String(receivedBytes));
-                        Toast.makeText(connectionsClient.getApplicationContext(), "Received configuration: " +new String(receivedBytes), Toast.LENGTH_LONG).show();
-                    }
+                    handlePayload(payload);
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate update) {
                     Log.d(TAG, "Payload transfer update from " + endpointId);
-                    handler.handlePayloadUpdate(update);
+                    handlePayloadUpdate(update);
                 }
             };
 
