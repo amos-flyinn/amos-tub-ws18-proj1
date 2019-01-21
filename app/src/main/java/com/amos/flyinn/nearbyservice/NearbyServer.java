@@ -4,6 +4,7 @@ import android.Manifest;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.amos.flyinn.configuration.ConfigurationSender;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -141,6 +142,10 @@ class NearbyServer {
                             connectionsClient.stopAdvertising();
                             clientID = endpointId;
                             nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
+
+                            // Send configuration
+                            new ConfigurationSender(endpointId, nearbyService);
+
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
