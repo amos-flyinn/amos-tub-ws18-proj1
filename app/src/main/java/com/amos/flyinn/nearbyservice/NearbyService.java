@@ -13,11 +13,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.amos.flyinn.ConnectedActivity;
 import com.amos.flyinn.ConnectionSetupActivity;
 import com.amos.flyinn.ShowCodeActivity;
 import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.ConnectionSigleton;
+import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
@@ -212,7 +212,6 @@ public class NearbyService extends IntentService {
                 i.setAction("stream");
                 ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
                 startService(i);
-                switchActivity(ConnectedActivity.class);
                 Log.d(TAG, "Send payload to activity");
         }
     }
@@ -268,10 +267,11 @@ public class NearbyService extends IntentService {
                 setNearbyCode(code);
                 Log.d(TAG, String.format("Setting code to %s", code));
             } catch (NullPointerException err) {
-                Log.d(TAG, "Could not get code from intent.");
+                Log.d(TAG, "Could not get code from intent.", err);
             }
         }
         try {
+            Log.d(TAG, "Got action " + intent.getAction());
             switch (intent.getAction()) {
                 case ACTION_START:
                     start();
@@ -280,15 +280,18 @@ public class NearbyService extends IntentService {
                     stop();
                     break;
                 case VIDEO_START:
-                    Payload payload = Payload.fromStream(VideoStreamSingleton.getInstance().os);
-                    server.connectionsClient.sendPayload(server.clientID, payload);
+                    assert VideoStreamSingleton.getInstance().os != null;
+                    Log.d(TAG, "Warped video_start stream");
+                    Log.d(TAG, "Send stream to " + VideoStreamSingleton.getInstance().serverID);
+                    Nearby.getConnectionsClient(this).sendPayload(VideoStreamSingleton.getInstance().serverID, Payload.fromStream(VideoStreamSingleton.getInstance().os));
+                    Log.d(TAG, "Sent video_start stream");
                     break;
                 default:
                     Log.d(TAG, "Unknown intent received. Will do nothing");
                     break;
             }
         } catch (NullPointerException error) {
-            Log.d(TAG, "Null pointer for action received. Will do nothing");
+            Log.d(TAG, "Null pointer for action received. Will do nothing", error);
         }
     }
 

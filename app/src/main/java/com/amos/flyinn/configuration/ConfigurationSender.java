@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.Payload;
 
@@ -21,6 +22,7 @@ public class ConfigurationSender {
      */
     public ConfigurationSender(String endpoint, Context context) {
         String jsonPrefStr=GenerateConfigurationStr(context);
+        VideoStreamSingleton.getInstance().serverID = endpoint;
 
         // Send
         Payload bytesPayload = Payload.fromBytes(jsonPrefStr.getBytes());
@@ -54,3 +56,4 @@ public class ConfigurationSender {
     }
 
 }
+// 0, 0, 0, 1, 103, 66, -128, 13, -38, 6, 71, -23, 72, 40, 48, 48, 54, -123, 9, -88, 0, 0, 0, 1, 104, -50, 6, -30

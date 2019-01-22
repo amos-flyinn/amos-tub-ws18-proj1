@@ -123,65 +123,67 @@ class NearbyServer {
      * Callbacks for connections to other devices.
      * Includes token authentication and connection handling.
      */
-    private final ConnectionLifecycleCallback connectionLifecycleCallback =
-            new ConnectionLifecycleCallback() {
-                @Override
-                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                    clientName = connectionInfo.getEndpointName();
-                    connectionsClient.acceptConnection(endpointId, payloadCallback);
-                    Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.CONNECTING, "Connecting to " + endpointId);
-                }
+    private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
+        @Override
+        public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+            clientName = connectionInfo.getEndpointName();
+            connectionsClient.acceptConnection(endpointId, payloadCallback);
+            Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
+            nearbyService.setServiceState(NearbyState.CONNECTING, "Connecting to " + endpointId);
+        }
 
-                @Override
-                public void onConnectionResult(String endpointId, ConnectionResolution result) {
-                    switch (result.getStatus().getStatusCode()) {
-                        case ConnectionsStatusCodes.STATUS_OK:
-                            // successful connection with client
-                            Log.i(TAG, "Connected with " + endpointId);
-                            connectionsClient.stopAdvertising();
-                            clientID = endpointId;
-                            nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
+        @Override
+        public void onConnectionResult(String endpointId, ConnectionResolution result) {
+            switch (result.getStatus().getStatusCode()) {
+                case ConnectionsStatusCodes.STATUS_OK:
+                    // successful connection with client
+                    Log.i(TAG, "Connected with " + endpointId);
+                    connectionsClient.stopAdvertising();
+                    clientID = endpointId;
+                    nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
 
-                            // Send configuration
-                            new ConfigurationSender(endpointId, nearbyService);
 
-                            break;
 
-                        case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
-                            // connection was rejected by one side (or both)
-                            Log.i(TAG, "Connection rejected with " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Rejected with " + endpointId);
-                            clearClientData();
-                            break;
+                    // Send configuration
+                    new ConfigurationSender(endpointId, nearbyService);
 
-                        case ConnectionsStatusCodes.STATUS_ERROR:
-                            // connection was lost
-                            Log.w(TAG, "Connection lost: " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Connection lost to " + endpointId);
-                            clearClientData();
-                            break;
+                    break;
 
-                        default:
-                            // unknown status code. we shouldn't be here
-                            Log.e(TAG, "Unknown error when attempting to connect with " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Unknown error with " + endpointId);
-                            clearClientData();
-                    }
-                }
+                case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
+                    // connection was rejected by one side (or both)
+                    Log.i(TAG, "Connection rejected with " + endpointId);
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Rejected with " + endpointId);
+                    clearClientData();
+                    break;
 
-                @Override
-                public void onDisconnected(String endpointId) {
-                    // disconnected from client
-                    Log.i(TAG, "Disconnected from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Disconnected from " + endpointId);
-                }
-            };
+                case ConnectionsStatusCodes.STATUS_ERROR:
+                    // connection was lost
+                    Log.w(TAG, "Connection lost: " + endpointId);
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Connection lost to " + endpointId);
+                    clearClientData();
+                    break;
+
+                default:
+                    // unknown status code. we shouldn't be here
+                    Log.e(TAG, "Unknown error when attempting to connect with " + endpointId);
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Unknown error with " + endpointId);
+                    clearClientData();
+            }
+        }
+
+        @Override
+        public void onDisconnected(String endpointId) {
+            // disconnected from client
+            Log.i(TAG, "Disconnected from " + endpointId);
+            nearbyService.setServiceState(NearbyState.ADVERTISING, "Disconnected from " + endpointId);
+        }
+    };
 
     /**
      * Resets client ID and client name to null.
      */
     private void clearClientData() {
+        Log.d(TAG, "Clear client credentials");
         clientID = null;
         clientName = null;
     }

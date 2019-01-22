@@ -82,11 +82,11 @@ dependencies {
     // org.json is included with Android, but Android.jar can not be used from unit tests
 }
 
-task prePreBuild {
-    exec {
-        workingDir '..'
-        commandLine('bash', 'update-build-info.sh', 'app')
-    }
-}
-
-preBuild.dependsOn(prePreBuild, ':fakeinputlib:assemble')
+//task prePreBuild {
+//    exec {
+//        workingDir '..'
+//        commandLine('bash', 'update-build-info.sh', 'app')
+//    }
+//}
+//
+//preBuild.dependsOn(prePreBuild, ':fakeinputlib:assemble')

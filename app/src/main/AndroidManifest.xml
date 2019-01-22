@@ -42,13 +42,16 @@
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ShowCodeActivity">
+        <activity android:name=".ShowCodeActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ConnectionSetupActivity">
+        <activity android:name=".ConnectionSetupActivity"
+            android:exported="true">
         </activity>
         <activity android:name=".ShowCodeConnAuth" />
         <service
