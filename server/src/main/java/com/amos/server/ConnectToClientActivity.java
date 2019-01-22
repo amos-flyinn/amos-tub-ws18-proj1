@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ServerConnection;
 
 public class ConnectToClientActivity extends Activity {
@@ -46,7 +47,9 @@ public class ConnectToClientActivity extends Activity {
         checkPermissions();
         // Ensure survival for life of entire application
         connection.init(getApplicationContext());
-        connection.discover();
+        // connection.discover();
+        MediaDecoderController.getInstance().registerNearby();
+
         text.setOnEditorActionListener(
                 (TextView v, int actionId, KeyEvent event) -> {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
