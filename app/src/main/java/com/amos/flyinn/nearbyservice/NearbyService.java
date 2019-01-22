@@ -243,7 +243,7 @@ public class NearbyService extends IntentService {
                             this.getApplicationContext(),
                             R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show());
                     Log.e(TAG, "SecurityException when starting NearbyServer in NearbyService");
-                    sendBroadcastMessage("com.flyinn.exit");
+                    sendBroadcastMessage("exit");
                 }
             }
         } else {

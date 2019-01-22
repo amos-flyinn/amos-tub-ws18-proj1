@@ -109,12 +109,13 @@ public class ShowCodeActivity extends AppCompatActivity {
             Log.d("ShowCodeActivity", "Failed to start ADB service");
             e.printStackTrace();
         }
+
         nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(0, 9999 + 1));
         while (nameNum.length() < 4) {
             nameNum = "0" + nameNum;
         }
-        display.setText(nameNum);
         Log.i(TAG, "App code is set to " + nameNum);
+        display.setText(nameNum);
         setService();
     }
 
