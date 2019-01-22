@@ -95,4 +95,13 @@ task prePreBuild {
         commandLine('bash', 'update-build-info.sh', 'server')
     }
 }
+
+task postBuild {
+    exec {
+        workingDir '..'
+        commandLine('bash', 'android_things_kill_launcher.sh')
+    }
+}
+
 preBuild.dependsOn prePreBuild
+build.finalizedBy(postBuild)

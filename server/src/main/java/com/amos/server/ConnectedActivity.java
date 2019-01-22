@@ -6,7 +6,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
@@ -16,10 +15,12 @@ import com.amos.server.nearby.ServerConnection;
 
 import java.io.IOException;
 
+import wseemann.media.FFmpegMediaPlayer;
+
+
 public class ConnectedActivity extends Activity {
 
     SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
 
     /**
      * Connection singleton managing nearby connection
@@ -36,24 +37,53 @@ public class ConnectedActivity extends Activity {
 
         connection = ServerConnection.getInstance();
 
-        surfaceView = findViewById(R.id.surfaceView);
-        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder sHolder) {
-                surfaceHolder = sHolder;
-            }
+        FFmpegMediaPlayer mp = new FFmpegMediaPlayer();
+        mp.setOnPreparedListener(new FFmpegMediaPlayer.OnPreparedListener() {
 
             @Override
-            public void surfaceChanged(SurfaceHolder sHolder, int i, int i1, int i2) {
-                Log.d(TAG, "Surface changed");
+            public void onPrepared(FFmpegMediaPlayer mp) {
+                mp.start();
             }
+        });
+        mp.setOnErrorListener(new FFmpegMediaPlayer.OnErrorListener() {
 
             @Override
-            public void surfaceDestroyed(SurfaceHolder sHolder) {
-                surfaceHolder = null;
+            public boolean onError(FFmpegMediaPlayer mp, int what, int extra) {
+                mp.release();
+                return false;
             }
         });
 
+        try {
+            mp.setDataSource("tcp://192.168.2.121:5551");
+            mp.prepareAsync();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        // surfaceView = findViewById(R.id.surfaceView);
+        // surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+        //     @Override
+        //     public void surfaceCreated(SurfaceHolder sHolder) {
+        //     }
+
+        //     @Override
+        //     public void surfaceChanged(SurfaceHolder sHolder, int format, int width, int height) {
+        //         Log.d(TAG, "Surface changed");
+        //         MediaDecoderController.getInstance().registerOutput(sHolder.getSurface());
+        //         MediaDecoderController.getInstance().network();
+        //     }
+
+        //     @Override
+        //     public void surfaceDestroyed(SurfaceHolder sHolder) {}
+        // });
         transmitInputEvents();
     }
 
@@ -62,6 +92,10 @@ public class ConnectedActivity extends Activity {
      */
     @SuppressLint("ClickableViewAccessibility")
     private void transmitInputEvents() {
+        if (!connection.isConnected()) {
+            toast("Not connected via nearby.");
+            return;
+        }
         Log.d(TAG, "Trying to transmit input events");
         toast("Trying to transmit input events");
         try {

@@ -54,18 +54,21 @@ public class ConnectionSetupServerActivity extends Activity {
      */
     private void buildConnection(String name) {
         setProgressText("Connecting to " + name);
-        connection.connectTo(name, new ConnectCallback() {
+        // connection.connectTo(name, new ConnectCallback() {
+        connection.discoverConnect(name, new ConnectCallback() {
             @Override
-            public void success() {
+            public void success(String message) {
                 Log.d(TAG, "Successfully connected to " + name);
-                toast(String.format("Successfully connected to %s", name));
+                // toast(String.format("Successfully connected to %s", name));
+                toast(message);
                 toConnectedActivity();
             }
 
             @Override
-            public void failure() {
+            public void failure(String message) {
                 Log.d(TAG, "Failed to connect to " + name);
-                toast(String.format("Failed to connect to %s", name));
+                // toast(String.format("Failed to connect to %s", name));
+                toast(message);
                 toInitialActivity();
             }
         });
