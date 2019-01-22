@@ -140,7 +140,12 @@ public class ShowCodeActivity extends AppCompatActivity {
     protected void onDestroy() {
         Intent intent = NearbyService.createNearbyIntent("", this);
         stopService(intent);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(msgReceiver);
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(msgReceiver);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+            Log.i(TAG, "Receiver was already unregistered.");
+        }
         super.onDestroy();
     }
 
