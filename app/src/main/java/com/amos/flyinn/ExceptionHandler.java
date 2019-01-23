@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Process;
 
 
-import com.amos.flyinn.ErrorScreen.ErrorActivity;
+import com.amos.flyinn.errorScreen.ErrorActivity;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,7 +14,7 @@ import java.io.StringWriter;
  * this activity will handle crashes and redirect to the error activity which will log the error.
  */
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
-    Context context;
+    private Context context;
     public static Boolean crashHappened = false;
 
     public ExceptionHandler(Context context) {
@@ -34,6 +34,5 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
         //kill the current activity
         Process.killProcess(Process.myPid());
-        System.exit(0);
     }
 }

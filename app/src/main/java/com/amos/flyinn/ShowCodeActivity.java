@@ -55,7 +55,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
 
-        display = findViewById(R.id.textView2);;
+        display = findViewById(R.id.textView2);
         if (!hasPermissions(NearbyService.getRequiredPermissions()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {

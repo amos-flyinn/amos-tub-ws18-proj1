@@ -38,7 +38,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ErrorScreen.ErrorActivity" />
+        <activity android:name=".errorScreen.ErrorActivity" />
         <activity
             android:name=".WebRTCActivity"
             android:label="WEBRTC Example"

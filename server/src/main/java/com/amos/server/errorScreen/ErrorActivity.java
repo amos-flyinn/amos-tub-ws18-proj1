@@ -1,12 +1,13 @@
-package com.amos.flyinn.ErrorScreen;
+package com.amos.server.errorScreen;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.amos.flyinn.R;
+import com.amos.server.R;
+
 
 public class ErrorActivity extends AppCompatActivity {
 
