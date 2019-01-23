@@ -26,8 +26,6 @@ import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
 import java.security.SecureRandom;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Initial activity showing code used for connection from remote display.

@@ -264,6 +264,7 @@ public class ServerConnection {
                 Log.i(TAG, "Connection initiated to " + endpointId);
 
                 if (endpointId.equals(clientID)) {
+                    notification(R.string.notification_connecting);
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                 } else {
                     // initiated connection is not with server selected by user

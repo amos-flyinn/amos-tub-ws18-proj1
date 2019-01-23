@@ -15,6 +15,7 @@
 
     <string name="notification_initialising">Initialising application.</string>
     <string name="notification_advertising">Searching for FlyInn servers.</string>
+    <string name="notification_connecting">Connecting to FlyInn server.</string>
     <string name="notification_connected">Connected to server.</string>
     <string name="notification_finish">Application shutting down.</string>
 

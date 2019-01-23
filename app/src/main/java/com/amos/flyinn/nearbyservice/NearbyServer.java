@@ -141,7 +141,8 @@ class NearbyServer {
                     clientName = connectionInfo.getEndpointName();
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                     Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.CONNECTING, null);
+                    nearbyService.setServiceState(NearbyState.CONNECTING,
+                            nearbyService.getString(R.string.notification_connecting));
                 }
 
                 @Override
