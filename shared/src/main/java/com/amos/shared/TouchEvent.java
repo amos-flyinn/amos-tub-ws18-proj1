@@ -34,7 +34,6 @@ public class TouchEvent implements Serializable {
      * @param downTime
      */
     public TouchEvent(float x, float y, int action, long downTime) {
-        Log.d("ToucEventLog", "TouchEvent: Test" );
 
         this.x = x;
         this.y = y;
@@ -47,8 +46,6 @@ public class TouchEvent implements Serializable {
      * @param m
      */
     public TouchEvent(MotionEvent m) {
-        Log.d("ToucEventLog", "TouchEvent: " + m.getPointerCount());
-
         if(m.getPointerCount() == 1)
         {
 
@@ -96,7 +93,6 @@ public class TouchEvent implements Serializable {
      * @param screenSize
      */
     public TouchEvent(MotionEvent m, Point screenSize) {
-        Log.d("ToucEventLog", "TouchEvent: " + m.getPointerCount());
         if(m.getPointerCount() == 1)
         {
 
@@ -138,58 +134,37 @@ public class TouchEvent implements Serializable {
 
     }
 
-    private MotionEvent.PointerCoords[] generateCoordsWithData(List<SubTouchEvent> subEvents){
-
-        MotionEvent.PointerCoords cordsArray[] = new MotionEvent.PointerCoords[subEvents.size()];
-
-        for(int x = 0;x<cordsArray.length ; x++)
+    private void generateDataMultiTouch(MotionEvent.PointerCoords cordsArray[], MotionEvent.PointerProperties propArray[],List<SubTouchEvent> subEvents)
+    {
+        for(int x = 0;x<propArray.length ; x++)
         {
-            SubTouchEvent event = this.subEvents.get(x);
+            SubTouchEvent event = subEvents.get(x);
 
             MotionEvent.PointerCoords cords = new MotionEvent.PointerCoords();
-
 
             cords.size = event.getSize();
             cords.x = event.getX();
             cords.y = event.getY();
 
             cordsArray[x] = cords;
-        }
-
-
-        return cordsArray;
-    }
-
-    private MotionEvent.PointerProperties[] generatePropertiesWithData(List<SubTouchEvent> subEvents){
-
-
-        MotionEvent.PointerProperties propsArray[] = new MotionEvent.PointerProperties[subEvents.size()];
-
-        for(int x = 0;x<propsArray.length ; x++)
-        {
-            SubTouchEvent event = this.subEvents.get(x);
 
             MotionEvent.PointerProperties prop = new MotionEvent.PointerProperties();
 
             prop.toolType = event.getTooltyp();
             prop.id = event.getId();
 
-            propsArray[x] = prop;
+            propArray[x] = prop;
+
         }
-
-        return propsArray;
-
     }
 
     private void calculateCorrectCords(MotionEvent.PointerCoords[]cordsArray,int maxX,int maxY)
     {
-
         for(MotionEvent.PointerCoords cords : cordsArray)
         {
             cords.x = (cords.x/max) * maxX;
             cords.y = (cords.y/max) * maxY;
         }
-
     }
 
     /**
@@ -200,11 +175,12 @@ public class TouchEvent implements Serializable {
      */
     public MotionEvent getConstructedMotionEvent(int maxX, int maxY) {
 
-        //Reconstruct the pointer properties from the sub events arraylist
-        MotionEvent.PointerProperties[] pointerProperties = this.generatePropertiesWithData(this.subEvents);
+        MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[this.subEvents.size()];
 
-        //Reconstruct the pointer cordinates and data from the sub events arraylist
-        MotionEvent.PointerCoords[] pointerCoords = this.generateCoordsWithData(this.subEvents);
+        MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[this.subEvents.size()];
+
+        //Generating the multitouch events from the Sub Events array
+        this.generateDataMultiTouch(pointerCoords,pointerProperties,this.subEvents);
 
         //Calculate new cords with the max screen coordinates
         this.calculateCorrectCords(pointerCoords,maxX,maxY);
@@ -213,7 +189,6 @@ public class TouchEvent implements Serializable {
                 action, counterPointer, pointerProperties,
                 pointerCoords, 0,  0, 1, 1, 0, 0, 0, 0 );
     }
-
     /**
      * Create String representation of TouchEvent.
      * @return
