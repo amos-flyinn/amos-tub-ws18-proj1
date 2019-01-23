@@ -3,24 +3,26 @@ package com.amos.server;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Point;
+import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
+import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
 import com.amos.server.eventsender.EventWriter;
+import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ServerConnection;
 
 import java.io.IOException;
 
-import wseemann.media.FFmpegMediaPlayer;
-
 
 public class ConnectedActivity extends Activity {
 
-    SurfaceView surfaceView;
+    TextureView surfaceView;
+    // SurfaceView surfaceView;
 
     /**
      * Connection singleton managing nearby connection
@@ -37,38 +39,40 @@ public class ConnectedActivity extends Activity {
 
         connection = ServerConnection.getInstance();
 
-        FFmpegMediaPlayer mp = new FFmpegMediaPlayer();
-        mp.setOnPreparedListener(new FFmpegMediaPlayer.OnPreparedListener() {
-
+        surfaceView = findViewById(R.id.surfaceView);
+        surfaceView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
-            public void onPrepared(FFmpegMediaPlayer mp) {
-                mp.start();
+            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                Log.d(TAG, "Surface changed");
+                Log.d(TAG, String.format("%d %d", surfaceView.getWidth(), surfaceView.getHeight()));
+                transmitInputEvents();
+                // surface.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+                //     @Override
+                //     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+                //         try {
+                //             surfaceTexture.updateTexImage();
+                //         } catch (Exception e) {}
+                //     }
+                // });
+                MediaDecoderController.getInstance().registerOutput(new Surface(surface));
+                // MediaDecoderController.getInstance().network();
+
             }
-        });
-        mp.setOnErrorListener(new FFmpegMediaPlayer.OnErrorListener() {
 
             @Override
-            public boolean onError(FFmpegMediaPlayer mp, int what, int extra) {
-                mp.release();
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
                 return false;
             }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            }
         });
-
-        try {
-            mp.setDataSource("tcp://192.168.2.121:5551");
-            mp.prepareAsync();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        // surfaceView = findViewById(R.id.surfaceView);
         // surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
         //     @Override
         //     public void surfaceCreated(SurfaceHolder sHolder) {
@@ -84,7 +88,6 @@ public class ConnectedActivity extends Activity {
         //     @Override
         //     public void surfaceDestroyed(SurfaceHolder sHolder) {}
         // });
-        transmitInputEvents();
     }
 
     /**
