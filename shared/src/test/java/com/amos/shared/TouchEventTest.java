@@ -26,7 +26,7 @@ public class TouchEventTest {
         assertEquals(m1.getEventTime(), m2.getEventTime());
     }
 
-    private void asserMotionEventEqualMultiTouch(MotionEvent m1,MotionEvent m2)
+    private void assertMotionEventEqualMultiTouch(MotionEvent m1,MotionEvent m2)
     {
         int counter = m1.getPointerCount();
         int counter2 = m2.getPointerCount();
@@ -63,7 +63,7 @@ public class TouchEventTest {
      * Check multitouch event consistency
      */
     @Test
-    public void getConstructedMotionEventMultiTouch() {
+    public void assertGetConstructedMotionEventMultiTouch() {
         int eventCounter = 3;
 
         MotionEvent.PointerCoords cordsArray[] = new MotionEvent.PointerCoords[3];
@@ -75,12 +75,12 @@ public class TouchEventTest {
 
         MotionEvent.PointerProperties prop2 = new MotionEvent.PointerProperties();
         prop2.id = 1;
-        prop2.toolType = MotionEvent.TOOL_TYPE_FINGER;;
+        prop2.toolType = MotionEvent.TOOL_TYPE_FINGER;
 
 
         MotionEvent.PointerProperties prop3 = new MotionEvent.PointerProperties();
         prop3.id = 2;
-        prop3.toolType = MotionEvent.TOOL_TYPE_FINGER;;
+        prop3.toolType = MotionEvent.TOOL_TYPE_FINGER;
 
         MotionEvent.PointerCoords cord1 = new MotionEvent.PointerCoords();
         cord1.x = 100;
@@ -115,7 +115,7 @@ public class TouchEventTest {
         Log.d("TEst", "getConstructedMotionEventMultiTouch: " + m);
         TouchEvent t = new TouchEvent(m);
         MotionEvent mnew = t.getConstructedMotionEvent(1, 1);
-        asserMotionEventEqualMultiTouch(mnew, m);
+        assertMotionEventEqualMultiTouch(mnew, m);
     }
 
     /**
