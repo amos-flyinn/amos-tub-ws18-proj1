@@ -2,6 +2,12 @@ package com.amos.shared;
 
 import java.io.Serializable;
 
+
+/**
+ * Serializable version of MotionEvents that has more than one pointer
+ *
+ * It helps to save the information about sub events with different pointers
+ */
 public class SubTouchEvent implements Serializable {
 
 
@@ -13,7 +19,14 @@ public class SubTouchEvent implements Serializable {
 
     private float max = 1;
 
-
+    /**
+     * Create a sub event with its pointer id
+     * @param id
+     * @param x
+     * @param y
+     * @param tooltyp
+     * @param size
+     */
     SubTouchEvent(int id,float x , float y ,int tooltyp,int size)
     {
 

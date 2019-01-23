@@ -120,6 +120,7 @@ public class TouchEvent implements Serializable {
             this.action = m.getAction();
             this.downTime = m.getDownTime();
 
+
             for(int x = 0;x<m.getPointerCount() ; x++)
             {
                 int indexPointer = m.findPointerIndex(x);
@@ -139,15 +140,12 @@ public class TouchEvent implements Serializable {
 
     private MotionEvent.PointerCoords[] generateCoordsWithData(List<SubTouchEvent> subEvents){
 
-
-
-        MotionEvent.PointerCoords cordsArray[] = new MotionEvent.PointerCoords[this.subEvents.size()];
+        MotionEvent.PointerCoords cordsArray[] = new MotionEvent.PointerCoords[subEvents.size()];
 
         for(int x = 0;x<cordsArray.length ; x++)
         {
             SubTouchEvent event = this.subEvents.get(x);
 
-            MotionEvent.PointerProperties prop = new MotionEvent.PointerProperties();
             MotionEvent.PointerCoords cords = new MotionEvent.PointerCoords();
 
 
@@ -165,7 +163,7 @@ public class TouchEvent implements Serializable {
     private MotionEvent.PointerProperties[] generatePropertiesWithData(List<SubTouchEvent> subEvents){
 
 
-        MotionEvent.PointerProperties propsArray[] = new MotionEvent.PointerProperties[this.subEvents.size()];
+        MotionEvent.PointerProperties propsArray[] = new MotionEvent.PointerProperties[subEvents.size()];
 
         for(int x = 0;x<propsArray.length ; x++)
         {
@@ -202,10 +200,13 @@ public class TouchEvent implements Serializable {
      */
     public MotionEvent getConstructedMotionEvent(int maxX, int maxY) {
 
+        //Reconstruct the pointer properties from the sub events arraylist
         MotionEvent.PointerProperties[] pointerProperties = this.generatePropertiesWithData(this.subEvents);
 
+        //Reconstruct the pointer cordinates and data from the sub events arraylist
         MotionEvent.PointerCoords[] pointerCoords = this.generateCoordsWithData(this.subEvents);
 
+        //Calculate new cords with the max screen coordinates
         this.calculateCorrectCords(pointerCoords,maxX,maxY);
 
         return MotionEvent.obtain(downTime, SystemClock.uptimeMillis(),
