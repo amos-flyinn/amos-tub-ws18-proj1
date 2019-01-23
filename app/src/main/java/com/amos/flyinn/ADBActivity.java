@@ -23,6 +23,7 @@ public class ADBActivity extends AppCompatActivity {
                 Point p = new Point();
                 getWindowManager().getDefaultDisplay().getRealSize(p);
                 Demo.start(getApplicationContext(), p);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
