@@ -21,7 +21,8 @@ public class MediaDecoderController implements HandlePayload {
 
     private int readyState = 0;
 
-    public final MediaDecoder decoder = new MediaDecoder();
+    // public final MediaDecoder decoder = new MediaDecoder();
+    private final DecoderThread decoder = new DecoderThread();
 
     private static final String TAG = "MediaDecoderController";
 
@@ -33,7 +34,7 @@ public class MediaDecoderController implements HandlePayload {
     }
 
     public void registerOutput(Surface surface) {
-        decoder.setOutput(surface);
+        decoder.setSurface(surface);
         readyState |= 2;
         if (readyState == 3) {
             Thread thread = new Thread(decoder);
@@ -45,11 +46,10 @@ public class MediaDecoderController implements HandlePayload {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         try {
-            Socket sock = new Socket("192.168.2.121", 5551);
+            Socket sock = new Socket("192.168.2.100", 5551);
             sock.getInputStream();
-            decoder.setInput(new MediaInputStream(sock.getInputStream()));
-            Thread thread = new Thread(decoder);
-            thread.start();
+            decoder.setInputStream(sock.getInputStream());
+            decoder.start();
         } catch (IOException error) {
             Log.e(TAG, error.toString());
             error.printStackTrace();
@@ -63,15 +63,7 @@ public class MediaDecoderController implements HandlePayload {
         if (stream == null) return;
 
         InputStream input = stream.asInputStream();
-
-        // byte[] buffer = new byte[512];
-        // while (true) {
-        //     try {
-        //         int len = input.read(buffer);
-        //         Log.d(TAG, String.format("Read %d", len));
-        //     } catch (IOException e){}
-        // }
-        decoder.setInput(new MediaInputStream(input));
+        decoder.setInputStream(input);
         readyState |= 1;
         if (readyState == 3) {
             // decoder.run();

@@ -1,6 +1,7 @@
 package com.amos.server.eventsender;
 
 import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.amos.shared.TouchEvent;
@@ -11,6 +12,7 @@ import java.io.OutputStream;
 
 
 public class EventWriter {
+    private static final String TAG = "EventWriter";
     private OutputStream outputStream;
     private ObjectOutputStream output;
     private Point screenSize;
@@ -22,11 +24,13 @@ public class EventWriter {
     }
 
     public void write(MotionEvent e) throws IOException {
+        Log.d(TAG, screenSize.toString());
         TouchEvent te = new TouchEvent(e, screenSize);
         write(te);
     }
 
     void write(TouchEvent e) throws IOException {
+        Log.d(TAG, e.toString());
         output.writeObject(e);
         output.flush();
     }
