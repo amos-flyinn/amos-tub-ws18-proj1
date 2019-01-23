@@ -37,8 +37,13 @@ public class ShowCodeConnAuth extends ClientConnAuthActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_show_code);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
+
         display = findViewById(R.id.textView2);
         display.setText(appCode);
+
+
         super.onCreate(savedInstanceState);
     }
 
