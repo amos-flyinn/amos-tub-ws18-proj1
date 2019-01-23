@@ -48,6 +48,7 @@ public class ConnectToClientActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*
         // close or restart application
         if (getIntent().getBooleanExtra("exit", false)) {
             Log.d(TAG, "Intent contains exit command.");
@@ -59,6 +60,7 @@ public class ConnectToClientActivity extends Activity {
             recreate();
             return;
         }
+        */
 
         setContentView(R.layout.activity_connect_to_client);
         EditText text = findViewById(R.id.connect_editText);
@@ -205,21 +207,27 @@ public class ConnectToClientActivity extends Activity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
+        finish();
+        /*
         Log.d(TAG, "Closing server via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("exit", true);
         startActivity(intent);
+        */
     }
 
     /**
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
+        finish();
+        /*
         Log.d(TAG, "Restarting server via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("restart", true);
         startActivity(intent);
+        */
     }
 }

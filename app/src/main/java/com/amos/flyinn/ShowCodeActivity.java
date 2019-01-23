@@ -41,6 +41,7 @@ public class ShowCodeActivity extends AppCompatActivity {
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            /*
             if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
                 Log.i(TAG, "Received exit message via BroadcastReceiver.");
                 closeApp();
@@ -48,6 +49,7 @@ public class ShowCodeActivity extends AppCompatActivity {
                 Log.i(TAG, "Received restart message via BroadcastReceiver.");
                 restartApp();
             }
+            */
         }
     };
 
@@ -68,6 +70,7 @@ public class ShowCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*
         // close or restart application
         if (getIntent().getBooleanExtra("exit", false)) {
             Log.d(TAG, "Intent contains exit command.");
@@ -82,6 +85,7 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
                 new IntentFilter("msg-flyinn"));
+                */
 
         setContentView(R.layout.activity_show_code);
         display = findViewById(R.id.textView2);
@@ -221,21 +225,27 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
+        finish();
+        /*
         Log.d(TAG, "Closing app via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("exit", true);
         startActivity(intent);
+        */
     }
 
     /**
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
+        finish();
+        /*
         Log.d(TAG, "Restarting app via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("restart", true);
         startActivity(intent);
+        */
     }
 }
