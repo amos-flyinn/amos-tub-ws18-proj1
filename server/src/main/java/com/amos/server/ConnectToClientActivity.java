@@ -192,7 +192,7 @@ public class ConnectToClientActivity extends Activity {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
-                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setPriority(NotificationCompat.PRIORITY_MIN) // no pop-up
                 .setContentTitle("Nearby server")
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
