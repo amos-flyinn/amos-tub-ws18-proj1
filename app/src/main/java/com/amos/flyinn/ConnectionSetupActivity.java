@@ -26,9 +26,12 @@ import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 
+import com.amos.flyinn.nearbyservice.NearbyService;
+import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
+
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -59,6 +62,8 @@ public class ConnectionSetupActivity extends Activity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
+    private Surface si;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,21 +134,21 @@ public class ConnectionSetupActivity extends Activity {
     private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        int w = p.x, h = p.y;
+        int w = 240, h = 400;
         String MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
         try {
-//            PipedInputStream stream = new PipedInputStream();
-//            PipedOutputStream data = new PipedOutputStream(stream);
-//            VideoStreamSingleton.getInstance().os = stream;
-//            Intent intent = NearbyService.createNearbyIntent(NearbyService.VIDEO_START, this);
-//            startService(intent);
+            PipedInputStream stream = new PipedInputStream();
+            PipedOutputStream data = new PipedOutputStream(stream);
+            VideoStreamSingleton.getInstance().os = stream;
+            Intent intent = NearbyService.createNearbyIntent(NearbyService.VIDEO_START, this);
+            startService(intent);
 
             {
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
             }
 
-            OutputStream data = new Socket("192.168.2.121", 5551).getOutputStream();
+//            OutputStream data = new Socket("192.168.2.100", 5552).getOutputStream();
             Log.d(TAG, "Payload sent video_start");
 
             MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
@@ -152,12 +157,17 @@ public class ConnectionSetupActivity extends Activity {
 //            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
             codec = MediaCodec.createEncoderByType(MIME_TYPE);
             format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, /*videoCapabilities.getBitrateRange().getUpper()*/ 5_000_000);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, /*videoCapabilities.getBitrateRange().getUpper()*/ 128_000);
             format.setInteger(MediaFormat.KEY_FRAME_RATE, /*videoCapabilities.getSupportedFrameRatesFor(w, h).getLower().intValue()*/30);
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                format.setInteger(MediaFormat.KEY_LATENCY, 3);
+            format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                format.setInteger(MediaFormat.KEY_PRIORITY, 0);
             }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                format.setInteger(MediaFormat.KEY_LATENCY, 0);
+            }
+
             Log.d(TAG, format.toString());
             codec.setCallback(new MediaCodec.Callback() {
                 MediaFormat mOutputFormat;
@@ -176,14 +186,7 @@ public class ConnectionSetupActivity extends Activity {
                     outputBuffer.position(info.offset);
                     outputBuffer.limit(info.offset + info.size);
                     try {
-                        bb.clear();
-                        if (outputBuffer == null) throw new AssertionError();
-                        bb.putInt(1);
-                        bb.putInt(info.size);
-//                        data.write(bb.array(), 0, 8);
-
                         Log.d(TAG, String.format("%d", info.size));
-
                         outputBuffer.get(qq, 0, info.size);
                         outputBuffer.clear();
                         Log.d(TAG, "Going to write to stream");
@@ -206,13 +209,14 @@ public class ConnectionSetupActivity extends Activity {
             });
 
             codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            si = codec.createInputSurface();
             mMediaProjection.createVirtualDisplay(
                     TAG,
                     w,
                     h,
                     mScreenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
-                    codec.createInputSurface(),
+                    si,
                     null,
                     null
             );
@@ -235,10 +239,9 @@ public class ConnectionSetupActivity extends Activity {
     }
 
     private void stopScreenSharing() {
-        if (mVirtualDisplay == null) {
-            return;
-        }
-        mVirtualDisplay.release();
+        codec.stop();
+        codec.release();
+        si.release();
         //mMediaRecorder.release(); //If used: mMediaRecorder object cannot
         // be reused again
         destroyMediaProjection();
@@ -247,13 +250,13 @@ public class ConnectionSetupActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        destroyMediaProjection();
         Log.d(TAG, "Destroy codec");
-        codec.release();
+        stopScreenSharing();
     }
 
     private void destroyMediaProjection() {
         if (mMediaProjection != null) {
+            mVirtualDisplay.release();
             mMediaProjection.unregisterCallback(mMediaProjectionCallback);
             mMediaProjection.stop();
             mMediaProjection = null;

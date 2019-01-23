@@ -96,12 +96,12 @@ task prePreBuild {
     }
 }
 
-task postBuild {
-    exec {
-        workingDir '..'
-        commandLine('bash', 'android_things_kill_launcher.sh')
-    }
-}
+//task postBuild {
+//    exec {
+//        workingDir '..'
+//        commandLine('bash', 'android_things_kill_launcher.sh')
+//    }
+//}
 
 preBuild.dependsOn prePreBuild
-build.finalizedBy(postBuild)
+//build.finalizedBy(postBuild)
