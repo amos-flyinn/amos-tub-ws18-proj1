@@ -25,6 +25,8 @@ import com.amos.flyinn.configuration.ConfigurationActivity;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
+import java.security.SecureRandom;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -110,7 +112,8 @@ public class ShowCodeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(0, 9999 + 1));
+        // nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(0, 9999 + 1));
+        nameNum = String.valueOf(new SecureRandom().nextInt(9999 + 1));
         while (nameNum.length() < 4) {
             nameNum = "0" + nameNum;
         }

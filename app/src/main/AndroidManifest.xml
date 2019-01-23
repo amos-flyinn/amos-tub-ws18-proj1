@@ -61,8 +61,6 @@
         <service android:name=".summoner.ADBService" android:enabled="true" android:exported="true"/>
         <service android:name=".nearbyservice.NearbyService" android:enabled="true" android:exported="true"/>
         <activity android:name=".ConnectionSetupActivity" />
-        <activity android:name=".ShowCodeConnAuth">
-        </activity>
         <activity
             android:name=".configuration.ConfigurationActivity"
             android:label="@string/title_activity_configuration">
