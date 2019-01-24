@@ -21,9 +21,6 @@
         android:name="android.permission.INTERNET"
         android:required="true" />
     <uses-permission
-        android:name="android.permission.CAMERA"
-        android:required="true" />
-    <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="true" />
     <uses-permission android:name="android.permission.BLUETOOTH" />

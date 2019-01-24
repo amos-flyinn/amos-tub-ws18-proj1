@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
@@ -23,12 +22,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.Surface;
 
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -51,18 +50,8 @@ public class ConnectionSetupActivity extends Activity {
     private int mScreenDensity;
     private MediaProjectionManager mProjectionManager;
     private MediaProjection mMediaProjection;
-    private VirtualDisplay mVirtualDisplay;
     private MediaProjectionCallback mMediaProjectionCallback;
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_PERMISSIONS = 10;
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
-
     private Surface si;
 
     @Override
@@ -70,7 +59,7 @@ public class ConnectionSetupActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_setup);
         DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         mScreenDensity = metrics.densityDpi;
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -134,11 +123,12 @@ public class ConnectionSetupActivity extends Activity {
     private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        int w = 240, h = 400;
-        String MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
+        int w = 480, h = 800;
+        String MIME_TYPE = "video/avc";
         try {
             PipedInputStream stream = new PipedInputStream();
-            PipedOutputStream data = new PipedOutputStream(stream);
+            PipedOutputStream data2 = new PipedOutputStream(stream);
+            BufferedOutputStream data = new BufferedOutputStream(data2);
             VideoStreamSingleton.getInstance().os = stream;
             Intent intent = NearbyService.createNearbyIntent(NearbyService.VIDEO_START, this);
             startService(intent);
@@ -148,7 +138,6 @@ public class ConnectionSetupActivity extends Activity {
                 StrictMode.setThreadPolicy(policy);
             }
 
-//            OutputStream data = new Socket("192.168.2.100", 5552).getOutputStream();
             Log.d(TAG, "Payload sent video_start");
 
             MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
@@ -157,10 +146,10 @@ public class ConnectionSetupActivity extends Activity {
 //            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
             codec = MediaCodec.createEncoderByType(MIME_TYPE);
             format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, /*videoCapabilities.getBitrateRange().getUpper()*/ 128_000);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, /*videoCapabilities.getSupportedFrameRatesFor(w, h).getLower().intValue()*/30);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, /*videoCapabilities.getBitrateRange().getUpper()*/ 1_000_000);
+            format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-            format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000);
+            format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 format.setInteger(MediaFormat.KEY_PRIORITY, 0);
             }
@@ -172,6 +161,8 @@ public class ConnectionSetupActivity extends Activity {
             codec.setCallback(new MediaCodec.Callback() {
                 MediaFormat mOutputFormat;
                 byte[] qq = new byte[w * h * 2];
+                ByteBuffer bb = ByteBuffer.allocate(4 + 8).order(ByteOrder.BIG_ENDIAN);
+                ByteBuffer outputBuffer;
 
                 @Override
                 public void onInputBufferAvailable(MediaCodec codec, int index) {
@@ -179,22 +170,20 @@ public class ConnectionSetupActivity extends Activity {
 
                 @Override
                 public void onOutputBufferAvailable(MediaCodec codec, int outputBufferId, MediaCodec.BufferInfo info) {
-                    ByteBuffer outputBuffer = codec.getOutputBuffer(outputBufferId);
-                    MediaFormat bufferFormat = codec.getOutputFormat(outputBufferId);
-                    ByteBuffer bb = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN);
-                    // needed?
+                    outputBuffer = codec.getOutputBuffer(outputBufferId);
                     outputBuffer.position(info.offset);
                     outputBuffer.limit(info.offset + info.size);
                     try {
-                        Log.d(TAG, String.format("%d", info.size));
+                        bb.rewind();
+                        bb.putLong(info.presentationTimeUs);
+                        bb.putInt(info.size);
+                        data.write(bb.array());
                         outputBuffer.get(qq, 0, info.size);
-                        outputBuffer.clear();
-                        Log.d(TAG, "Going to write to stream");
                         data.write(qq, 0, info.size);
-                        Log.d(TAG, "Wrote to stream");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    outputBuffer.clear();
                     codec.releaseOutputBuffer(outputBufferId, false);
                 }
 
@@ -215,14 +204,16 @@ public class ConnectionSetupActivity extends Activity {
                     w,
                     h,
                     mScreenDensity,
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     si,
                     null,
                     null
             );
             Log.d(TAG, "Created Media Encoder");
-            codec.start();
-            Log.d(TAG, "Start encoding");
+            new Thread(() -> {
+                Log.d(TAG, "Start encoding");
+                codec.start();
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -242,8 +233,8 @@ public class ConnectionSetupActivity extends Activity {
         codec.stop();
         codec.release();
         si.release();
-        //mMediaRecorder.release(); //If used: mMediaRecorder object cannot
-        // be reused again
+        // If used: mMediaRecorder object cannot be reused again
+        //mMediaRecorder.release();
         destroyMediaProjection();
     }
 
@@ -256,7 +247,6 @@ public class ConnectionSetupActivity extends Activity {
 
     private void destroyMediaProjection() {
         if (mMediaProjection != null) {
-            mVirtualDisplay.release();
             mMediaProjection.unregisterCallback(mMediaProjectionCallback);
             mMediaProjection.stop();
             mMediaProjection = null;
