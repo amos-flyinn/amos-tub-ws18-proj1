@@ -87,7 +87,8 @@ public class ShowCodeActivity extends AppCompatActivity {
                 */
 
         setContentView(R.layout.activity_show_code);
-        display = findViewById(R.id.textView2);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
 
         if (!hasPermissions(NearbyService.getRequiredPermissions())) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

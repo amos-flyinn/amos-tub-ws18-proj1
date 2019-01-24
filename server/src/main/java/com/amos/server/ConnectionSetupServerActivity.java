@@ -40,6 +40,8 @@ public class ConnectionSetupServerActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_setup);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
         infiniteBar = findViewById(R.id.infiniteBar);
         progressText = findViewById(R.id.progressText);
         view = findViewById(R.id.surface_remote_viewer);

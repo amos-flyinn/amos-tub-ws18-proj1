@@ -63,6 +63,7 @@ public class ConnectToClientActivity extends Activity {
         */
 
         setContentView(R.layout.activity_connect_to_client);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         EditText text = findViewById(R.id.connect_editText);
 
         notification(getString(R.string.notification_initialising));

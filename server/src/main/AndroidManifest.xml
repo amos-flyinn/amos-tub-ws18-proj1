@@ -47,6 +47,7 @@
         <activity
             android:name=".ConnectionSetupServerActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".errorScreen.ErrorActivity" />
         <activity android:name=".SettingsScreen.SettingsActivity"></activity>
     </application>
 
