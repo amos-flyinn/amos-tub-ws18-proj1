@@ -1,5 +1,7 @@
 package com.amos.server.mediadecoder;
 
+import android.media.MediaCodec;
+import android.media.MediaFormat;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Surface;
@@ -19,10 +21,8 @@ public class MediaDecoderController implements HandlePayload {
         return ourInstance;
     }
 
-    private int readyState = 0;
-
-    // public final MediaDecoder decoder = new MediaDecoder();
-    private final DecoderThread decoder = new DecoderThread();
+    private Surface surface = null;
+    private InputStream input = null;
 
     private static final String TAG = "MediaDecoderController";
 
@@ -34,12 +34,8 @@ public class MediaDecoderController implements HandlePayload {
     }
 
     public void registerOutput(Surface surface) {
-        decoder.setSurface(surface);
-        readyState |= 2;
-        if (readyState == 3) {
-            Thread thread = new Thread(decoder);
-            thread.start();
-        }
+        this.surface = surface;
+        run();
     }
 
     public void network() {
@@ -48,27 +44,36 @@ public class MediaDecoderController implements HandlePayload {
         try {
             Socket sock = new Socket("192.168.2.100", 5551);
             sock.getInputStream();
-            decoder.setInputStream(sock.getInputStream());
-            decoder.start();
         } catch (IOException error) {
             Log.e(TAG, error.toString());
             error.printStackTrace();
         }
     }
 
+    public void run() {
+        if (surface == null) return;
+        if (input == null) return;
+        try {
+            MediaCodec codec = MediaCodec.createDecoderByType("video/avc");
+            MediaFormat format = MediaFormat.createVideoFormat("video/avc", 480, 800);
+            codec.configure(format, surface, null, 0);
+            codec.start();
+            InputQueuer inputQueuer = new InputQueuer(codec, input);
+            OutputQueuer outputQueuer = new OutputQueuer(codec);
+            new Thread(inputQueuer).start();
+            new Thread(outputQueuer).start();
+        } catch (IOException e) {}
+    }
+
     @Override
     public void receive(Payload payload) {
-        Log.d(TAG, "Receiving payload");
+        Log.d(TAG, "Receiving streaming payload");
         Payload.Stream stream = payload.asStream();
-        if (stream == null) return;
-
-        InputStream input = stream.asInputStream();
-        decoder.setInputStream(input);
-        readyState |= 1;
-        if (readyState == 3) {
-            // decoder.run();
-            Thread thread = new Thread(decoder);
-            thread.start();
+        if (stream == null){
+            Log.e(TAG, "No stream found");
+            return;
         }
+        input = stream.asInputStream();
+        run();
     }
 }
