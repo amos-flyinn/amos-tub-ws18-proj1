@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -25,7 +24,7 @@ public class DecoderThread extends Thread
 
     // local constants
     private final static int FINISH_TIMEOUT = 5000;
-    private final static int BUFFER_SIZE = 16384;
+    private final static int BUFFER_SIZE = 16384 * 8;
     private final static int NAL_SIZE_INC = 4096;
     private final static int MAX_READ_ERRORS = 300;
 
@@ -135,6 +134,9 @@ public class DecoderThread extends Thread
         int numZeroes = 0;
         int numReadErrors = 0;
 
+        OutputQueuer queuer = null;
+        Thread thread;
+
         try
         {
             // create the decoder
@@ -143,13 +145,11 @@ public class DecoderThread extends Thread
             // create the reader
             buffer = new byte[BUFFER_SIZE];
 
-            BufferedInputStream nreader = new BufferedInputStream(reader);
-
             // read until we're interrupted
             while (!isInterrupted())
             {
                 // read from the stream
-                int len = nreader.read(buffer);
+                int len = reader.read(buffer);
                 if (isInterrupted()) break;
 
                 // process the input buffer
@@ -202,21 +202,26 @@ public class DecoderThread extends Thread
                 // send an output buffer to the surface
                 if (format != null && decoding)
                 {
-                    if (isInterrupted()) break;
-                    MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-                    int index;
-                    do
-                    {
-                        index = decoder.dequeueOutputBuffer(info, 0);
-                        if (isInterrupted()) break;
-                        if (index >= 0)
-                        {
-                            // ByteBuffer output = decoder.getOutputBuffer(index);
-                            // Log.d(TAG, String.format("Output: %d", output.remaining()));
-                            decoder.releaseOutputBuffer(index, true);
-                        }
-                        Log.i(TAG, String.format("dequeueOutputBuffer index = %d", index));
-                    } while (index >= 0);
+                    if (queuer == null) {
+                        queuer = new OutputQueuer(decoder);
+                        thread = new Thread(queuer);
+                        thread.start();
+                    }
+                    // if (isInterrupted()) break;
+                    // MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+                    // int index;
+                    // do
+                    // {
+                    //     index = decoder.dequeueOutputBuffer(info, 0);
+                    //     if (isInterrupted()) break;
+                    //     if (index >= 0)
+                    //     {
+                    //         // ByteBuffer output = decoder.getOutputBuffer(index);
+                    //         // Log.d(TAG, String.format("Output: %d", output.remaining()));
+                    //         decoder.releaseOutputBuffer(index, true);
+                    //     }
+                    //     Log.i(TAG, String.format("dequeueOutputBuffer index = %d", index));
+                    // } while (index >= 0);
                 }
             }
         }

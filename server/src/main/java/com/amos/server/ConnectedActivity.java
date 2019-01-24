@@ -3,12 +3,11 @@ package com.amos.server;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Point;
-import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.TextureView;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,8 +20,7 @@ import java.io.IOException;
 
 public class ConnectedActivity extends Activity {
 
-    TextureView surfaceView;
-    // SurfaceView surfaceView;
+    SurfaceView surfaceView;
 
     /**
      * Connection singleton managing nearby connection
@@ -40,54 +38,47 @@ public class ConnectedActivity extends Activity {
         connection = ServerConnection.getInstance();
 
         surfaceView = findViewById(R.id.surfaceView);
-        surfaceView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                Log.d(TAG, "Surface changed");
-                Log.d(TAG, String.format("%d %d", surfaceView.getWidth(), surfaceView.getHeight()));
-                transmitInputEvents();
-                // surface.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
-                //     @Override
-                //     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-                //         try {
-                //             surfaceTexture.updateTexImage();
-                //         } catch (Exception e) {}
-                //     }
-                // });
-                MediaDecoderController.getInstance().registerOutput(new Surface(surface));
-                // MediaDecoderController.getInstance().network();
-
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            }
-        });
-        // surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+        // surfaceView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
         //     @Override
-        //     public void surfaceCreated(SurfaceHolder sHolder) {
-        //     }
-
-        //     @Override
-        //     public void surfaceChanged(SurfaceHolder sHolder, int format, int width, int height) {
+        //     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         //         Log.d(TAG, "Surface changed");
-        //         MediaDecoderController.getInstance().registerOutput(sHolder.getSurface());
-        //         MediaDecoderController.getInstance().network();
+        //         Log.d(TAG, String.format("%d %d", surfaceView.getWidth(), surfaceView.getHeight()));
+        //         transmitInputEvents();
+        //         MediaDecoderController.getInstance().registerOutput(new Surface(surface));
+        //         // MediaDecoderController.getInstance().network();
+
         //     }
 
         //     @Override
-        //     public void surfaceDestroyed(SurfaceHolder sHolder) {}
+        //     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+        //     }
+
+        //     @Override
+        //     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        //         return false;
+        //     }
+
+        //     @Override
+        //     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        //     }
         // });
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder sHolder) {
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder sHolder, int format, int width, int height) {
+                Log.d(TAG, "Surface changed");
+                MediaDecoderController.getInstance().registerOutput(sHolder.getSurface());
+                // MediaDecoderController.getInstance().network();
+                transmitInputEvents();
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder sHolder) {}
+        });
     }
 
     /**
