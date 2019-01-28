@@ -28,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.amos.flyinn.ExceptionHandler;
 import com.amos.flyinn.R;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
@@ -49,6 +50,9 @@ public class ConfigurationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
+
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
 
         prefs = this.getSharedPreferences("com.amos.flyinn", Context.MODE_PRIVATE);
 
