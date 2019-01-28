@@ -123,6 +123,7 @@ public abstract class ClientConnAuthActivity extends Activity {
                             mToast.setText(R.string.nearby_connection_error);
                             mToast.show();
                             clearServerData();
+                            break;
                     }
                 }
 
