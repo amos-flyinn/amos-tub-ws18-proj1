@@ -52,7 +52,7 @@ public abstract class ClientConnAuthActivity extends Activity {
     private String serverName;
 
     private Toast mToast;
-    Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     /** Tag for logging purposes. */
     private static final String CONN_AUTH_TAG = "ClientConnAuth";

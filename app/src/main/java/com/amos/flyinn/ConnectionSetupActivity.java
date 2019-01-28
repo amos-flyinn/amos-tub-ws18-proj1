@@ -50,9 +50,9 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     private Button switchToHomeScreenButton;
     private Button closeConnectionButton;
     private TextView connectedMessage;
-    TextView connectionStatus;
-    Button adbButton;
-    Daemon adbDaemon;
+    private TextView connectionStatus;
+    private Button adbButton;
+    private Daemon adbDaemon;
     private MediaProjectionManager mProjectionManager;
     private PeerConnection localConnection;
     private ClientSocket clientSocket;
