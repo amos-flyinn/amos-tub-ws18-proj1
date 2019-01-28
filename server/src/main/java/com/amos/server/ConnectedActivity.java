@@ -33,11 +33,13 @@ public class ConnectedActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_connected);
 
         connection = ServerConnection.getInstance();
 
         surfaceView = findViewById(R.id.surfaceView);
+        surfaceView.setRotation(270);
         // surfaceView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
         //     @Override
         //     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {

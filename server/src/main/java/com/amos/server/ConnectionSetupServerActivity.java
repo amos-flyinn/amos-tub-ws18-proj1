@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ConnectCallback;
 import com.amos.server.nearby.ServerConnection;
 
@@ -69,6 +70,7 @@ public class ConnectionSetupServerActivity extends Activity {
                 Log.d(TAG, "Failed to connect to " + name);
                 // toast(String.format("Failed to connect to %s", name));
                 toast(message);
+                MediaDecoderController.getInstance().reset();
                 toInitialActivity();
             }
         });

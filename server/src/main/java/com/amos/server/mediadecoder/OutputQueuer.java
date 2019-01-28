@@ -1,7 +1,6 @@
 package com.amos.server.mediadecoder;
 
 import android.media.MediaCodec;
-import android.util.Log;
 
 public class OutputQueuer implements Runnable {
     private static final String TAG = "OutputQueuer";
@@ -23,7 +22,7 @@ public class OutputQueuer implements Runnable {
                 // Log.d(TAG, String.format("Output: %d", output.remaining()));
                 codec.releaseOutputBuffer(index, true);
             }
-            Log.i(TAG, String.format("dequeueOutputBuffer index = %d", index));
+            // Log.i(TAG, String.format("dequeueOutputBuffer index = %d", index));
         }
     }
 }
