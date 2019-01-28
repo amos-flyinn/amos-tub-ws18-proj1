@@ -49,16 +49,19 @@ public class ConnectToClientActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         /*
+
         // close or restart application
-        if (getIntent().getBooleanExtra("exit", false)) {
-            Log.d(TAG, "Intent contains exit command.");
-            finish();
-            return;
-        }
-        if (getIntent().getBooleanExtra("restart", false)) {
-            Log.d(TAG, "Intent contains restart command.");
-            recreate();
-            return;
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getBooleanExtra("exit", false)) {
+                Log.d(TAG, "Intent contains exit command.");
+                finish();
+                return;
+            }
+            if (getIntent().getBooleanExtra("restart", false)) {
+                Log.d(TAG, "Intent contains restart command.");
+                recreate();
+                return;
+            }
         }
         */
 
@@ -211,14 +214,13 @@ public class ConnectToClientActivity extends Activity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
+        Log.d(TAG, "Closing server via closeApp function.");
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
 
         // have to rework this
         this.finishAffinity();
         finishAndRemoveTask();
-        System.exit(0);
         /*
-        Log.d(TAG, "Closing server via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("exit", true);
@@ -230,10 +232,10 @@ public class ConnectToClientActivity extends Activity {
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
+        Log.d(TAG, "Restarting server via restartApp function.");
         // have to rework this
         closeApp();
         /*
-        Log.d(TAG, "Restarting server via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("restart", true);

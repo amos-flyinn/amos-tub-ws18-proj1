@@ -75,21 +75,24 @@ public class ShowCodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         /*
-        // close or restart application
-        if (getIntent().getBooleanExtra("exit", false)) {
-            Log.d(TAG, "Intent contains exit command.");
-            finish();
-            return;
-        }
-        if (getIntent().getBooleanExtra("restart", false)) {
-            Log.d(TAG, "Intent contains restart command.");
-            recreate();
-            return;
+        // close or restart application}
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getBooleanExtra("exit", false)) {
+                Log.d(TAG, "Intent contains exit command.");
+                finish();
+                return;
+            }
+            if (getIntent().getBooleanExtra("restart", false)) {
+                Log.d(TAG, "Intent contains restart command.");
+                recreate();
+                return;
+            }
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
                 new IntentFilter("msg-flyinn"));
                 */
+
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
@@ -230,14 +233,13 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
+        Log.d(TAG, "Closing app via closeApp function.");
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
 
         // have to rework this
         this.finishAffinity();
         finishAndRemoveTask();
-        System.exit(0);
         /*
-        Log.d(TAG, "Closing app via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("exit", true);
@@ -249,10 +251,10 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
+        Log.d(TAG, "Restarting app via restartApp function.");
         // have to rework this
         closeApp();
         /*
-        Log.d(TAG, "Restarting app via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("restart", true);
