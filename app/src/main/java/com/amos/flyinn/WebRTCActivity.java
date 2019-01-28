@@ -92,8 +92,6 @@ public class WebRTCActivity extends Activity {
                                 .WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO},
                         10);
             }
-        } else {
-            //onToggleScreenShare(v);
         }
 
     }
