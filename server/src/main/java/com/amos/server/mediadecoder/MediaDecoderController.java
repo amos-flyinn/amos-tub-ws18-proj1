@@ -38,6 +38,10 @@ public class MediaDecoderController implements HandlePayload {
         run();
     }
 
+    /**
+     * Test function enabling us to read a raw h264 tcp stream.
+     */
+    @SuppressWarnings("unused")
     public void network() {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -50,7 +54,7 @@ public class MediaDecoderController implements HandlePayload {
         }
     }
 
-    public void run() {
+    private void run() {
         if (surface == null) return;
         if (input == null) return;
         try {
@@ -62,7 +66,7 @@ public class MediaDecoderController implements HandlePayload {
             OutputQueuer outputQueuer = new OutputQueuer(codec);
             new Thread(inputQueuer).start();
             new Thread(outputQueuer).start();
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
     }
 
     @Override

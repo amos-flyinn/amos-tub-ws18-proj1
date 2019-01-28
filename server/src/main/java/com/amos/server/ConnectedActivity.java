@@ -93,7 +93,11 @@ public class ConnectedActivity extends Activity {
         Log.d(TAG, "Trying to transmit input events");
         toast("Trying to transmit input events");
         try {
-            writer = new EventWriter(connection.sendStream(), new Point(surfaceView.getWidth(), surfaceView.getHeight()));
+            writer = new EventWriter(
+                    connection.sendStream(),
+                    new Point(surfaceView.getWidth(), surfaceView.getHeight()),
+                    getResources().getConfiguration().orientation
+            );
         } catch (IOException ignored) {
         }
         surfaceView.setOnTouchListener((View v, MotionEvent event) -> {
@@ -113,5 +117,4 @@ public class ConnectedActivity extends Activity {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();
     }
-
 }

@@ -19,7 +19,7 @@ public class InputQueuer implements Runnable {
     private long timestamp;
     private int size;
 
-    public InputQueuer(MediaCodec codec, InputStream stream) {
+    InputQueuer(MediaCodec codec, InputStream stream) {
         this.codec = codec;
         this.stream = stream;
     }
@@ -32,7 +32,7 @@ public class InputQueuer implements Runnable {
         while (num < 12) {
             try {
                 result = this.stream.read();
-            } catch(IOException e) {}
+            } catch(IOException ignored) {}
             if (result < 0) continue;
             header.put((byte)result);
             num++;
@@ -43,7 +43,7 @@ public class InputQueuer implements Runnable {
         Log.d(TAG, String.format("Read header: %d", size));
     }
 
-    public void readData(){
+    private void readData(){
         int offset = 0;
         int remaining = size;
         int read;
@@ -55,17 +55,18 @@ public class InputQueuer implements Runnable {
                     offset += read;
                     remaining -= read;
                 }
-            } catch (IOException e) {}
+            } catch (IOException ignored) {}
         }
         Log.d(TAG, "Finished reading data");
     }
 
     @Override
     public void run() {
+        //noinspection deprecation
         ByteBuffer[] inputBuffers = codec.getInputBuffers();
         int index;
 
-        while (true) {
+        while (!Thread.interrupted()) {
             Log.d(TAG, "Queueing input buffer");
             index = codec.dequeueInputBuffer(10000);
             if (index < 0) continue;

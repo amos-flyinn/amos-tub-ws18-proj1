@@ -50,6 +50,7 @@
         <activity
             android:name=".ConnectedActivity"
             android:label="@string/title_activity_connected"
+            android:screenOrientation="landscape"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
     </application>

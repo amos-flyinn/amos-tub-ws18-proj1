@@ -5,16 +5,17 @@ import android.util.Log;
 
 public class OutputQueuer implements Runnable {
     private static final String TAG = "OutputQueuer";
-    MediaCodec codec;
+    private MediaCodec codec;
 
-    public OutputQueuer(MediaCodec codec) {
+    OutputQueuer(MediaCodec codec) {
         this.codec = codec;
     }
+
     @Override
     public void run() {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int index;
-        while (true) {
+        while (!Thread.interrupted()) {
             index = codec.dequeueOutputBuffer(info, 10000);
             if (index >= 0)
             {

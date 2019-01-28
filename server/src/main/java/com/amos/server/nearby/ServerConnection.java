@@ -133,7 +133,7 @@ public class ServerConnection implements PayloadHandling {
     /**
      * Clears all servers map data as well as serverName/serverID and starts discovery
      */
-    public void discover() {
+    void discover() {
         ConnectCallback callback = new ConnectCallback() {
             @Override
             public void success(String message) {
@@ -146,7 +146,7 @@ public class ServerConnection implements PayloadHandling {
         discover(callback, buildEndpointDiscoveryCallback("", callback));
     }
 
-    public void discover(ConnectCallback callback, EndpointDiscoveryCallback discoveryCallback) {
+    private void discover(ConnectCallback callback, EndpointDiscoveryCallback discoveryCallback) {
         if (connectionsClient == null) {
             Log.e(TAG, "connectionsClient is null, cannot discover.");
             return;
@@ -158,20 +158,18 @@ public class ServerConnection implements PayloadHandling {
 
         connectionsClient.startDiscovery("com.amos.server", discoveryCallback,
                 discoveryOptions)
-                .addOnSuccessListener((Void unused) -> {
-                    Log.e(TAG, "Success discover");
-                })
+                .addOnSuccessListener((Void unused) -> Log.e(TAG, "Success discover"))
                 .addOnFailureListener((Exception e) -> {
                     Log.e(TAG, "Failed to discover");
                     callback.failure("Failed to discover");
                 });
     }
 
-    public List<String> getClients() {
+    List<String> getClients() {
         return clients;
     }
 
-    public String getClientID() {
+    String getClientID() {
         return clientID;
     }
 
@@ -195,7 +193,7 @@ public class ServerConnection implements PayloadHandling {
      * @param code     Suffix of connection target
      * @param callback Callbacks on connection success and failure
      */
-    public void connectTo(String code, ConnectCallback callback) {
+    void connectTo(String code, ConnectCallback callback) {
         if (connectionsClient == null) {
             Log.e(TAG, "connectionsClient is null, cannot discover.");
             return;
