@@ -24,6 +24,9 @@ public class MediaDecoderController implements HandlePayload {
     private Surface surface = null;
     private InputStream input = null;
 
+    private Thread inputThread, outputThread;
+    private MediaCodec codec;
+
     private static final String TAG = "MediaDecoderController";
 
     private MediaDecoderController() {
@@ -38,6 +41,10 @@ public class MediaDecoderController implements HandlePayload {
         run();
     }
 
+    /**
+     * Test function enabling us to read a raw h264 tcp stream.
+     */
+    @SuppressWarnings("unused")
     public void network() {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -50,19 +57,22 @@ public class MediaDecoderController implements HandlePayload {
         }
     }
 
-    public void run() {
+    private void run() {
         if (surface == null) return;
         if (input == null) return;
         try {
-            MediaCodec codec = MediaCodec.createDecoderByType("video/avc");
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", 480, 800);
+            codec = MediaCodec.createDecoderByType("video/avc");
+            MediaFormat format = MediaFormat.createVideoFormat("video/avc", 800, 480);
+            format.setInteger("KEY_ROTATION", 180);
             codec.configure(format, surface, null, 0);
             codec.start();
             InputQueuer inputQueuer = new InputQueuer(codec, input);
             OutputQueuer outputQueuer = new OutputQueuer(codec);
-            new Thread(inputQueuer).start();
-            new Thread(outputQueuer).start();
-        } catch (IOException e) {}
+            inputThread = new Thread(inputQueuer);
+            outputThread = new Thread(outputQueuer);
+            inputThread.start();
+            outputThread.start();
+        } catch (IOException ignored) {}
     }
 
     @Override
@@ -75,5 +85,28 @@ public class MediaDecoderController implements HandlePayload {
         }
         input = stream.asInputStream();
         run();
+    }
+
+    public void reset(){
+        if (inputThread != null) {
+            try {
+                inputThread.interrupt();
+                inputThread.join();
+            } catch (InterruptedException ignored) {}
+        }
+        if (outputThread != null) {
+            try {
+                outputThread.interrupt();
+                outputThread.join();
+            } catch (InterruptedException ignored) {}
+        }
+        if (input != null) {
+            try {
+                input.close();
+            } catch (IOException ignored){} finally {input = null;};
+        }
+        codec.stop();
+        codec.reset();
+        surface = null;
     }
 }

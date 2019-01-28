@@ -42,7 +42,9 @@ public class ConnectToClientActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_to_client);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         EditText text = findViewById(R.id.connect_editText);
+
 
         checkPermissions();
         // Ensure survival for life of entire application

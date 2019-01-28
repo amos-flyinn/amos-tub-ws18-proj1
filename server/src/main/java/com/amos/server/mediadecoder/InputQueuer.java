@@ -1,7 +1,6 @@
 package com.amos.server.mediadecoder;
 
 import android.media.MediaCodec;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +18,7 @@ public class InputQueuer implements Runnable {
     private long timestamp;
     private int size;
 
-    public InputQueuer(MediaCodec codec, InputStream stream) {
+    InputQueuer(MediaCodec codec, InputStream stream) {
         this.codec = codec;
         this.stream = stream;
     }
@@ -27,12 +26,12 @@ public class InputQueuer implements Runnable {
     private void readHeader() {
         int result = -1;
         int num = 0;
-        Log.d(TAG, "Reading header");
+        // Log.d(TAG, "Reading header");
         header.rewind();
         while (num < 12) {
             try {
                 result = this.stream.read();
-            } catch(IOException e) {}
+            } catch(IOException ignored) {}
             if (result < 0) continue;
             header.put((byte)result);
             num++;
@@ -40,14 +39,14 @@ public class InputQueuer implements Runnable {
         header.rewind();
         timestamp = header.getLong();
         size = header.getInt();
-        Log.d(TAG, String.format("Read header: %d", size));
+        // Log.d(TAG, String.format("Read header: %d", size));
     }
 
-    public void readData(){
+    private void readData(){
         int offset = 0;
         int remaining = size;
         int read;
-        Log.d(TAG, "Reading data");
+        // Log.d(TAG, "Reading data");
         while (remaining > 0) {
             try {
                 read = stream.read(buffer, offset, remaining);
@@ -55,18 +54,19 @@ public class InputQueuer implements Runnable {
                     offset += read;
                     remaining -= read;
                 }
-            } catch (IOException e) {}
+            } catch (IOException ignored) {}
         }
-        Log.d(TAG, "Finished reading data");
+        // Log.d(TAG, "Finished reading data");
     }
 
     @Override
     public void run() {
+        //noinspection deprecation
         ByteBuffer[] inputBuffers = codec.getInputBuffers();
         int index;
 
-        while (true) {
-            Log.d(TAG, "Queueing input buffer");
+        while (!Thread.interrupted()) {
+            // Log.d(TAG, "Queueing input buffer");
             index = codec.dequeueInputBuffer(10000);
             if (index < 0) continue;
             ByteBuffer inputBuffer = inputBuffers[index];

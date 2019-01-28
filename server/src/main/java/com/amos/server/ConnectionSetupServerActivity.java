@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ConnectCallback;
 import com.amos.server.nearby.ServerConnection;
 
@@ -26,6 +27,8 @@ public class ConnectionSetupServerActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_setup);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
         progressText = findViewById(R.id.progressText);
 
         connection = ServerConnection.getInstance();
@@ -69,6 +72,7 @@ public class ConnectionSetupServerActivity extends Activity {
                 Log.d(TAG, "Failed to connect to " + name);
                 // toast(String.format("Failed to connect to %s", name));
                 toast(message);
+                MediaDecoderController.getInstance().reset();
                 toInitialActivity();
             }
         });
