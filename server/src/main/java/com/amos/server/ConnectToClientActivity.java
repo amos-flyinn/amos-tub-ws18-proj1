@@ -113,6 +113,7 @@ public class ConnectToClientActivity extends Activity {
     @Override
     protected void onDestroy() {
         connection.abort();
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
         super.onDestroy();
     }
 
@@ -128,6 +129,8 @@ public class ConnectToClientActivity extends Activity {
             }
         } else {
             Log.w(TAG, "Could not check permissions due to version");
+            toast(getString(R.string.nearby_permissions_version));
+            closeApp();
         }
     }
 
@@ -208,7 +211,12 @@ public class ConnectToClientActivity extends Activity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
-        finish();
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+
+        // have to rework this
+        this.finishAffinity();
+        finishAndRemoveTask();
+        System.exit(0);
         /*
         Log.d(TAG, "Closing server via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
@@ -222,7 +230,8 @@ public class ConnectToClientActivity extends Activity {
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
-        finish();
+        // have to rework this
+        closeApp();
         /*
         Log.d(TAG, "Restarting server via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);

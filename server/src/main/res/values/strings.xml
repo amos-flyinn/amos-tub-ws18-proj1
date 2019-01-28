@@ -5,6 +5,7 @@
 
     <string name="thread_button_label">Manually start event server thread</string>
 
+    <string name="nearby_permissions_version">Cannot check permissions due to Android API version.</string>
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>

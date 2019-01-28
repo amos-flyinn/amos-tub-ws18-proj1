@@ -127,7 +127,8 @@ class NearbyServer {
     public void stop() {
         connectionsClient.stopAllEndpoints();
         Log.d(TAG, "Stopped all endpoints");
-        nearbyService.setServiceState(NearbyState.STOPPED, "Stopped all endpoints");
+        nearbyService.setServiceState(NearbyState.STOPPED,
+                nearbyService.getString(R.string.notification_stopped));
     }
 
     /**
@@ -205,12 +206,13 @@ class NearbyServer {
                 public void onDisconnected(String endpointId) {
                     // disconnected from client
                     Log.i(TAG, "Disconnected from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.ADVERTISING,
-                            nearbyService.getString(R.string.notification_advertising));
 
                     (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
                             nearbyService.getApplicationContext(),
                             R.string.nearby_disconnected, Toast.LENGTH_LONG).show());
+
+                    nearbyService.setServiceState(NearbyState.STOPPED,
+                            nearbyService.getString(R.string.notification_stopped));
                     nearbyService.sendBroadcastMessage("restart");
                 }
             };

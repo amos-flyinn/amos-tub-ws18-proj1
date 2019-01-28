@@ -4,6 +4,7 @@
     <string name="title_activity_build_info">BuildInfoActivity</string>
     
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
+    <string name="nearby_permissions_version">Cannot check permissions due to Android API version.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_error">Could not start searching for connections.</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>
@@ -17,6 +18,7 @@
     <string name="notification_advertising">Searching for FlyInn servers.</string>
     <string name="notification_connecting">Connecting to FlyInn server.</string>
     <string name="notification_connected">Connected to server.</string>
+    <string name="notification_stopped">Stopped all networking.</string>
     <string name="notification_finish">Application shutting down.</string>
 
     <string name="flyinn_name">FlyInn-</string>

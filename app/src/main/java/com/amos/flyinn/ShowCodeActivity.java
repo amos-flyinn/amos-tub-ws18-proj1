@@ -1,6 +1,7 @@
 package com.amos.flyinn;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,10 @@ public class ShowCodeActivity extends AppCompatActivity {
     private static final String TAG = "showCode";
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
+
+    public static final String[] STORAGE_PERMISSIONS = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
         @Override
@@ -88,24 +93,10 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        display = findViewById(R.id.textView2);
 
-
-        if (!hasPermissions(NearbyService.getRequiredPermissions())) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
-            } else {
-                Log.w(TAG, "Could not check permissions due to version");
-            }
-        }
-
-        String[] perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (!hasPermissions(perms)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
-            } else {
-                Log.w(TAG, "Could not check permissions due to version");
-            }
-        }
+        checkPermissions(STORAGE_PERMISSIONS);
+        checkPermissions(NearbyService.getRequiredPermissions());
 
         try {
             createADBService();
@@ -153,7 +144,21 @@ public class ShowCodeActivity extends AppCompatActivity {
             Log.d(TAG, e.toString());
             Log.i(TAG, "Receiver was already unregistered.");
         }
+
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
         super.onDestroy();
+    }
+
+    private void checkPermissions(String[] permissions) {
+        if (!hasPermissions(permissions)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(permissions, REQUEST_CODE_REQUIRED_PERMISSIONS);
+            } else {
+                Log.w(TAG, "Could not check permissions due to version");
+                Toast.makeText(this, R.string.nearby_permissions_version, Toast.LENGTH_LONG).show();
+                closeApp();
+            }
+        }
     }
 
     /**
@@ -225,7 +230,12 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Closes the app (kills all activities)
      */
     public void closeApp() {
-        finish();
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+
+        // have to rework this
+        this.finishAffinity();
+        finishAndRemoveTask();
+        System.exit(0);
         /*
         Log.d(TAG, "Closing app via closeApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
@@ -239,7 +249,8 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Finishes all activities and then restarts the app
      */
     public void restartApp() {
-        finish();
+        // have to rework this
+        closeApp();
         /*
         Log.d(TAG, "Restarting app via restartApp function.");
         Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
