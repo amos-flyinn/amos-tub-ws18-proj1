@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
@@ -16,6 +17,7 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -62,11 +64,12 @@ public class ConnectionSetupActivity extends Activity {
         getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
         mScreenDensity = metrics.densityDpi;
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, REQUEST_PERMISSIONS);
         } else {
             if (mMediaProjection == null) {
-                startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
+                startActivityForResult(videoIntent(), REQUEST_CODE);
                 return;
             }
         }
@@ -85,11 +88,20 @@ public class ConnectionSetupActivity extends Activity {
         mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
         mMediaProjection.registerCallback(mMediaProjectionCallback, null);
         if (mMediaProjection == null) {
-            startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
+            startActivityForResult(videoIntent(), REQUEST_CODE);
             return;
         }
         startScreenShare();
     }
+
+    Intent videoIntent() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Intent mOptionIntent = mProjectionManager.createScreenCaptureIntent();
+        mOptionIntent.putExtra("return-data", true);
+        mOptionIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        return mOptionIntent;
+    }
+
 
     public void startScreenShare() {
         initRecorder();
@@ -123,12 +135,17 @@ public class ConnectionSetupActivity extends Activity {
     private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        int w = 480, h = 800;
+        int w = 400, h = 240;
         String MIME_TYPE = "video/avc";
         try {
             PipedInputStream stream = new PipedInputStream();
             PipedOutputStream data2 = new PipedOutputStream(stream);
             BufferedOutputStream data = new BufferedOutputStream(data2);
+            {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+            }
+//            OutputStream data = new Socket("192.168.2.121", 5551).getOutputStream();
             VideoStreamSingleton.getInstance().os = stream;
             Intent intent = NearbyService.createNearbyIntent(NearbyService.VIDEO_START, this);
             startService(intent);
@@ -146,10 +163,13 @@ public class ConnectionSetupActivity extends Activity {
 //            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
             codec = MediaCodec.createEncoderByType(MIME_TYPE);
             format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, /*videoCapabilities.getBitrateRange().getUpper()*/ 1_000_000);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, 200_000);
             format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
             format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
+            format.setInteger(MediaFormat.KEY_ROTATION, 90);
+            format.setInteger("rotation-degrees", 90);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 format.setInteger(MediaFormat.KEY_PRIORITY, 0);
             }
@@ -234,7 +254,6 @@ public class ConnectionSetupActivity extends Activity {
         codec.release();
         si.release();
         // If used: mMediaRecorder object cannot be reused again
-        //mMediaRecorder.release();
         destroyMediaProjection();
     }
 

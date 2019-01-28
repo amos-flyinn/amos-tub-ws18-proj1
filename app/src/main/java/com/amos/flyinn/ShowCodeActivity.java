@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amos.flyinn.nearbyservice.NearbyService;
+import com.amos.flyinn.service.FPSOverlay;
 import com.amos.flyinn.summoner.Daemon;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -63,6 +65,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         if (!hasPermissions(perms) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
         }
+        checkPermissionOverlay();
 
         try {
             createADBService();
@@ -73,6 +76,20 @@ public class ShowCodeActivity extends AppCompatActivity {
         nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
         display.setText(nameNum);
         setService();
+    }
+
+    public static int OVERLAY_PERMISSION_REQ_CODE = 1678;
+
+    public void checkPermissionOverlay() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intentSettings = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivityForResult(intentSettings, OVERLAY_PERMISSION_REQ_CODE);
+            }
+        }
+
+        Intent svc = new Intent(this, FPSOverlay.class);
+        startService(svc);
     }
 
     protected Daemon createADBService() throws Exception {
