@@ -43,6 +43,8 @@ public class WebRTCActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webrtc);
 
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
         mProjectionManager = (MediaProjectionManager) getSystemService
                 (Context.MEDIA_PROJECTION_SERVICE);
 

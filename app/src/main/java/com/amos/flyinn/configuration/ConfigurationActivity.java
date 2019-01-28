@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 
+import com.amos.flyinn.ExceptionHandler;
 import com.amos.flyinn.R;
 
 
@@ -25,6 +26,9 @@ public class ConfigurationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuration);
+
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
 
         prefs = this.getSharedPreferences("com.amos.flyinn", Context.MODE_PRIVATE);
 

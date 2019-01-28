@@ -169,6 +169,8 @@ public abstract class ClientConnAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+
         clientName = generateName();
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&

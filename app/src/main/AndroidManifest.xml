@@ -38,6 +38,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".errorScreen.ErrorActivity" />
         <activity
             android:name=".WebRTCActivity"
             android:label="WEBRTC Example"
@@ -54,19 +55,25 @@
         <activity android:name=".ShowCodeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service android:name=".summoner.ADBService" android:enabled="true" android:exported="true"/>
-        <service android:name=".nearbyservice.NearbyService" android:enabled="true" android:exported="true"/>
+        <service
+            android:name=".summoner.ADBService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".nearbyservice.NearbyService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity android:name=".ConnectionSetupActivity" />
-        <activity android:name=".ShowCodeConnAuth">
-        </activity>
+        <activity android:name=".ShowCodeConnAuth" />
         <activity
             android:name=".configuration.ConfigurationActivity"
-            android:label="@string/title_activity_configuration">
-        </activity>
+            android:label="@string/title_activity_configuration" />
     </application>
 
 </manifest>

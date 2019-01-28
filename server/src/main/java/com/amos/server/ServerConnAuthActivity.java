@@ -223,6 +223,7 @@ public class ServerConnAuthActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
         if (!hasPermissions(this, REQUIRED_PERMISSIONS) &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
