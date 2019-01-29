@@ -108,17 +108,29 @@ public class NearbyService extends IntentService {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
-                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentTitle(String.format("%s %s", getString(R.string.notification_name), nearbyCode))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
 
+        /*
+        // this code created new instances of the activities
         if (target != null) {
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(target);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             b.setContentIntent(pendingIntent);
         }
+        */
+
+        // open FlyInn when clicking on notification
+        Intent intent = new Intent(this, ShowCodeActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                intent, 0);
+        b.setContentIntent(pendingIntent);
 
         return (b.build());
     }

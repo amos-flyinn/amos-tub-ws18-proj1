@@ -116,7 +116,7 @@ public class ServerConnection {
                 .addOnSuccessListener((Void unused) -> {
                     // started searching for servers successfully
                     Log.i(TAG, "Discovering connections on " + serverName);
-                    toast(R.string.nearby_discovering_success);
+                    // toast(R.string.nearby_discovering_success);
                     notification(R.string.notification_discovery);
                 })
                 .addOnFailureListener((Exception e) -> {

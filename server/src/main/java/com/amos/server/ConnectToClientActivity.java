@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -208,10 +209,19 @@ public class ConnectToClientActivity extends Activity {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
-                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentTitle(getString(R.string.notification_name))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
+
+        // open FlyInn when clicking on notification
+        Intent intent = new Intent(this, ConnectToClientActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                intent, 0);
+        b.setContentIntent(pendingIntent);
 
         NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mgr.notify(NOTIFY_ID, b.build());
