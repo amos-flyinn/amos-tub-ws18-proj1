@@ -8,6 +8,7 @@ import java.io.Serializable;
  *
  * It helps to save the information about sub events with different pointers
  */
+@SuppressWarnings("WeakerAccess")
 public class SubTouchEvent implements Serializable {
 
 
