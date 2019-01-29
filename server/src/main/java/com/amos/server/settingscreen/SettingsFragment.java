@@ -1,4 +1,4 @@
-package com.amos.server.SettingsScreen;
+package com.amos.server.settingscreen;
 
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
