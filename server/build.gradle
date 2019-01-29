@@ -7,14 +7,14 @@ android {
             output.assemble.dependsOn lintTask
         }
     }
-    // lintOptions {
-    //     htmlReport true
-    //     htmlOutput file("lint-report.html")
-    //     textReport true
-    //     textOutput 'stdout'
-    //     abortOnError true
-    //     warningsAsErrors false
-    // }
+    lintOptions {
+        htmlReport true
+        htmlOutput file("lint-report.html")
+        textReport true
+        textOutput 'stdout'
+        abortOnError true
+        warningsAsErrors false
+    }
 
     compileSdkVersion 28
 
@@ -108,12 +108,4 @@ task prePreBuild {
     }
 }
 
-//task postBuild {
-//    exec {
-//        workingDir '..'
-//        commandLine('bash', 'android_things_kill_launcher.sh')
-//    }
-//}
-
 preBuild.dependsOn prePreBuild
-//build.finalizedBy(postBuild)
