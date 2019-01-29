@@ -40,10 +40,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".errorScreen.ErrorActivity" />
         <activity
-            android:name=".WebRTCActivity"
-            android:label="WEBRTC Example"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity
             android:name=".ADBActivity"
             android:label="@string/title_activity_adb"
             android:theme="@style/AppTheme.NoActionBar" />
