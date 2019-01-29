@@ -1,4 +1,4 @@
-package com.amos.server.errorScreen;
+package com.amos.server.errorscreen;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -31,8 +31,8 @@ public class ConnectionSetupServerActivity extends Activity {
     private ServerConnection connection;
     private EventWriter writer;
 
-    TextView connectionInfo;
-    SurfaceViewRenderer view;
+    private TextView connectionInfo;
+    private SurfaceViewRenderer view;
 
     private static final String TAG = "ConnectionSetup";
 

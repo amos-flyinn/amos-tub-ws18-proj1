@@ -1,7 +1,6 @@
 package com.amos.server.webrtc;
 
 import com.amos.server.signaling.WebServer;
-import com.amos.server.webrtc.IPeer;
 
 import org.java_websocket.WebSocket;
 import org.json.JSONException;
@@ -12,8 +11,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
-
-import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
 

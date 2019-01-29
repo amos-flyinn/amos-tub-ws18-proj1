@@ -1,12 +1,10 @@
 package com.amos.flyinn;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.media.projection.MediaProjectionManager;
 import android.net.wifi.WifiManager;
@@ -14,8 +12,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,8 +26,6 @@ import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.Daemon;
 import com.amos.flyinn.webrtc.PeerWrapper;
 import com.amos.flyinn.webrtc.SetupStates;
-import com.amos.flyinn.wificonnector.WifiConnectorSingleton;
-import com.amos.flyinn.wificonnector.WifiStateMachine;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
@@ -56,9 +50,6 @@ public class ConnectionSetupActivity extends AppCompatActivity {
     private Button switchToHomeScreenButton;
     private Button closeConnectionButton;
     private TextView connectedMessage;
-    TextView connectionStatus;
-    Button adbButton;
-    Daemon adbDaemon;
     private MediaProjectionManager mProjectionManager;
     private PeerConnection localConnection;
     private ClientSocket clientSocket;
