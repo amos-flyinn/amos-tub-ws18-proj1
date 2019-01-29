@@ -18,6 +18,7 @@
     <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
     <string name="nearby_disconnected">Connection closed. Restarting.</string>
 
+    <string name="notification_name">FlyInn server</string>
     <string name="notification_initialising">Initialising application.</string>
     <string name="notification_discovery">Open to FlyInn clients.</string>
     <string name="notification_connected">Connected to client.</string>

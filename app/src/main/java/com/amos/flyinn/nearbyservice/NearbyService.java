@@ -63,10 +63,11 @@ public class NearbyService extends IntentService {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        startForeground(FOREGROUND_ID, buildForegroundNotification(
-                getString(R.string.notification_initialising), null));
         Log.d(TAG, "Creating channel");
         createChannel();
+        startForeground(FOREGROUND_ID, buildForegroundNotification(
+                getString(R.string.notification_initialising), null));
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -85,10 +86,11 @@ public class NearbyService extends IntentService {
                 mgr.getNotificationChannel(CHANNEL_ID) == null) {
 
             NotificationChannel c = new NotificationChannel(CHANNEL_ID,
-                    "flyinn_channel", NotificationManager.IMPORTANCE_HIGH);
+                    "flyinn_channel", NotificationManager.IMPORTANCE_LOW);
 
             c.enableLights(true);
             c.setLightColor(0xFFFF0000);
+            c.enableVibration(false);
 
             mgr.createNotificationChannel(c);
         }
@@ -106,8 +108,8 @@ public class NearbyService extends IntentService {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
-                .setPriority(NotificationCompat.PRIORITY_MIN) // no pop-up
-                .setContentTitle(String.format("Nearby service %s", nearbyCode))
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setContentTitle(String.format("%s %s", getString(R.string.notification_name), nearbyCode))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
 

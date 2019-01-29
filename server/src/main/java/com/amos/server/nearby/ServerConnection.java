@@ -66,7 +66,7 @@ public class ServerConnection {
     /**
      * Tag for logging purposes.
      */
-    private static final String TAG = "NearbyServer";
+    private static final String TAG = "NearbyServerConnection";
 
     /**
      * Connection manager for the connection to FlyInn clients.

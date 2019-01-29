@@ -3,12 +3,16 @@ package com.amos.flyinn;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -45,16 +49,24 @@ public class ShowCodeActivity extends AppCompatActivity {
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            /*
-            if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
-                Log.i(TAG, "Received exit message via BroadcastReceiver.");
-                closeApp();
-            } else if (intent.getBooleanExtra("com.amos.flyinn.restart", false)) {
-                Log.i(TAG, "Received restart message via BroadcastReceiver.");
-                restartApp();
+            if (intent.getExtras() != null) {
+                if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
+                    Log.i(TAG, "Received exit message via BroadcastReceiver.");
+                    closeApp();
+                } else if (intent.getBooleanExtra("com.amos.flyinn.restart", false)) {
+                    Log.i(TAG, "Received restart message via BroadcastReceiver.");
+                    restartApp();
+                }
             }
-            */
         }
+    };
+
+    private ServiceConnection myConnection = new ServiceConnection() {
+        public void onServiceConnected (ComponentName className, IBinder binder) {
+            ((KillNotificationService.KillBinder) binder).service.startService(
+                    new Intent(ShowCodeActivity.this, KillNotificationService.class));
+        }
+        public void onServiceDisconnected(ComponentName className) {}
     };
 
     /**
@@ -74,25 +86,10 @@ public class ShowCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
-        // close or restart application}
-        if (getIntent().getExtras() != null) {
-            if (getIntent().getBooleanExtra("exit", false)) {
-                Log.d(TAG, "Intent contains exit command.");
-                finish();
-                return;
-            }
-            if (getIntent().getBooleanExtra("restart", false)) {
-                Log.d(TAG, "Intent contains restart command.");
-                recreate();
-                return;
-            }
-        }
-
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
                 new IntentFilter("msg-flyinn"));
-                */
-
+        bindService(new Intent(ShowCodeActivity.this,
+                        KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
@@ -141,11 +138,19 @@ public class ShowCodeActivity extends AppCompatActivity {
     protected void onDestroy() {
         Intent intent = NearbyService.createNearbyIntent("", this);
         stopService(intent);
+
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(msgReceiver);
         } catch (Exception e) {
             Log.d(TAG, e.toString());
             Log.i(TAG, "Receiver was already unregistered.");
+        }
+
+        try {
+            unbindService(myConnection);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+            Log.i(TAG, "KillNotificationService was already unbound.");
         }
 
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
@@ -236,15 +241,8 @@ public class ShowCodeActivity extends AppCompatActivity {
         Log.d(TAG, "Closing app via closeApp function.");
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
 
-        // have to rework this
         this.finishAffinity();
         finishAndRemoveTask();
-        /*
-        Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("exit", true);
-        startActivity(intent);
-        */
     }
 
     /**
@@ -252,13 +250,9 @@ public class ShowCodeActivity extends AppCompatActivity {
      */
     public void restartApp() {
         Log.d(TAG, "Restarting app via restartApp function.");
-        // have to rework this
-        closeApp();
-        /*
-        Intent intent = new Intent(getApplicationContext(), ShowCodeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("restart", true);
-        startActivity(intent);
-        */
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 }

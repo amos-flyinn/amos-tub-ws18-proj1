@@ -2,12 +2,16 @@ package com.amos.server;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -42,33 +46,28 @@ public class ConnectToClientActivity extends Activity {
     private ServerConnection connection = ServerConnection.getInstance();
 
     /** Tag for logging purposes. */
-    private static final String TAG = "ServerNearbyConnection";
+    private static final String TAG = "ServerConnectToClient";
+
+    private ServiceConnection myConnection = new ServiceConnection() {
+        public void onServiceConnected (ComponentName className, IBinder binder) {
+            ((KillNotificationService.KillBinder) binder).service.startService(
+                    new Intent(ConnectToClientActivity.this, KillNotificationService.class));
+        }
+        public void onServiceDisconnected(ComponentName className) {}
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
-
-        // close or restart application
-        if (getIntent().getExtras() != null) {
-            if (getIntent().getBooleanExtra("exit", false)) {
-                Log.d(TAG, "Intent contains exit command.");
-                finish();
-                return;
-            }
-            if (getIntent().getBooleanExtra("restart", false)) {
-                Log.d(TAG, "Intent contains restart command.");
-                recreate();
-                return;
-            }
-        }
-        */
+        bindService(new Intent(ConnectToClientActivity.this,
+                KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
 
         setContentView(R.layout.activity_connect_to_client);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         EditText text = findViewById(R.id.connect_editText);
 
+        createChannel();
         notification(getString(R.string.notification_initialising));
         mToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
         connection.setActivity(this);
@@ -116,6 +115,14 @@ public class ConnectToClientActivity extends Activity {
     @Override
     protected void onDestroy() {
         connection.abort();
+
+        try {
+            unbindService(myConnection);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+            Log.i(TAG, "KillNotificationService was already unbound.");
+        }
+
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
         super.onDestroy();
     }
@@ -201,13 +208,30 @@ public class ConnectToClientActivity extends Activity {
                 new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
-                .setPriority(NotificationCompat.PRIORITY_MIN) // no pop-up
-                .setContentTitle("Nearby server")
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setContentTitle(getString(R.string.notification_name))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
 
         NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mgr.notify(NOTIFY_ID, b.build());
+    }
+
+    private void createChannel() {
+        NotificationManager mgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                mgr.getNotificationChannel(CHANNEL_ID) == null) {
+
+            NotificationChannel c = new NotificationChannel(CHANNEL_ID,
+                    "flyinn_channel", NotificationManager.IMPORTANCE_LOW);
+
+            c.enableLights(true);
+            c.setLightColor(0xFFFF0000);
+            c.enableVibration(false);
+
+            mgr.createNotificationChannel(c);
+        }
     }
 
     /**
@@ -217,15 +241,8 @@ public class ConnectToClientActivity extends Activity {
         Log.d(TAG, "Closing server via closeApp function.");
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
 
-        // have to rework this
         this.finishAffinity();
         finishAndRemoveTask();
-        /*
-        Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("exit", true);
-        startActivity(intent);
-        */
     }
 
     /**
@@ -233,13 +250,9 @@ public class ConnectToClientActivity extends Activity {
      */
     public void restartApp() {
         Log.d(TAG, "Restarting server via restartApp function.");
-        // have to rework this
-        closeApp();
-        /*
-        Intent intent = new Intent(getApplicationContext(), ConnectToClientActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("restart", true);
-        startActivity(intent);
-        */
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 }
