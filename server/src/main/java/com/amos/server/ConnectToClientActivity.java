@@ -54,7 +54,9 @@ public class ConnectToClientActivity extends Activity {
             ((KillNotificationService.KillBinder) binder).service.startService(
                     new Intent(ConnectToClientActivity.this, KillNotificationService.class));
         }
-        public void onServiceDisconnected(ComponentName className) {}
+        public void onServiceDisconnected(ComponentName className) {
+            // empty method
+        }
     };
 
     @Override

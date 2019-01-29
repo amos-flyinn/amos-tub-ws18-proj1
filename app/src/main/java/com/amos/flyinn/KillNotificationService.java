@@ -13,6 +13,10 @@ import android.util.Log;
  */
 public class KillNotificationService extends Service {
 
+    private static final String TAG = "KillNotificationService";
+
+    private final IBinder myBinder = new KillBinder(this);
+
     /**
      * Binder with a service as class variable
      */
@@ -25,10 +29,6 @@ public class KillNotificationService extends Service {
         }
 
     }
-
-    private static final String TAG = "KillNotificationService";
-
-    private final IBinder myBinder = new KillBinder(this);
 
     /**
      * Returns a KillBinder with this service as its instance's service

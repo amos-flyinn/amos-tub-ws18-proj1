@@ -66,7 +66,9 @@ public class ShowCodeActivity extends AppCompatActivity {
             ((KillNotificationService.KillBinder) binder).service.startService(
                     new Intent(ShowCodeActivity.this, KillNotificationService.class));
         }
-        public void onServiceDisconnected(ComponentName className) {}
+        public void onServiceDisconnected(ComponentName className) {
+            // empty method
+        }
     };
 
     /**
