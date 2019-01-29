@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Process;
 
 
-import com.amos.server.errorScreen.ErrorActivity;
+import com.amos.server.errorscreen.ErrorActivity;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

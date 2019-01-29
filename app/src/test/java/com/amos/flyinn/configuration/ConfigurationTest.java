@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.amos.flyinn.R;
-import com.amos.flyinn.ShowCodeConnAuth;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

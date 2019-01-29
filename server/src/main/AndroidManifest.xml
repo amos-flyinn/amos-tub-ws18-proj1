@@ -58,7 +58,6 @@
             android:screenOrientation="landscape"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".errorScreen.ErrorActivity" />
     </application>
 
 </manifest>
