@@ -184,7 +184,6 @@ public abstract class ClientConnAuthActivity extends Activity {
 
         Log.i(CONN_AUTH_TAG, "Current name is: " + clientName);
         connectionsClient = Nearby.getConnectionsClient(this);
-        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
         startAdvertising();
     }
