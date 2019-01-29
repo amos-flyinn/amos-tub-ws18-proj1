@@ -1,5 +1,6 @@
 ![FlyInn Logo](https://i.ibb.co/5nnFp9J/black.png)  
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ed6d8f59b86944b9b80775de6a8028c1)](https://app.codacy.com/app/lvap/amos-tub-ws18-proj1?utm_source=github.com&utm_medium=referral&utm_content=amos-flyinn/amos-tub-ws18-proj1&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/amos-flyinn/amos-tub-ws18-proj1.svg?branch=master)](https://travis-ci.com/amos-flyinn/amos-tub-ws18-proj1) [![MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/amos-flyinn/amos-tub-ws18-proj1/blob/master/LICENSE)
 
 ## Project Description
