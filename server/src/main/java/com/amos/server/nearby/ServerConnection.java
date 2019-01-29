@@ -33,6 +33,7 @@ import java.util.List;
  * <p>
  * The server needs to send input events to the client and correctly receive the recorded screen.
  */
+@SuppressWarnings("WeakerAccess")
 public class ServerConnection implements PayloadHandling {
 
     private static final ServerConnection ourInstance = new ServerConnection();
@@ -73,11 +74,11 @@ public class ServerConnection implements PayloadHandling {
      */
     private ConnectionsClient connectionsClient;
 
+    private SparseArray<HandlePayload> handleMap = new SparseArray<>();
+
     public static ServerConnection getInstance() {
         return ourInstance;
     }
-
-    private SparseArray<HandlePayload> handleMap = new SparseArray<>();
 
     /**
      * Create a new server connection.
@@ -121,6 +122,9 @@ public class ServerConnection implements PayloadHandling {
                 case Payload.Type.STREAM:
                     Log.d(TAG, "Received unregistered stream");
                     break;
+                default:
+                    Log.d(TAG, "Unknown payload type received");
+                    break;
             }
         }
     }
@@ -130,23 +134,13 @@ public class ServerConnection implements PayloadHandling {
         Log.d(TAG, String.format("Update for payload %d", update.getPayloadId()));
     }
 
+
     /**
-     * Clears all servers map data as well as serverName/serverID and starts discovery
+     * Discover new endpoints
+     * @param callback Callbacks for success / Failure in discovery
+     * @param discoveryCallback Discovery callbacks to act on discovered entpoints
      */
-    void discover() {
-        ConnectCallback callback = new ConnectCallback() {
-            @Override
-            public void success(String message) {
-            }
-
-            @Override
-            public void failure(String message) {
-            }
-        };
-        discover(callback, buildEndpointDiscoveryCallback("", callback));
-    }
-
-    private void discover(ConnectCallback callback, EndpointDiscoveryCallback discoveryCallback) {
+    public void discover(ConnectCallback callback, EndpointDiscoveryCallback discoveryCallback) {
         if (connectionsClient == null) {
             Log.e(TAG, "connectionsClient is null, cannot discover.");
             return;
@@ -165,14 +159,19 @@ public class ServerConnection implements PayloadHandling {
                 });
     }
 
-    List<String> getClients() {
+    public List<String> getClients() {
         return clients;
     }
 
-    String getClientID() {
+    public String getClientID() {
         return clientID;
     }
 
+    /**
+     * Combined attempt at connecting or initiating discovery if failed.
+     * @param code Suffix of endpoint name to connect to
+     * @param callback Callbacks for success/failure
+     */
     public void discoverConnect(String code, ConnectCallback callback) {
         connectTo(code, new ConnectCallback() {
             @Override
@@ -193,7 +192,7 @@ public class ServerConnection implements PayloadHandling {
      * @param code     Suffix of connection target
      * @param callback Callbacks on connection success and failure
      */
-    void connectTo(String code, ConnectCallback callback) {
+    public void connectTo(String code, ConnectCallback callback) {
         if (connectionsClient == null) {
             Log.e(TAG, "connectionsClient is null, cannot discover.");
             return;
@@ -257,7 +256,7 @@ public class ServerConnection implements PayloadHandling {
      * Handling of discovered endpoints (servers). Adds new endpoints to servers data maps/list,
      * and removes lost endpoints.
      */
-    private EndpointDiscoveryCallback buildEndpointDiscoveryCallback(String name, ConnectCallback callback) {
+    public EndpointDiscoveryCallback buildEndpointDiscoveryCallback(String name, ConnectCallback callback) {
         return new EndpointDiscoveryCallback() {
             @Override
             public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo info) {

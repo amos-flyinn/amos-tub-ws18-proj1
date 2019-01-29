@@ -1,6 +1,7 @@
 package com.amos.server.mediadecoder;
 
 import android.media.MediaCodec;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +10,7 @@ import java.nio.ByteBuffer;
 public class InputQueuer implements Runnable {
 
     private static final String TAG = "InputQueuer";
+    private static final boolean DEBUG = false;
     private MediaCodec codec;
     private InputStream stream;
 
@@ -26,7 +28,7 @@ public class InputQueuer implements Runnable {
     private void readHeader() {
         int result = -1;
         int num = 0;
-        // Log.d(TAG, "Reading header");
+        if (DEBUG) Log.d(TAG, "Reading header");
         header.rewind();
         while (num < 12) {
             try {
@@ -46,7 +48,7 @@ public class InputQueuer implements Runnable {
         int offset = 0;
         int remaining = size;
         int read;
-        // Log.d(TAG, "Reading data");
+        if (DEBUG) Log.d(TAG, "Reading data");
         while (remaining > 0) {
             try {
                 read = stream.read(buffer, offset, remaining);
@@ -56,7 +58,7 @@ public class InputQueuer implements Runnable {
                 }
             } catch (IOException ignored) {}
         }
-        // Log.d(TAG, "Finished reading data");
+        if (DEBUG) Log.d(TAG, "Finished reading data");
     }
 
     @Override
@@ -66,7 +68,7 @@ public class InputQueuer implements Runnable {
         int index;
 
         while (!Thread.interrupted()) {
-            // Log.d(TAG, "Queueing input buffer");
+            if (DEBUG) Log.d(TAG, "Queueing input buffer");
             index = codec.dequeueInputBuffer(10000);
             if (index < 0) continue;
             ByteBuffer inputBuffer = inputBuffers[index];
