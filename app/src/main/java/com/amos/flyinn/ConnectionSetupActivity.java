@@ -45,6 +45,9 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class ConnectionSetupActivity extends AppCompatActivity {
+
+    private static final String TAG = ConnectionSetupActivity.class.getName();
+
     private ProgressBar infiniteBar;
     private TextView progressText;
     private Button switchToHomeScreenButton;
@@ -144,7 +147,7 @@ public class ConnectionSetupActivity extends AppCompatActivity {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Log.d("MainActivity", "initWebRTCScreenCapture: " + "Error traying to connect to the server");
+            Log.d(TAG, "initWebRTCScreenCapture: " + "Error traying to connect to the server");
         }
     }
 
