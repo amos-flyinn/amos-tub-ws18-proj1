@@ -1,15 +1,12 @@
 package com.amos.flyinn.webrtc;
 
 import com.amos.flyinn.signaling.ClientSocket;
-import com.amos.flyinn.webrtc.IPeer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;

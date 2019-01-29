@@ -9,7 +9,6 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
