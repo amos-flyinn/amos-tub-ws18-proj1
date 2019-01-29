@@ -4,9 +4,6 @@
     <string name="title_activity_build_info">BuildInfoActivity</string>
 
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
-    <string name="nearby_close_connection">Close connection to:</string>
-    <string name="nearby_discovering_error">Could not start searching for connections.</string>
-    <string name="nearby_discovering_success">Started searching for connections.</string>
     <string name="nearby_advertising_error">Could not start searching for connections.</string>
     <string name="nearby_connection_success">Connection established.</string>
     <string name="nearby_connection_rejected">Connection was rejected.</string>
@@ -19,8 +16,6 @@
     <string name="buildinfo_git_commit_date">Git Commit: </string>
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
-    <string name="title_activity_nearby_connection">NearbyConnectionActivity</string>
-    <string name="title_activity_client_conn_auth">ClientConnAuth</string>
     <string name="title_activity_configuration">ConfigurationActivity</string>
 
     <string name="configuration_screen_ratio">Screen ratio:</string>
