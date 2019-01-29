@@ -21,6 +21,9 @@ import com.amos.flyinn.configuration.ConfigurationActivity;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -39,6 +42,7 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Set state and information in android service.
      */
     private void setService() {
+
         Intent intent = NearbyService.createNearbyIntent(NearbyService.ACTION_START, this);
         intent.putExtra("code", nameNum);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -54,27 +58,50 @@ public class ShowCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
-
         display = findViewById(R.id.textView2);
-        if (!hasPermissions(NearbyService.getRequiredPermissions()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
-        } else {
-            Log.w(TAG, "Could not check permissions due to version");
+        nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
+        display.setText(nameNum);
+
+        validatePermissions();
+    }
+
+    /**
+     * Checks if all permissions are given, requests them and start service if yes
+     */
+    protected void validatePermissions() {
+
+        // Create permission list
+        ArrayList<String> allPermissions=new ArrayList<String>();
+        allPermissions.addAll(Arrays.asList(NearbyService.getRequiredPermissions()));
+        allPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        String[] allPermissionsArr = new String[allPermissions.size()];
+        allPermissionsArr = allPermissions.toArray(allPermissionsArr);
+
+        // Request missing permissions
+        if (!hasPermissions(allPermissionsArr) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(allPermissionsArr, REQUEST_CODE_REQUIRED_PERMISSIONS);
         }
 
-        String[] perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (!hasPermissions(perms) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        // Starts service
+        if(hasPermissions(allPermissionsArr)==false) {
+            startServices();
         }
 
+    }
+
+    /**
+     * Starts adb and set nearby service
+     */
+    protected void startServices() {
         try {
             createADBService();
         } catch (Exception e) {
             Log.d("ShowCodeActivity", "Failed to start ADB service");
             e.printStackTrace();
         }
-        nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
-        display.setText(nameNum);
+
         setService();
     }
 
@@ -119,16 +146,18 @@ public class ShowCodeActivity extends AppCompatActivity {
         if (requestCode != REQUEST_CODE_REQUIRED_PERMISSIONS) {
             return;
         }
-
+        boolean acceptedAll=true;
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
                 Log.w("flyinn.ShowCode", "Permissions necessary for connections were not granted.");
-                mToast.setText(R.string.nearby_missing_permissions);
-                mToast.show();
+
+                Toast.makeText(this.getApplicationContext(),R.string.nearby_missing_permissions,Toast.LENGTH_LONG).show();
+
+                acceptedAll=false;
                 finish();
             }
         }
-        recreate();
+        if(acceptedAll) recreate();
     }
 
     /**
