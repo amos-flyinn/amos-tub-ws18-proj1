@@ -1,5 +1,7 @@
 package com.amos.flyinn.summoner;
 
+import com.tananaev.adblib.AdbCrypto;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,8 +26,19 @@ public class ADBServiceTest {
     }
 
     @Test(expected = IOException.class)
-    public void spawnApp() throws IOException{
+    public void spawnApp() throws Exception{
         service.spawnApp(null, "Yolo");
     }
+
+    @Test
+    public void setupADBCrypto() {
+        try {
+            AdbCrypto k1=service.setupADBCrypto();
+            AdbCrypto k2=service.setupADBCrypto();
+            assertEquals(k1.getAdbPublicKeyPayload(), k2.getAdbPublicKeyPayload());
+        } catch (Exception err) {
+        }
+    }
+
 
 }
