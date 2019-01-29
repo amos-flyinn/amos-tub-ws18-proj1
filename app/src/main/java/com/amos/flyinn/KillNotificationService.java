@@ -26,7 +26,7 @@ public class KillNotificationService extends Service {
 
     }
 
-    private static final String TAG = "KillNotificationClientService";
+    private static final String TAG = "KillNotificationService";
 
     private final IBinder myBinder = new KillBinder(this);
 
