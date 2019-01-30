@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ConnectCallback;

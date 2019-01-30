@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.os.IBinder;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -26,10 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amos.flyinn.nearbyservice.NearbyService;
-import com.amos.flyinn.service.FPSOverlay;
 import com.amos.flyinn.summoner.Daemon;
 
 import java.security.SecureRandom;
+import java.util.Locale;
 
 /**
  * Initial activity showing code used for connection from remote display.
@@ -37,7 +36,6 @@ import java.security.SecureRandom;
 public class ShowCodeActivity extends AppCompatActivity {
 
     private String nameNum = "";
-    private TextView display;
 
     private static final String TAG = "showCode";
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
@@ -96,7 +94,7 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
-        display = findViewById(R.id.textView2);
+        TextView display = findViewById(R.id.textView2);
 
         checkPermissions(STORAGE_PERMISSIONS);
         checkPermissions(NearbyService.getRequiredPermissions());
@@ -109,24 +107,11 @@ public class ShowCodeActivity extends AppCompatActivity {
         }
 
         // create app code between 0 and 9999; secureRandom is non-deterministic
-        nameNum = String.valueOf((new SecureRandom()).nextInt(9999 + 1));
-        while (nameNum.length() < 4) {
-            nameNum = "0" + nameNum;
-        }
+        nameNum = String.format(Locale.ROOT, "%04d", new SecureRandom().nextInt(9999 + 1));
 
         Log.i(TAG, "App code is set to " + nameNum);
         display.setText(nameNum);
         setService();
-    }
-
-    public void checkPermissionOverlay() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            Intent intentSettings = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            startActivityForResult(intentSettings, OVERLAY_PERMISSION_REQ_CODE);
-        }
-
-        Intent svc = new Intent(this, FPSOverlay.class);
-        startService(svc);
     }
 
     protected void createADBService() throws Exception {
@@ -263,7 +248,9 @@ public class ShowCodeActivity extends AppCompatActivity {
         Log.d(TAG, "Restarting app via restartApp function.");
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (i != null) {
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
         startActivity(i);
     }
 }

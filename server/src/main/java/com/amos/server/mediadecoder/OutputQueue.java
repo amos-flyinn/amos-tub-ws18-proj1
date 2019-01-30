@@ -5,12 +5,12 @@ import android.util.Log;
 
 import java.nio.ByteBuffer;
 
-public class OutputQueuer implements Runnable {
-    private static final String TAG = "OutputQueuer";
+public class OutputQueue implements Runnable {
+    private static final String TAG = "OutputQueue";
     private static final boolean DEBUG = false;
     private MediaCodec codec;
 
-    OutputQueuer(MediaCodec codec) {
+    OutputQueue(MediaCodec codec) {
         this.codec = codec;
     }
 

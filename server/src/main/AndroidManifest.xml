@@ -28,7 +28,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="landscape"
         android:supportsRtl="true"
-        tools:ignore="AllowBackup">
+        tools:ignore="AllowBackup"
         android:theme="@style/AppTheme">
         <activity
             android:name=".BuildInfoActivity"
@@ -59,13 +59,13 @@
             android:screenOrientation="landscape"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".errorScreen.ErrorActivity" />
-        <activity android:name=".SettingsScreen.SettingsActivity" />
+        <activity android:name=".errorscreen.ErrorActivity" />
         <service
             android:name=".KillNotificationService"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="false" />
+            android:stopWithTask="false"
+            tools:ignore="ExportedService" />
     </application>
 
 </manifest>

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.CallSuper;
@@ -42,8 +43,6 @@ public class ConnectToClientActivity extends Activity {
     private static final int NOTIFY_ID = 2;
     private static final String CHANNEL_ID = "FlyInn server nearby";
 
-    private Toast mToast;
-
     private ServerConnection connection = ServerConnection.getInstance();
 
     /** Tag for logging purposes. */
@@ -72,8 +71,6 @@ public class ConnectToClientActivity extends Activity {
 
         createChannel();
         notification(getString(R.string.notification_initialising));
-        mToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
-        connection.setActivity(this);
 
         checkPermissions();
         // Ensure survival for life of entire application
@@ -192,17 +189,6 @@ public class ConnectToClientActivity extends Activity {
     }
 
     /**
-     * Shows the message as toast (length: long).
-     * Toasts will replace each other, and not overlap/stack.
-     *
-     * @param message String message which should be shown as a Toast
-     */
-    public void toast(String message) {
-        mToast.setText(message);
-        mToast.show();
-    }
-
-    /**
      * Simply creates a persistent notification with default priority (no pop-up).
      *
      * @param message String message which should be shown as a notification
@@ -234,8 +220,7 @@ public class ConnectToClientActivity extends Activity {
     private void createChannel() {
         NotificationManager mgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                mgr.getNotificationChannel(CHANNEL_ID) == null) {
+        if (mgr.getNotificationChannel(CHANNEL_ID) == null) {
 
             NotificationChannel c = new NotificationChannel(CHANNEL_ID,
                     "flyinn_channel", NotificationManager.IMPORTANCE_LOW);
@@ -257,16 +242,5 @@ public class ConnectToClientActivity extends Activity {
 
         this.finishAffinity();
         finishAndRemoveTask();
-    }
-
-    /**
-     * Finishes all activities and then restarts the app
-     */
-    public void restartApp() {
-        Log.d(TAG, "Restarting server via restartApp function.");
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
     }
 }

@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-public class InputQueuer implements Runnable {
+public class InputQueue implements Runnable {
 
-    private static final String TAG = "InputQueuer";
+    private static final String TAG = "InputQueue";
     private static final boolean DEBUG = false;
     private MediaCodec codec;
     private InputStream stream;
@@ -20,7 +20,7 @@ public class InputQueuer implements Runnable {
     private long timestamp;
     private int size;
 
-    InputQueuer(MediaCodec codec, InputStream stream) {
+    InputQueue(MediaCodec codec, InputStream stream) {
         this.codec = codec;
         this.stream = stream;
     }

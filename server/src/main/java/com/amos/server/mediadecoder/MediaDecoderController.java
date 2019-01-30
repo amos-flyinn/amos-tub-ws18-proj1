@@ -66,9 +66,9 @@ public class MediaDecoderController implements HandlePayload {
             format.setInteger("KEY_ROTATION", 180);
             codec.configure(format, surface, null, 0);
             codec.start();
-            InputQueuer inputQueuer = new InputQueuer(codec, input);
-            OutputQueuer outputQueuer = new OutputQueuer(codec);
-            inputThread = new Thread(inputQueuer);
+            InputQueue inputQueue = new InputQueue(codec, input);
+            OutputQueue outputQueuer = new OutputQueue(codec);
+            inputThread = new Thread(inputQueue);
             outputThread = new Thread(outputQueuer);
             inputThread.start();
             outputThread.start();
