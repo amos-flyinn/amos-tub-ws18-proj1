@@ -4,21 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.TextView;
 
 public class ConnectedActivity extends Activity {
-    private Button switchToHomeScreenButton;
-    private Button closeConnectionButton;
-    private TextView connectedMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connected);
 
-        closeConnectionButton = findViewById(R.id.close_connection);
-        switchToHomeScreenButton = findViewById(R.id.switch_home_screen);
-        connectedMessage = findViewById(R.id.connected_message);
+        Button closeConnectionButton = findViewById(R.id.close_connection);
+        Button switchToHomeScreenButton = findViewById(R.id.switch_home_screen);
+        findViewById(R.id.connected_message);
 
         //Giving callback to the close connection button
         closeConnectionButton.setOnClickListener(view -> restartAPP());
@@ -41,7 +37,9 @@ public class ConnectedActivity extends Activity {
         Intent i = getBaseContext()
                 .getPackageManager()
                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (i != null) {
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
         startActivity(i);
     }
 }

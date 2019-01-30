@@ -21,7 +21,7 @@ public class ConfigurationSender {
      * Send config String through nearby to server
      */
     public ConfigurationSender(String endpoint, Context context) {
-        String jsonPrefStr=GenerateConfigurationStr(context);
+        String jsonPrefStr= generateConfigurationStr(context);
         VideoStreamSingleton.getInstance().serverID = endpoint;
 
         // Send
@@ -39,7 +39,7 @@ public class ConfigurationSender {
      * Generates a JSON object of the preferences to use for communication with server
      * @return String from JSON object of preferences
      */
-    private String GenerateConfigurationStr(Context context) {
+    private String generateConfigurationStr(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("com.amos.flyinn", Context.MODE_PRIVATE);
 
         JSONObject prefJson = new JSONObject();

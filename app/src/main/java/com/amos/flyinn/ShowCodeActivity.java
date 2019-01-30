@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,13 +27,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * Initial activity showing code used for connection from remote display.
  */
 public class ShowCodeActivity extends AppCompatActivity {
-    private String nameNum = "";
-    private TextView display;
-    private Toast mToast;
-
+    public static int OVERLAY_PERMISSION_REQ_CODE = 1678;
     private static final String TAG = "showCode";
-
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
+
+    private String nameNum = "";
 
     /**
      * Set state and information in android service.
@@ -56,7 +53,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
 
-        display = findViewById(R.id.textView2);
+        TextView display = findViewById(R.id.textView2);
         if (!hasPermissions(NearbyService.getRequiredPermissions()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
@@ -80,21 +77,17 @@ public class ShowCodeActivity extends AppCompatActivity {
         setService();
     }
 
-    public static int OVERLAY_PERMISSION_REQ_CODE = 1678;
-
     public void checkPermissionOverlay() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intentSettings = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                startActivityForResult(intentSettings, OVERLAY_PERMISSION_REQ_CODE);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Intent intentSettings = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+            startActivityForResult(intentSettings, OVERLAY_PERMISSION_REQ_CODE);
         }
 
         Intent svc = new Intent(this, FPSOverlay.class);
         startService(svc);
     }
 
-    protected Daemon createADBService() throws Exception {
+    protected void createADBService() throws Exception {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
         Daemon d = new Daemon(getApplicationContext(), p);
@@ -103,7 +96,6 @@ public class ShowCodeActivity extends AppCompatActivity {
         Log.d("ShowCodeActivity", "Going to spawn ADB service");
         d.spawn_adb();
         Log.d("ShowCodeActivity", "Spawned ADB service");
-        return d;
     }
 
     @Override
@@ -139,8 +131,8 @@ public class ShowCodeActivity extends AppCompatActivity {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
                 Log.w("flyinn.ShowCode", "Permissions necessary for connections were not granted.");
-                mToast.setText(R.string.nearby_missing_permissions);
-                mToast.show();
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.nearby_missing_permissions, Toast.LENGTH_SHORT);
+                toast.show();
                 finish();
             }
         }
@@ -165,8 +157,7 @@ public class ShowCodeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.options_menu, menu);
+        getMenuInflater();
         return true;
     }
 

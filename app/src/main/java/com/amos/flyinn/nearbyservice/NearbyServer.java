@@ -141,12 +141,8 @@ class NearbyServer {
                     connectionsClient.stopAdvertising();
                     clientID = endpointId;
                     nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
-
-
-
                     // Send configuration
                     new ConfigurationSender(endpointId, nearbyService);
-
                     break;
 
                 case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
@@ -168,6 +164,7 @@ class NearbyServer {
                     Log.e(TAG, "Unknown error when attempting to connect with " + endpointId);
                     nearbyService.setServiceState(NearbyState.ADVERTISING, "Unknown error with " + endpointId);
                     clearClientData();
+                    break;
             }
         }
 
