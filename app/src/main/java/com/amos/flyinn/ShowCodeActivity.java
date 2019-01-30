@@ -105,36 +105,38 @@ public class ShowCodeActivity extends AppCompatActivity {
         Log.i(TAG, "App code is set to " + nameNum);
         display.setText(nameNum);
 
-        validatePermissions();
+        validatePermissionsAndStartServices();
     }
 
     /**
      * Checks if all permissions are given, requests them and start service if yes
      */
-    protected void validatePermissions() {
-        // Create permission list
-        ArrayList<String> allPermissions=new ArrayList<String>();
-        allPermissions.addAll(Arrays.asList(NearbyService.getRequiredPermissions()));
-        allPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        String[] allPermissionsArr = new String[allPermissions.size()];
-        allPermissionsArr = allPermissions.toArray(allPermissionsArr);
+    protected void validatePermissionsAndStartServices() {
+        // Collect all necessary permissions
+        ArrayList<String> permissionsList = new ArrayList<>();
+        permissionsList.addAll(Arrays.asList(NearbyService.getRequiredPermissions()));
+        permissionsList.addAll(Arrays.asList(STORAGE_PERMISSIONS));
+        String[] allPermissions = new String[permissionsList.size()];
+        allPermissions = permissionsList.toArray(allPermissions);
 
         // Request missing permissions
-        if(hasPermissions(allPermissionsArr)) {
+        if(hasPermissions(allPermissions)) {
             startServices();
+            return;
         }
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(allPermissionsArr, REQUEST_CODE_REQUIRED_PERMISSIONS);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(allPermissions, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            closeNoPermissions();
+            Log.e(TAG, "Could not check permissions due to version");
+            Toast.makeText(this, R.string.nearby_permissions_version, Toast.LENGTH_LONG).show();
+            closeApp();
         }
 
     }
 
     /**
-     * Starts adb and set nearby service
+     * Starts adb and sets nearby service
      */
     protected void startServices() {
         try {
@@ -145,16 +147,6 @@ public class ShowCodeActivity extends AppCompatActivity {
         }
 
         setService();
-    }
-
-    /**
-     * Close app because of no permissions
-     * @throws Exception
-     */
-    protected void closeNoPermissions() {
-        Log.w(TAG, "Permissions necessary for connections were not granted.");
-        Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
-        closeApp();
     }
 
     protected void createADBService() throws Exception {
@@ -217,11 +209,12 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                closeNoPermissions();
-
+                Log.w(TAG, "Permissions necessary for connections were not granted.");
+                Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
+                closeApp();
             }
         }
-        recreate();
+        startServices();
     }
 
     /**
