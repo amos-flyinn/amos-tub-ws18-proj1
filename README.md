@@ -63,11 +63,11 @@ The FlyInn application is a product of the [AMOS (Agile Methods and Open Source)
 
 ### Project Team
 Abdulrahim Al Methiab  
-León Avilés
+León  
 Luk Burchard  
 Eliza Danila  
 Alejandro Jaramillo  
 Steffen Loos  
 Duy Anh Charlie Nguyen  
 Max Zhao  
-Erik Z.
+Erik
