@@ -12,15 +12,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 public class FPSOverlay extends Service {
-    private View topLeftView;
-    Handler handler;
+    public Handler handler;
+    public WindowManager.LayoutParams params;
 
-
+    private int color = 0;
     private Button overlayedButton;
     private WindowManager wm;
-    WindowManager.LayoutParams params;
 
-    public FPSOverlay() {
+    FPSOverlay() {
     }
 
     @Override
@@ -54,7 +53,7 @@ public class FPSOverlay extends Service {
         params.y = 0;
         wm.addView(overlayedButton, params);
 
-        topLeftView = new View(this);
+        View topLeftView = new View(this);
         WindowManager.LayoutParams topLeftParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -85,8 +84,6 @@ public class FPSOverlay extends Service {
            }
         }).start();
     }
-
-    int color = 0;
 
     public void updateUI() {
         color = (0x02020202 + color) % 0xeeeeeeee;

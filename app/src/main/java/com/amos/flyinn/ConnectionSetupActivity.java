@@ -10,7 +10,6 @@ import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
@@ -36,6 +35,9 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import static android.media.MediaCodecList.getCodecCount;
+import static android.media.MediaCodecList.getCodecInfoAt;
 
 /**
  * <h1>ConnectionSetup</h1>
@@ -111,16 +113,11 @@ public class ConnectionSetupActivity extends Activity {
         initRecorder();
     }
 
-    public void stopScreenShare() {
-        Log.v(TAG, "Stopping Recording");
-        stopScreenSharing();
-    }
-
-
+    @Nullable
     private static MediaCodecInfo selectCodec(String mimeType) {
-        int numCodecs = MediaCodecList.getCodecCount();
+        int numCodecs = getCodecCount();
         for (int i = 0; i < numCodecs; i++) {
-            MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+            MediaCodecInfo codecInfo = getCodecInfoAt(i);
             if (!codecInfo.isEncoder()) {
                 continue;
             }
@@ -171,7 +168,9 @@ public class ConnectionSetupActivity extends Activity {
             format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
             format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
-            format.setInteger(MediaFormat.KEY_ROTATION, 90);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                format.setInteger(MediaFormat.KEY_ROTATION, 90);
+            }
             format.setInteger("rotation-degrees", 90);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -189,14 +188,18 @@ public class ConnectionSetupActivity extends Activity {
                 ByteBuffer outputBuffer;
 
                 @Override
-                public void onInputBufferAvailable(MediaCodec codec, int index) {
+                public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
                 }
 
                 @Override
-                public void onOutputBufferAvailable(MediaCodec codec, int outputBufferId, MediaCodec.BufferInfo info) {
+                public void onOutputBufferAvailable(@NonNull MediaCodec codec, int outputBufferId, @NonNull MediaCodec.BufferInfo info) {
                     outputBuffer = codec.getOutputBuffer(outputBufferId);
-                    outputBuffer.position(info.offset);
-                    outputBuffer.limit(info.offset + info.size);
+                    if (outputBuffer != null) {
+                        outputBuffer.position(info.offset);
+                    }
+                    if (outputBuffer != null) {
+                        outputBuffer.limit(info.offset + info.size);
+                    }
                     try {
                         bb.rewind();
                         bb.putLong(info.presentationTimeUs);
@@ -212,11 +215,11 @@ public class ConnectionSetupActivity extends Activity {
                 }
 
                 @Override
-                public void onError(MediaCodec codec, MediaCodec.CodecException e) {
+                public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
                 }
 
                 @Override
-                public void onOutputFormatChanged(MediaCodec mc, MediaFormat format) {
+                public void onOutputFormatChanged(@NonNull MediaCodec mc, @NonNull MediaFormat format) {
                     mOutputFormat = format;
                 }
             });
@@ -275,10 +278,5 @@ public class ConnectionSetupActivity extends Activity {
             mMediaProjection = null;
         }
         Log.i(TAG, "MediaProjection Stopped");
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
     }
 }

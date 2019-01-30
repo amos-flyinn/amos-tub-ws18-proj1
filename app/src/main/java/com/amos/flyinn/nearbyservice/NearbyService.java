@@ -213,6 +213,7 @@ public class NearbyService extends IntentService {
                 ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
                 startService(i);
                 Log.d(TAG, "Send payload to activity");
+                break;
         }
     }
 
