@@ -4,5 +4,5 @@ set -euo pipefail
 
 ./gradlew assembleMobileDebug \
           connectedMobileDebugAndroidTest
-
-
+./gradlew assembleDebug \
+          connectedDebugAndroidTest

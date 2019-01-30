@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ServerConnection;
 
 public class ConnectToClientActivity extends Activity {
@@ -41,8 +42,6 @@ public class ConnectToClientActivity extends Activity {
 
     private static final int NOTIFY_ID = 2;
     private static final String CHANNEL_ID = "FlyInn server nearby";
-
-    private Toast mToast;
 
     private ServerConnection connection = ServerConnection.getInstance();
 
@@ -72,13 +71,13 @@ public class ConnectToClientActivity extends Activity {
 
         createChannel();
         notification(getString(R.string.notification_initialising));
-        mToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
-        connection.setActivity(this);
 
         checkPermissions();
         // Ensure survival for life of entire application
         connection.init(getApplicationContext());
-        connection.discover();
+        // connection.discover();
+        MediaDecoderController.getInstance().registerNearby();
+
         text.setOnEditorActionListener(
                 (TextView v, int actionId, KeyEvent event) -> {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -134,16 +133,10 @@ public class ConnectToClientActivity extends Activity {
      * Checks whether FlyInn has the required permissions
      */
     private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!hasPermissions(this)) {
-                requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
-            } else {
-                Log.d(TAG, "Permissions are ok.");
-            }
+        if (!hasPermissions(this)) {
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            Log.w(TAG, "Could not check permissions due to version");
-            toast(getString(R.string.nearby_permissions_version));
-            closeApp();
+            Log.d(TAG, "Permissions are ok.");
         }
     }
 
@@ -160,6 +153,12 @@ public class ConnectToClientActivity extends Activity {
             }
         }
         return true;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void toast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     /**
@@ -187,17 +186,6 @@ public class ConnectToClientActivity extends Activity {
             }
         }
         recreate();
-    }
-
-    /**
-     * Shows the message as toast (length: long).
-     * Toasts will replace each other, and not overlap/stack.
-     *
-     * @param message String message which should be shown as a Toast
-     */
-    public void toast(String message) {
-        mToast.setText(message);
-        mToast.show();
     }
 
     /**
@@ -232,8 +220,7 @@ public class ConnectToClientActivity extends Activity {
     private void createChannel() {
         NotificationManager mgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                mgr.getNotificationChannel(CHANNEL_ID) == null) {
+        if (mgr.getNotificationChannel(CHANNEL_ID) == null) {
 
             NotificationChannel c = new NotificationChannel(CHANNEL_ID,
                     "flyinn_channel", NotificationManager.IMPORTANCE_LOW);
@@ -255,16 +242,5 @@ public class ConnectToClientActivity extends Activity {
 
         this.finishAffinity();
         finishAndRemoveTask();
-    }
-
-    /**
-     * Finishes all activities and then restarts the app
-     */
-    public void restartApp() {
-        Log.d(TAG, "Restarting server via restartApp function.");
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
     }
 }

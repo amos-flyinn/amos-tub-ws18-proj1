@@ -1,38 +1,25 @@
 package com.amos.server;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.amos.server.eventsender.EventWriter;
+import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ConnectCallback;
 import com.amos.server.nearby.ServerConnection;
 
-import org.webrtc.SurfaceViewRenderer;
-
-import java.io.IOException;
-
 public class ConnectionSetupServerActivity extends Activity {
 
-    private ProgressBar infiniteBar;
     private TextView progressText;
 
     /**
      * Connection singleton managing nearby connection
      */
     private ServerConnection connection;
-    private EventWriter writer;
-
-    private TextView connectionInfo;
-    private SurfaceViewRenderer view;
 
     private static final String TAG = "ConnectionSetup";
 
@@ -42,11 +29,7 @@ public class ConnectionSetupServerActivity extends Activity {
         setContentView(R.layout.activity_connection_setup);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
-        infiniteBar = findViewById(R.id.infiniteBar);
         progressText = findViewById(R.id.progressText);
-        view = findViewById(R.id.surface_remote_viewer);
-        connectionInfo = findViewById(R.id.connectionInfo);
-        connectionInfo.setVisibility(View.INVISIBLE);
 
         connection = ServerConnection.getInstance();
 
@@ -64,52 +47,40 @@ public class ConnectionSetupServerActivity extends Activity {
         startActivity(intent);
     }
 
+    private void toConnectedActivity() {
+        Intent intent = new Intent(this, ConnectedActivity.class);
+        startActivity(intent);
+    }
+
     /**
      * Create connection to the given destination server
      */
     private void buildConnection(String name) {
         setProgressText("Connecting to " + name);
-        connection.connectTo(name, new ConnectCallback() {
+        // connection.connectTo(name, new ConnectCallback() {
+        connection.discoverConnect(name, new ConnectCallback() {
             @Override
-            public void success() {
+            public void success(String message) {
                 Log.d(TAG, "Successfully connected to " + name);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                progressText.setVisibility(View.INVISIBLE);
-                view.setVisibility(View.VISIBLE);
-                connectionInfo.setVisibility(View.VISIBLE);
-                transmitInputEvents();
+                // toast(String.format("Successfully connected to %s", name));
+                toast(message);
+                toConnectedActivity();
             }
 
             @Override
-            public void failure() {
+            public void failure(String message) {
                 Log.d(TAG, "Failed to connect to " + name);
+                // toast(String.format("Failed to connect to %s", name));
+                toast(message);
+                MediaDecoderController.getInstance().reset();
                 toInitialActivity();
             }
         });
     }
 
-    /**
-     * Send touch events over established connection
-     */
-    @SuppressLint("ClickableViewAccessibility")
-    private void transmitInputEvents() {
-        Log.d(TAG, "Trying to transmit input events");
-        // Toast.makeText(this, "Trying to transmit input events", Toast.LENGTH_LONG).show();
-        try {
-            writer = new EventWriter(connection.sendStream(), new Point(view.getWidth(), view.getHeight()));
-        } catch (IOException ignored) {
-        }
-        view.setOnTouchListener((View v, MotionEvent event) -> {
-            Log.d(TAG, event.toString());
-            if (writer != null) {
-                try {
-                    writer.write(event);
-                } catch (IOException ignored) {
-                    Log.d(TAG, "Failed to write touch event to EventWriter");
-                }
-            }
-            return true;
-        });
+    private void toast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     private void setProgressText(String message) {

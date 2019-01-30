@@ -20,27 +20,26 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amos.flyinn.configuration.ConfigurationActivity;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
 import java.security.SecureRandom;
+import java.util.Locale;
 
 /**
  * Initial activity showing code used for connection from remote display.
  */
 public class ShowCodeActivity extends AppCompatActivity {
+
     private String nameNum = "";
-    private TextView display;
 
     private static final String TAG = "showCode";
-
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
+
 
     public static final String[] STORAGE_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -95,7 +94,7 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
-        display = findViewById(R.id.textView2);
+        TextView display = findViewById(R.id.textView2);
 
         checkPermissions(STORAGE_PERMISSIONS);
         checkPermissions(NearbyService.getRequiredPermissions());
@@ -108,17 +107,14 @@ public class ShowCodeActivity extends AppCompatActivity {
         }
 
         // create app code between 0 and 9999; secureRandom is non-deterministic
-        nameNum = String.valueOf((new SecureRandom()).nextInt(9999 + 1));
-        while (nameNum.length() < 4) {
-            nameNum = "0" + nameNum;
-        }
+        nameNum = String.format(Locale.ROOT, "%04d", new SecureRandom().nextInt(9999 + 1));
 
         Log.i(TAG, "App code is set to " + nameNum);
         display.setText(nameNum);
         setService();
     }
 
-    protected Daemon createADBService() throws Exception {
+    protected void createADBService() throws Exception {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
         Daemon d = new Daemon(getApplicationContext(), p);
@@ -127,7 +123,6 @@ public class ShowCodeActivity extends AppCompatActivity {
         Log.d("ShowCodeActivity", "Going to spawn ADB service");
         d.spawn_adb();
         Log.d("ShowCodeActivity", "Spawned ADB service");
-        return d;
     }
 
     @Override
@@ -216,24 +211,23 @@ public class ShowCodeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
+        getMenuInflater();
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.btn_settings:
-                startActivity(new Intent(this, ConfigurationActivity.class));
-                break;
+//            case R.id.btn_settings:
+//                startActivity(new Intent(this, ConfigurationActivity.class));
+//                break;
 
             default:
                 Log.e(TAG, "unimplemented option selected");
                 return false;
         }
 
-        return true;
+//        return true;
     }
 
     /**
@@ -254,7 +248,9 @@ public class ShowCodeActivity extends AppCompatActivity {
         Log.d(TAG, "Restarting app via restartApp function.");
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (i != null) {
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
         startActivity(i);
     }
 }

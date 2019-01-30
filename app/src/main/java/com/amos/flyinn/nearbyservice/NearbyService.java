@@ -21,6 +21,7 @@ import com.amos.flyinn.R;
 import com.amos.flyinn.ShowCodeActivity;
 import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.ConnectionSigleton;
+import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 
@@ -38,14 +39,13 @@ public class NearbyService extends IntentService {
 
     public static final String ACTION_START = "nearby_start";
     public static final String ACTION_STOP = "nearby_stop";
-
-    private NearbyServer server;
-
+    public static final String VIDEO_START = "video_start";
+    private static final String CHANNEL_ID = "flyinn_nearby";
     private static final int FOREGROUND_ID = 1;
     private static final int NOTIFY_ID = 2;
-    private static final String CHANNEL_ID = "FlyInn client nearby";
 
     private String nearbyCode = "";
+    private NearbyServer server;
 
     /**
      * Define the serviceState of our service.
@@ -103,8 +103,7 @@ public class NearbyService extends IntentService {
      * @return
      */
     private Notification buildForegroundNotification(String message, @Nullable Intent target) {
-        NotificationCompat.Builder b =
-                new NotificationCompat.Builder(this, CHANNEL_ID);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(this, CHANNEL_ID);
 
         b.setOngoing(true) // persistent notification
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -162,6 +161,9 @@ public class NearbyService extends IntentService {
             case CONNECTED:
                 intent = new Intent(this, ConnectionSetupActivity.class);
                 intent.putExtra("code", getNearbyCode());
+                break;
+            default:
+                Log.e(TAG, "Unknown state");
                 break;
         }
         raiseNotification(buildForegroundNotification(message, intent));
@@ -226,15 +228,19 @@ public class NearbyService extends IntentService {
 
     public void handlePayload(Payload payload) {
         Log.d(TAG, "Received payload");
-        if (payload.asStream() == null) {
-            Log.wtf("AAAAAAAAAAAAAAAAAAA", "Payload is null!");
-            return;
+        switch (payload.getType()) {
+            case Payload.Type.STREAM:
+                Log.d(TAG, "Payload is of type stream");
+                Intent i = new Intent(this, ADBService.class);
+                i.setAction("stream");
+                ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
+                startService(i);
+                Log.d(TAG, "Send payload to activity");
+                break;
+            default:
+                Log.e(TAG, "Unknown payload type");
+                break;
         }
-        Intent i = new Intent(this, ADBService.class);
-        i.setAction("stream");
-        ConnectionSigleton.getInstance().inputStream = Objects.requireNonNull(payload.asStream()).asInputStream();
-        startService(i);
-        Log.d(TAG, "Send payload to activity");
     }
 
     public void handlePayloadTransferUpdate(PayloadTransferUpdate update) {
@@ -291,11 +297,11 @@ public class NearbyService extends IntentService {
                 setNearbyCode(code);
                 Log.d(TAG, String.format("Setting code to %s", code));
             } catch (NullPointerException err) {
-                Log.d(TAG, "Could not get code from intent.");
+                Log.d(TAG, "Could not get code from intent.", err);
             }
         }
-
         try {
+            Log.d(TAG, "Got action " + intent.getAction());
             switch (intent.getAction()) {
                 case ACTION_START:
                     start();
@@ -303,12 +309,19 @@ public class NearbyService extends IntentService {
                 case ACTION_STOP:
                     stop();
                     break;
+                case VIDEO_START:
+                    assert VideoStreamSingleton.getInstance().os != null;
+                    Log.d(TAG, "Warped video_start stream");
+                    Log.d(TAG, "Send stream to " + VideoStreamSingleton.getInstance().serverID);
+                    Nearby.getConnectionsClient(this).sendPayload(VideoStreamSingleton.getInstance().serverID, Payload.fromStream(VideoStreamSingleton.getInstance().os));
+                    Log.d(TAG, "Sent video_start stream");
+                    break;
                 default:
                     Log.d(TAG, "Unknown intent received. Will do nothing");
                     break;
             }
         } catch (NullPointerException error) {
-            Log.d(TAG, "Null pointer for action received. Will do nothing");
+            Log.d(TAG, "Null pointer for action received. Will do nothing", error);
         }
     }
 
