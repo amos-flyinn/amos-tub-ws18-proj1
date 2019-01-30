@@ -21,9 +21,6 @@ public class FPSOverlay extends Service {
     private Button overlayedButton;
     private WindowManager wm;
 
-    public FPSOverlay() {
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;

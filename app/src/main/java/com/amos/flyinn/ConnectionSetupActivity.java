@@ -31,6 +31,7 @@ import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
@@ -131,6 +132,75 @@ public class ConnectionSetupActivity extends Activity {
         return null;
     }
 
+    private MediaCodec.Callback buildEncoderCallback(OutputStream data, int width, int height) {
+        return new MediaCodec.Callback() {
+            MediaFormat mOutputFormat;
+            byte[] qq = new byte[width * height * 2];
+            ByteBuffer bb = ByteBuffer.allocate(4 + 8).order(ByteOrder.BIG_ENDIAN);
+            ByteBuffer outputBuffer;
+
+            @Override
+            public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
+                // do not do anything with input buffers
+            }
+
+            @Override
+            public void onOutputBufferAvailable(@NonNull MediaCodec codec, int outputBufferId, @NonNull MediaCodec.BufferInfo info) {
+                outputBuffer = codec.getOutputBuffer(outputBufferId);
+                if (outputBuffer != null) {
+                    outputBuffer.position(info.offset);
+                }
+                if (outputBuffer != null) {
+                    outputBuffer.limit(info.offset + info.size);
+                }
+                try {
+                    bb.rewind();
+                    bb.putLong(info.presentationTimeUs);
+                    bb.putInt(info.size);
+                    data.write(bb.array());
+                    outputBuffer.get(qq, 0, info.size);
+                    data.write(qq, 0, info.size);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                outputBuffer.clear();
+                codec.releaseOutputBuffer(outputBufferId, false);
+            }
+
+            @Override
+            public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
+                // not handling errors yet
+            }
+
+            @Override
+            public void onOutputFormatChanged(@NonNull MediaCodec mc, @NonNull MediaFormat format) {
+                mOutputFormat = format;
+            }
+        };
+    }
+
+    private MediaFormat buildMediaFormat(String mimetype, int width, int height) {
+        MediaFormat format = MediaFormat.createVideoFormat(mimetype, width, height);
+//            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 200_000);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+        format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            format.setInteger(MediaFormat.KEY_ROTATION, 90);
+        }
+        format.setInteger("rotation-degrees", 90);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            format.setInteger(MediaFormat.KEY_PRIORITY, 0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            format.setInteger(MediaFormat.KEY_LATENCY, 0);
+        }
+        return format;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void initRecorder() {
         Point p = new Point();
@@ -160,69 +230,11 @@ public class ConnectionSetupActivity extends Activity {
 
             MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
             assert codecInfo != null;
-            MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, w, h);
-//            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
             codec = MediaCodec.createEncoderByType(MIME_TYPE);
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, 200_000);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
-            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-            format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                format.setInteger(MediaFormat.KEY_ROTATION, 90);
-            }
-            format.setInteger("rotation-degrees", 90);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                format.setInteger(MediaFormat.KEY_PRIORITY, 0);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                format.setInteger(MediaFormat.KEY_LATENCY, 0);
-            }
+            MediaFormat format = buildMediaFormat(MIME_TYPE, w, h);
 
             Log.d(TAG, format.toString());
-            codec.setCallback(new MediaCodec.Callback() {
-                MediaFormat mOutputFormat;
-                byte[] qq = new byte[w * h * 2];
-                ByteBuffer bb = ByteBuffer.allocate(4 + 8).order(ByteOrder.BIG_ENDIAN);
-                ByteBuffer outputBuffer;
-
-                @Override
-                public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
-                }
-
-                @Override
-                public void onOutputBufferAvailable(@NonNull MediaCodec codec, int outputBufferId, @NonNull MediaCodec.BufferInfo info) {
-                    outputBuffer = codec.getOutputBuffer(outputBufferId);
-                    if (outputBuffer != null) {
-                        outputBuffer.position(info.offset);
-                    }
-                    if (outputBuffer != null) {
-                        outputBuffer.limit(info.offset + info.size);
-                    }
-                    try {
-                        bb.rewind();
-                        bb.putLong(info.presentationTimeUs);
-                        bb.putInt(info.size);
-                        data.write(bb.array());
-                        outputBuffer.get(qq, 0, info.size);
-                        data.write(qq, 0, info.size);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    outputBuffer.clear();
-                    codec.releaseOutputBuffer(outputBufferId, false);
-                }
-
-                @Override
-                public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
-                }
-
-                @Override
-                public void onOutputFormatChanged(@NonNull MediaCodec mc, @NonNull MediaFormat format) {
-                    mOutputFormat = format;
-                }
-            });
+            codec.setCallback(buildEncoderCallback(data, w, h));
 
             codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             si = codec.createInputSurface();

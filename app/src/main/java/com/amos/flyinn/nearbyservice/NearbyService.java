@@ -162,6 +162,9 @@ public class NearbyService extends IntentService {
                 intent = new Intent(this, ConnectionSetupActivity.class);
                 intent.putExtra("code", getNearbyCode());
                 break;
+            default:
+                Log.e(TAG, "Unknown state");
+                break;
         }
         raiseNotification(buildForegroundNotification(message, intent));
     }
