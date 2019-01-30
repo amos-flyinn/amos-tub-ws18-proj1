@@ -128,7 +128,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(allPermissionsArr, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            CloseNoPermissions();
+            closeNoPermissions();
         }
 
     }
@@ -151,7 +151,7 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Close app because of no permissions
      * @throws Exception
      */
-    protected void CloseNoPermissions() {
+    protected void closeNoPermissions() {
         Log.w(TAG, "Permissions necessary for connections were not granted.");
         Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
         closeApp();
@@ -217,7 +217,7 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                CloseNoPermissions();
+                closeNoPermissions();
 
             }
         }
