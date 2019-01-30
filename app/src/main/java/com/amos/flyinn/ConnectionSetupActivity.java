@@ -138,7 +138,7 @@ public class ConnectionSetupActivity extends Activity {
     private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        int w = 400
+        int w = 400;
         int h = 240;
         String MIME_TYPE = "video/avc";
         try {
