@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -95,15 +94,10 @@ public class ConnectToClientActivity extends Activity {
     }
 
     private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!hasPermissions(this)) {
-                requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
-            } else {
-                Log.d(TAG, "Permissions are ok.");
-            }
+        if (!hasPermissions(this)) {
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
-            Log.w(TAG, "Could not check permissions due to version");
-            toast("Could not check permissions due to version");
+            Log.d(TAG, "Permissions are ok.");
         }
     }
 
@@ -122,6 +116,7 @@ public class ConnectToClientActivity extends Activity {
         return true;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void toast(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();

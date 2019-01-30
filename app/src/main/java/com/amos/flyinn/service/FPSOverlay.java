@@ -4,8 +4,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,6 +33,7 @@ public class FPSOverlay extends Service {
         handler.post(runnable);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         handler = new Handler();
@@ -48,7 +51,7 @@ public class FPSOverlay extends Service {
 
         params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT);
 
-        params.gravity = Gravity.LEFT | Gravity.TOP;
+        params.gravity = Gravity.START | Gravity.TOP;
         params.x = 0;
         params.y = 0;
         wm.addView(overlayedButton, params);
@@ -61,7 +64,7 @@ public class FPSOverlay extends Service {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT
         );
-        topLeftParams.gravity = Gravity.LEFT | Gravity.TOP;
+        topLeftParams.gravity = Gravity.START | Gravity.TOP;
         topLeftParams.x = 0;
         topLeftParams.y = 0;
         topLeftParams.width = 1;
@@ -69,18 +72,13 @@ public class FPSOverlay extends Service {
         wm.addView(topLeftView, topLeftParams);
 
         new Thread(() -> {
-           while (true)  {
+           while (!Thread.interrupted())  {
                try {
-                   Thread.sleep((int) 1000/5);
+                   Thread.sleep(1000/5);
                } catch (InterruptedException e) {
                    e.printStackTrace();
                }
-               runOnUiThread(new Runnable() {
-                   @Override
-                   public void run() {
-                       updateUI();
-                   }
-               });
+               runOnUiThread(this::updateUI);
            }
         }).start();
     }
