@@ -23,7 +23,6 @@ import com.amos.flyinn.summoner.Daemon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -85,7 +84,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         }
 
         // Starts service
-        if(hasPermissions(allPermissionsArr)==false) {
+        if(!hasPermissions(allPermissionsArr)) {
             startServices();
         }
 
