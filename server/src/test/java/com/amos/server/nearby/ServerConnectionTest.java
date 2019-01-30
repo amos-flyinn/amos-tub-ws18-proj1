@@ -163,10 +163,12 @@ public class ServerConnectionTest {
         ConnectCallback callback = new ConnectCallback() {
             @Override
             public void success(String message) {
+                // nothing needed, check in assert
             }
 
             @Override
             public void failure(String message) {
+                // nothing needed, check in assert
             }
         };
         connection.discover(callback, connection.buildEndpointDiscoveryCallback("", callback));
@@ -181,6 +183,7 @@ public class ServerConnectionTest {
         ConnectCallback callback = new ConnectCallback() {
             @Override
             public void success(String message) {
+                // check in asserts
             }
 
             @Override

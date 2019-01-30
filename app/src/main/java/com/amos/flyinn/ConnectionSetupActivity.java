@@ -20,6 +20,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
@@ -56,6 +57,8 @@ public class ConnectionSetupActivity extends Activity {
     private static final int REQUEST_PERMISSIONS = 10;
     private Surface si;
 
+    private MediaCodec codec;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,11 +73,11 @@ public class ConnectionSetupActivity extends Activity {
         } else {
             if (mMediaProjection == null) {
                 startActivityForResult(videoIntent(), REQUEST_CODE);
-                return;
             }
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != REQUEST_CODE) {
@@ -94,7 +97,7 @@ public class ConnectionSetupActivity extends Activity {
         startScreenShare();
     }
 
-    Intent videoIntent() {
+    private Intent videoIntent() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Intent mOptionIntent = mProjectionManager.createScreenCaptureIntent();
         mOptionIntent.putExtra("return-data", true);
@@ -103,11 +106,12 @@ public class ConnectionSetupActivity extends Activity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void startScreenShare() {
         initRecorder();
     }
 
-    public void StopScreenShare() {
+    public void stopScreenShare() {
         Log.v(TAG, "Stopping Recording");
         stopScreenSharing();
     }
@@ -121,8 +125,8 @@ public class ConnectionSetupActivity extends Activity {
                 continue;
             }
             String[] types = codecInfo.getSupportedTypes();
-            for (int j = 0; j < types.length; j++) {
-                if (types[j].equalsIgnoreCase(mimeType)) {
+            for (String type : types) {
+                if (type.equalsIgnoreCase(mimeType)) {
                     return codecInfo;
                 }
             }
@@ -130,12 +134,12 @@ public class ConnectionSetupActivity extends Activity {
         return null;
     }
 
-    MediaCodec codec;
-
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        int w = 400, h = 240;
+        int w = 400
+        int h = 240;
         String MIME_TYPE = "video/avc";
         try {
             PipedInputStream stream = new PipedInputStream();

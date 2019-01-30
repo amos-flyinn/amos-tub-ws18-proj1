@@ -66,12 +66,9 @@ public class ConnectedActivity extends Activity {
         //     }
         // });
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            /**
-             * Executed on surface creation. Not needed, since we will instantiate with available surface.
-             * @param sHolder
-             */
             @Override
             public void surfaceCreated(SurfaceHolder sHolder) {
+                // Everything done in surface changed, to react to size changes
             }
 
             @Override
@@ -82,12 +79,10 @@ public class ConnectedActivity extends Activity {
                 transmitInputEvents();
             }
 
-            /**
-             * Executed on surface destruction. Not implemented, since the view will remain in foreground on the server.
-             * @param sHolder
-             */
             @Override
-            public void surfaceDestroyed(SurfaceHolder sHolder) {}
+            public void surfaceDestroyed(SurfaceHolder sHolder) {
+                // never stops on server by itself, so no cleanup
+            }
         });
     }
 
