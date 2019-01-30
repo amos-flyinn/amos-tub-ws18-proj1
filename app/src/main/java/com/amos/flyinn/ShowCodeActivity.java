@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.security.SecureRandom;
 import java.util.Locale;
 
@@ -90,15 +92,51 @@ public class ShowCodeActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
                 new IntentFilter("msg-flyinn"));
         bindService(new Intent(ShowCodeActivity.this,
-                        KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
+                KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         TextView display = findViewById(R.id.textView2);
 
-        checkPermissions(STORAGE_PERMISSIONS);
-        checkPermissions(NearbyService.getRequiredPermissions());
 
+        // create app code between 0 and 9999; secureRandom is non-deterministic
+        nameNum = String.format(Locale.ROOT, "%04d", new SecureRandom().nextInt(9999 + 1));
+
+        Log.i(TAG, "App code is set to " + nameNum);
+        display.setText(nameNum);
+
+        validatePermissions();
+    }
+
+    /**
+     * Checks if all permissions are given, requests them and start service if yes
+     */
+    protected void validatePermissions() {
+        // Create permission list
+        ArrayList<String> allPermissions=new ArrayList<String>();
+        allPermissions.addAll(Arrays.asList(NearbyService.getRequiredPermissions()));
+        allPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        String[] allPermissionsArr = new String[allPermissions.size()];
+        allPermissionsArr = allPermissions.toArray(allPermissionsArr);
+
+        // Request missing permissions
+        if(hasPermissions(allPermissionsArr)) {
+            startServices();
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(allPermissionsArr, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        } else {
+            CloseNoPermissions();
+        }
+
+    }
+
+    /**
+     * Starts adb and set nearby service
+     */
+    protected void startServices() {
         try {
             createADBService();
         } catch (Exception e) {
@@ -106,12 +144,17 @@ public class ShowCodeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // create app code between 0 and 9999; secureRandom is non-deterministic
-        nameNum = String.format(Locale.ROOT, "%04d", new SecureRandom().nextInt(9999 + 1));
-
-        Log.i(TAG, "App code is set to " + nameNum);
-        display.setText(nameNum);
         setService();
+    }
+
+    /**
+     * Close app because of no permissions
+     * @throws Exception
+     */
+    protected void CloseNoPermissions() {
+        Log.w(TAG, "Permissions necessary for connections were not granted.");
+        Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
+        closeApp();
     }
 
     protected void createADBService() throws Exception {
@@ -154,17 +197,6 @@ public class ShowCodeActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void checkPermissions(String[] permissions) {
-        if (!hasPermissions(permissions)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(permissions, REQUEST_CODE_REQUIRED_PERMISSIONS);
-            } else {
-                Log.w(TAG, "Could not check permissions due to version");
-                Toast.makeText(this, R.string.nearby_permissions_version, Toast.LENGTH_LONG).show();
-                closeApp();
-            }
-        }
-    }
 
     /**
      * Handles user acceptance (or denial) of our permission request.
@@ -185,9 +217,8 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.w(TAG, "Permissions necessary for connections were not granted.");
-                Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
-                closeApp();
+                CloseNoPermissions();
+
             }
         }
         recreate();
