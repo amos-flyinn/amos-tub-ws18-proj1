@@ -19,7 +19,7 @@ public class FPSOverlay extends Service {
     private Button overlayedButton;
     private WindowManager wm;
 
-    FPSOverlay() {
+    public FPSOverlay() {
     }
 
     @Override
