@@ -40,7 +40,6 @@
             android:name=".service.FPSOverlay"
             android:enabled="true"
             android:exported="true"></service>
-
         <activity android:name=".errorScreen.ErrorActivity" />
         <activity
             android:name=".BuildInfoActivity"
@@ -69,7 +68,11 @@
             android:name=".nearbyservice.NearbyService"
             android:enabled="true"
             android:exported="true" />
-
+        <service
+            android:name=".KillNotificationService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false" />
         <activity
             android:name=".ConnectedActivity"
             android:label="@string/title_activity_connected" />

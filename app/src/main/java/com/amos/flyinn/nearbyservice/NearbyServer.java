@@ -1,9 +1,13 @@
 package com.amos.flyinn.nearbyservice;
 
 import android.Manifest;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.amos.flyinn.R;
 import com.amos.flyinn.configuration.ConfigurationSender;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -22,7 +26,7 @@ import com.google.android.gms.nearby.connection.Strategy;
  * incoming connections.
  */
 class NearbyServer {
-    public static final String TAG = NearbyServer.class.getPackage().getName();
+    public static final String TAG = "NearbyServer";
     /**
      * Required permissions for Nearby connections
      */
@@ -101,12 +105,20 @@ class NearbyServer {
                 connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener((Void unused) -> {
                     Log.d(TAG, "Start advertising Android nearby");
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Advertising android nearby");
+                    nearbyService.setServiceState(NearbyState.ADVERTISING,
+                            nearbyService.getString(R.string.notification_advertising));
                 })
                 .addOnFailureListener((Exception e) -> {
-                    Log.d(TAG, "Error trying to advertise Android nearby");
+                    Log.e(TAG, "Error trying to advertise Android nearby");
                     nearbyService.handleResponse(true, e.toString());
-                    nearbyService.setServiceState(NearbyState.STOPPED, "Failed to advertise android nearby");
+
+                    (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                            nearbyService.getApplicationContext(),
+                            R.string.nearby_advertising_error, Toast.LENGTH_LONG).show());
+
+                    nearbyService.setServiceState(NearbyState.STOPPED,
+                            nearbyService.getString(R.string.notification_finish));
+                    nearbyService.sendBroadcastMessage("exit");
                 });
     }
 
@@ -116,7 +128,8 @@ class NearbyServer {
     public void stop() {
         connectionsClient.stopAllEndpoints();
         Log.d(TAG, "Stopped all endpoints");
-        nearbyService.setServiceState(NearbyState.STOPPED, "Stopped all endpoints");
+        nearbyService.setServiceState(NearbyState.STOPPED,
+                nearbyService.getString(R.string.notification_stopped));
     }
 
     /**

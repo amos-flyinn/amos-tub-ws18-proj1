@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.amos.server.ConnectToClientActivity;
+import com.amos.server.R;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
@@ -67,7 +69,7 @@ public class ServerConnection implements PayloadHandling {
     /**
      * Tag for logging purposes.
      */
-    private static final String TAG = "NearbyServer";
+    private static final String TAG = "NearbyServerConnection";
 
     /**
      * Connection manager for the connection to FlyInn clients.
@@ -79,6 +81,7 @@ public class ServerConnection implements PayloadHandling {
     public static ServerConnection getInstance() {
         return ourInstance;
     }
+
 
     /**
      * Create a new server connection.
@@ -305,6 +308,7 @@ public class ServerConnection implements PayloadHandling {
                 Log.i(TAG, "Connection initiated to " + endpointId);
 
                 if (endpointId.equals(clientID)) {
+                    notification(R.string.notification_connecting);
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                 } else {
                     // initiated connection is not with server selected by user
@@ -320,6 +324,8 @@ public class ServerConnection implements PayloadHandling {
                     case ConnectionsStatusCodes.STATUS_OK:
                         // successful connection with server
                         Log.i(TAG, "Connected with " + endpointId);
+                        toast(R.string.nearby_connection_success);
+                        notification(R.string.notification_connected);
                         resetDiscovery();
                         connected = true;
                         callback.success("Connected with " + endpointId);
@@ -327,6 +333,7 @@ public class ServerConnection implements PayloadHandling {
                     case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                         // connection was rejected by one side (or both)
                         Log.i(TAG, "Connection rejected with " + endpointId);
+                        toast(R.string.nearby_connection_rejected);
                         clientID = null;
                         connected = false;
                         callback.failure("Connection rejected");
@@ -334,6 +341,7 @@ public class ServerConnection implements PayloadHandling {
                     case ConnectionsStatusCodes.STATUS_ERROR:
                         // connection was lost
                         Log.w(TAG, "Connection lost: " + endpointId);
+                        toast(R.string.nearby_connection_error);
                         clientID = null;
                         connected = false;
                         callback.failure("Connection lost");
@@ -353,11 +361,37 @@ public class ServerConnection implements PayloadHandling {
             public void onDisconnected(@NonNull String endpointId) {
                 // disconnected from server
                 Log.i(TAG, "Disconnected from " + endpointId);
+                toast(R.string.nearby_disconnected);
+                notification(R.string.notification_initialising);
                 resetClientData();
                 connected = false;
                 callback.failure("Disconnected");
             }
         };
+    }
+
+    /**
+     * Create toast using myActivity (stored ConnectToClientActivity)
+     *
+     * @param message String message which should be shown as a toast
+     */
+    private void toast (int message) {
+        if (myActivity == null) {
+            return;
+        }
+        myActivity.toast(myActivity.getString(message));
+    }
+
+    /**
+     * Update status notification using myActivity (stored ConnectToClientActivity)
+     *
+     * @param notification notification update which should be shown
+     */
+    private void notification (int notification) {
+        if (myActivity == null) {
+            return;
+        }
+        myActivity.notification(myActivity.getString(notification));
     }
 
     /**

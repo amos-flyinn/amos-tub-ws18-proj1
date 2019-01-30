@@ -5,15 +5,19 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.amos.flyinn.ConnectionSetupActivity;
+import com.amos.flyinn.R;
 import com.amos.flyinn.ShowCodeActivity;
 import com.amos.flyinn.summoner.ADBService;
 import com.amos.flyinn.summoner.ConnectionSigleton;
@@ -31,7 +35,8 @@ import java.util.Objects;
  * initiate a connection over nearby.
  */
 public class NearbyService extends IntentService {
-    public static final String TAG = NearbyService.class.getPackage().getName();
+    public static final String TAG = "NearbyService";
+
     public static final String ACTION_START = "nearby_start";
     public static final String ACTION_STOP = "nearby_stop";
     public static final String VIDEO_START = "video_start";
@@ -57,9 +62,11 @@ public class NearbyService extends IntentService {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        startForeground(FOREGROUND_ID, buildForegroundNotification("Nearby Action running", null));
         Log.d(TAG, "Creating channel");
         createChannel();
+        startForeground(FOREGROUND_ID, buildForegroundNotification(
+                getString(R.string.notification_initialising), null));
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -78,10 +85,11 @@ public class NearbyService extends IntentService {
                 mgr.getNotificationChannel(CHANNEL_ID) == null) {
 
             NotificationChannel c = new NotificationChannel(CHANNEL_ID,
-                    "flyinn_channel", NotificationManager.IMPORTANCE_HIGH);
+                    "flyinn_channel", NotificationManager.IMPORTANCE_LOW);
 
             c.enableLights(true);
             c.setLightColor(0xFFFF0000);
+            c.enableVibration(false);
 
             mgr.createNotificationChannel(c);
         }
@@ -97,18 +105,30 @@ public class NearbyService extends IntentService {
     private Notification buildForegroundNotification(String message, @Nullable Intent target) {
         NotificationCompat.Builder b = new NotificationCompat.Builder(this, CHANNEL_ID);
 
-        b.setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)  // makes notification pop up
-                .setContentTitle(String.format("Nearby service %s", nearbyCode))
+        b.setOngoing(true) // persistent notification
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentTitle(String.format("%s %s", getString(R.string.notification_name), nearbyCode))
                 .setContentText(message)
                 .setSmallIcon(android.R.drawable.stat_notify_sync);
 
+        /*
+        // this code created new instances of the activities
         if (target != null) {
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(target);
             PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             b.setContentIntent(pendingIntent);
         }
+        */
+
+        // open FlyInn when clicking on notification
+        Intent intent = new Intent(this, ShowCodeActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                intent, 0);
+        b.setContentIntent(pendingIntent);
 
         return (b.build());
     }
@@ -232,7 +252,11 @@ public class NearbyService extends IntentService {
                     server = new NearbyServer(this);
                     server.start();
                 } catch (SecurityException error) {
-                    notify("Insufficient permissions");
+                    (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                            this.getApplicationContext(),
+                            R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show());
+                    Log.e(TAG, "SecurityException when starting NearbyServer in NearbyService");
+                    sendBroadcastMessage("exit");
                 }
             }
         } else {
@@ -247,7 +271,6 @@ public class NearbyService extends IntentService {
         if (serviceState != NearbyState.STOPPED) {
             Log.d(TAG, "Stopping NearbyService");
             serviceState = NearbyState.STOPPED;
-            notify("Stopping nearby advertising");
             server.stop();
         } else {
             Log.d(TAG, "NearbyService already stopped");
@@ -302,5 +325,18 @@ public class NearbyService extends IntentService {
 
     public String getNearbyCode() {
         return nearbyCode;
+    }
+
+    /**
+     * Sends a message (to the start activity) via a LocalBroadcastManager.
+     * Used to close or restart the app. Prepends package prefix.
+     *
+     * @param message The message sent to the activity as boolean.
+     */
+    public void sendBroadcastMessage (String message) {
+        Intent intent = new Intent ("msg-flyinn");
+        intent.putExtra("com.amos.flyinn." + message, true);
+        Log.i(TAG, "NearbyService broadcasting message com.amos.flyinn." + message);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

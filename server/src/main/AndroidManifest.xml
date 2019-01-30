@@ -28,8 +28,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="landscape"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
@@ -39,6 +39,7 @@
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -58,6 +59,13 @@
             android:screenOrientation="landscape"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".errorScreen.ErrorActivity" />
+        <activity android:name=".SettingsScreen.SettingsActivity" />
+        <service
+            android:name=".KillNotificationService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false" />
     </application>
 
 </manifest>
