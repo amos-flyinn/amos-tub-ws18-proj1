@@ -1,9 +1,13 @@
 package com.amos.flyinn.nearbyservice;
 
 import android.Manifest;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.amos.flyinn.R;
 import com.amos.flyinn.configuration.ConfigurationSender;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -22,7 +26,7 @@ import com.google.android.gms.nearby.connection.Strategy;
  * incoming connections.
  */
 class NearbyServer {
-    public static final String TAG = NearbyServer.class.getPackage().getName();
+    public static final String TAG = "NearbyServer";
     /**
      * Required permissions for Nearby connections
      */
@@ -100,12 +104,20 @@ class NearbyServer {
                 connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener((Void unused) -> {
                     Log.d(TAG, "Start advertising Android nearby");
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Advertising android nearby");
+                    nearbyService.setServiceState(NearbyState.ADVERTISING,
+                            nearbyService.getString(R.string.notification_advertising));
                 })
                 .addOnFailureListener((Exception e) -> {
-                    Log.d(TAG, "Error trying to advertise Android nearby");
+                    Log.e(TAG, "Error trying to advertise Android nearby");
                     nearbyService.handleResponse(true, e.toString());
-                    nearbyService.setServiceState(NearbyState.STOPPED, "Failed to advertise android nearby");
+
+                    (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                            nearbyService.getApplicationContext(),
+                            R.string.nearby_advertising_error, Toast.LENGTH_LONG).show());
+
+                    nearbyService.setServiceState(NearbyState.STOPPED,
+                            nearbyService.getString(R.string.notification_finish));
+                    nearbyService.sendBroadcastMessage("exit");
                 });
     }
 
@@ -115,7 +127,8 @@ class NearbyServer {
     public void stop() {
         connectionsClient.stopAllEndpoints();
         Log.d(TAG, "Stopped all endpoints");
-        nearbyService.setServiceState(NearbyState.STOPPED, "Stopped all endpoints");
+        nearbyService.setServiceState(NearbyState.STOPPED,
+                nearbyService.getString(R.string.notification_stopped));
     }
 
     /**
@@ -129,7 +142,8 @@ class NearbyServer {
                     clientName = connectionInfo.getEndpointName();
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                     Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.CONNECTING, "Connecting to " + endpointId);
+                    nearbyService.setServiceState(NearbyState.CONNECTING,
+                            nearbyService.getString(R.string.notification_connecting));
                 }
 
                 @Override
@@ -140,31 +154,50 @@ class NearbyServer {
                             Log.i(TAG, "Connected with " + endpointId);
                             connectionsClient.stopAdvertising();
                             clientID = endpointId;
-                            nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
+
+                            nearbyService.setServiceState(NearbyState.CONNECTED,
+                                    nearbyService.getString(R.string.notification_connected));
 
                             // Send configuration
                             new ConfigurationSender(endpointId, nearbyService);
-
                             break;
 
                         case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                             // connection was rejected by one side (or both)
                             Log.i(TAG, "Connection rejected with " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Rejected with " + endpointId);
+                            nearbyService.setServiceState(NearbyState.ADVERTISING,
+                                    nearbyService.getString(R.string.notification_advertising));
+
+                            (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                                    nearbyService.getApplicationContext(),
+                                    R.string.nearby_connection_rejected, Toast.LENGTH_LONG).show());
+
                             clearClientData();
                             break;
 
                         case ConnectionsStatusCodes.STATUS_ERROR:
                             // connection was lost
                             Log.w(TAG, "Connection lost: " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Connection lost to " + endpointId);
+                            nearbyService.setServiceState(NearbyState.ADVERTISING,
+                                    nearbyService.getString(R.string.notification_advertising));
+
+                            (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                                    nearbyService.getApplicationContext(),
+                                    R.string.nearby_connection_error, Toast.LENGTH_LONG).show());
+
                             clearClientData();
                             break;
 
                         default:
                             // unknown status code. we shouldn't be here
                             Log.e(TAG, "Unknown error when attempting to connect with " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Unknown error with " + endpointId);
+                            nearbyService.setServiceState(NearbyState.ADVERTISING,
+                                    nearbyService.getString(R.string.notification_advertising));
+
+                            (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                                    nearbyService.getApplicationContext(),
+                                    R.string.nearby_connection_error, Toast.LENGTH_LONG).show());
+
                             clearClientData();
                     }
                 }
@@ -173,7 +206,14 @@ class NearbyServer {
                 public void onDisconnected(String endpointId) {
                     // disconnected from client
                     Log.i(TAG, "Disconnected from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Disconnected from " + endpointId);
+
+                    (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                            nearbyService.getApplicationContext(),
+                            R.string.nearby_disconnected, Toast.LENGTH_LONG).show());
+
+                    nearbyService.setServiceState(NearbyState.STOPPED,
+                            nearbyService.getString(R.string.notification_stopped));
+                    nearbyService.sendBroadcastMessage("restart");
                 }
             };
 

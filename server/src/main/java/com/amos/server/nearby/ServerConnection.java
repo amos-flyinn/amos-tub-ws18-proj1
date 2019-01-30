@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amos.server.ConnectToClientActivity;
+import com.amos.server.R;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
@@ -64,16 +66,21 @@ public class ServerConnection {
     /**
      * Tag for logging purposes.
      */
-    private static final String TAG = "NearbyServer";
+    private static final String TAG = "NearbyServerConnection";
 
     /**
      * Connection manager for the connection to FlyInn clients.
      */
     private ConnectionsClient connectionsClient;
 
+    private ConnectToClientActivity myActivity;
+
     public static ServerConnection getInstance() {
         return ourInstance;
     }
+
+    public void setActivity (ConnectToClientActivity activity) { myActivity = activity; }
+
 
     /**
      * Create a new server connection.
@@ -109,11 +116,15 @@ public class ServerConnection {
                 .addOnSuccessListener((Void unused) -> {
                     // started searching for servers successfully
                     Log.i(TAG, "Discovering connections on " + serverName);
+                    // toast(R.string.nearby_discovering_success);
+                    notification(R.string.notification_discovery);
                 })
                 .addOnFailureListener((Exception e) -> {
                     // unable to start discovery
                     Log.e(TAG, e.toString());
                     Log.e(TAG, "Unable to start discovery on " + serverName);
+                    toast(R.string.nearby_discovering_error);
+                    myActivity.closeApp();
                 });
     }
 
@@ -150,6 +161,7 @@ public class ServerConnection {
             // callback success will be called in the subsequent function
             connectionsClient.requestConnection(searchedClientName, endpoint, buildConnectionLifecycleCallback(callback));
         } else {
+            toast(R.string.nearby_connection_unreachable);
             callback.failure();
         }
 
@@ -252,6 +264,7 @@ public class ServerConnection {
                 Log.i(TAG, "Connection initiated to " + endpointId);
 
                 if (endpointId.equals(clientID)) {
+                    notification(R.string.notification_connecting);
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                 } else {
                     // initiated connection is not with server selected by user
@@ -267,18 +280,22 @@ public class ServerConnection {
                     case ConnectionsStatusCodes.STATUS_OK:
                         // successful connection with server
                         Log.i(TAG, "Connected with " + endpointId);
+                        toast(R.string.nearby_connection_success);
+                        notification(R.string.notification_connected);
                         resetDiscovery();
                         callback.success();
                         break;
                     case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                         // connection was rejected by one side (or both)
                         Log.i(TAG, "Connection rejected with " + endpointId);
+                        toast(R.string.nearby_connection_rejected);
                         clientID = null;
                         callback.failure();
                         break;
                     case ConnectionsStatusCodes.STATUS_ERROR:
                         // connection was lost
                         Log.w(TAG, "Connection lost: " + endpointId);
+                        toast(R.string.nearby_connection_error);
                         clientID = null;
                         callback.failure();
                         break;
@@ -286,6 +303,7 @@ public class ServerConnection {
                         // unknown status code. we shouldn't be here
                         Log.e(TAG, "Unknown error when attempting to connect with "
                                 + endpointId);
+                        toast(R.string.nearby_connection_error);
                         clientID = null;
                         callback.failure();
                         break;
@@ -296,9 +314,36 @@ public class ServerConnection {
             public void onDisconnected(@NonNull String endpointId) {
                 // disconnected from server
                 Log.i(TAG, "Disconnected from " + endpointId);
+                toast(R.string.nearby_disconnected);
+                notification(R.string.notification_initialising);
                 resetClientData();
+                myActivity.restartApp();
             }
         };
+    }
+
+    /**
+     * Create toast using myActivity (stored ConnectToClientActivity)
+     *
+     * @param message String message which should be shown as a toast
+     */
+    private void toast (int message) {
+        if (myActivity == null) {
+            return;
+        }
+        myActivity.toast(myActivity.getString(message));
+    }
+
+    /**
+     * Update status notification using myActivity (stored ConnectToClientActivity)
+     *
+     * @param notification notification update which should be shown
+     */
+    private void notification (int notification) {
+        if (myActivity == null) {
+            return;
+        }
+        myActivity.notification(myActivity.getString(notification));
     }
 
     /**

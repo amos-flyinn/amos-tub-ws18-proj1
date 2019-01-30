@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amos.server.eventsender.EventWriter;
 import com.amos.server.nearby.ConnectCallback;
@@ -74,7 +73,6 @@ public class ConnectionSetupServerActivity extends Activity {
             @Override
             public void success() {
                 Log.d(TAG, "Successfully connected to " + name);
-                toast(String.format("Successfully connected to %s", name));
                 infiniteBar.setVisibility(View.INVISIBLE);
                 progressText.setVisibility(View.INVISIBLE);
                 view.setVisibility(View.VISIBLE);
@@ -85,7 +83,6 @@ public class ConnectionSetupServerActivity extends Activity {
             @Override
             public void failure() {
                 Log.d(TAG, "Failed to connect to " + name);
-                toast(String.format("Failed to connect to %s", name));
                 toInitialActivity();
             }
         });
@@ -97,7 +94,7 @@ public class ConnectionSetupServerActivity extends Activity {
     @SuppressLint("ClickableViewAccessibility")
     private void transmitInputEvents() {
         Log.d(TAG, "Trying to transmit input events");
-        toast("Trying to transmit input events");
+        // Toast.makeText(this, "Trying to transmit input events", Toast.LENGTH_LONG).show();
         try {
             writer = new EventWriter(connection.sendStream(), new Point(view.getWidth(), view.getHeight()));
         } catch (IOException ignored) {
@@ -113,11 +110,6 @@ public class ConnectionSetupServerActivity extends Activity {
             }
             return true;
         });
-    }
-
-    private void toast(String message) {
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        toast.show();
     }
 
     private void setProgressText(String message) {

@@ -1,14 +1,22 @@
 package com.amos.flyinn;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,7 +29,7 @@ import com.amos.flyinn.configuration.ConfigurationActivity;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.security.SecureRandom;
 
 /**
  * Initial activity showing code used for connection from remote display.
@@ -29,11 +37,39 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ShowCodeActivity extends AppCompatActivity {
     private String nameNum = "";
     private TextView display;
-    private Toast mToast;
 
     private static final String TAG = "showCode";
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
+
+    public static final String[] STORAGE_PERMISSIONS = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
+
+    private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getExtras() != null) {
+                if (intent.getBooleanExtra("com.amos.flyinn.exit", false)) {
+                    Log.i(TAG, "Received exit message via BroadcastReceiver.");
+                    closeApp();
+                } else if (intent.getBooleanExtra("com.amos.flyinn.restart", false)) {
+                    Log.i(TAG, "Received restart message via BroadcastReceiver.");
+                    restartApp();
+                }
+            }
+        }
+    };
+
+    private ServiceConnection myConnection = new ServiceConnection() {
+        public void onServiceConnected (ComponentName className, IBinder binder) {
+            ((KillNotificationService.KillBinder) binder).service.startService(
+                    new Intent(ShowCodeActivity.this, KillNotificationService.class));
+        }
+        public void onServiceDisconnected(ComponentName className) {
+            // empty method
+        }
+    };
 
     /**
      * Set state and information in android service.
@@ -51,21 +87,18 @@ public class ShowCodeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
+                new IntentFilter("msg-flyinn"));
+        bindService(new Intent(ShowCodeActivity.this,
+                        KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
+
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
-
-
         display = findViewById(R.id.textView2);
-        if (!hasPermissions(NearbyService.getRequiredPermissions()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(NearbyService.getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
-        } else {
-            Log.w(TAG, "Could not check permissions due to version");
-        }
 
-        String[] perms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (!hasPermissions(perms) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(perms, REQUEST_CODE_REQUIRED_PERMISSIONS);
-        }
+        checkPermissions(STORAGE_PERMISSIONS);
+        checkPermissions(NearbyService.getRequiredPermissions());
 
         try {
             createADBService();
@@ -73,7 +106,14 @@ public class ShowCodeActivity extends AppCompatActivity {
             Log.d("ShowCodeActivity", "Failed to start ADB service");
             e.printStackTrace();
         }
-        nameNum = String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9998 + 1));
+
+        // create app code between 0 and 9999; secureRandom is non-deterministic
+        nameNum = String.valueOf((new SecureRandom()).nextInt(9999 + 1));
+        while (nameNum.length() < 4) {
+            nameNum = "0" + nameNum;
+        }
+
+        Log.i(TAG, "App code is set to " + nameNum);
         display.setText(nameNum);
         setService();
     }
@@ -100,7 +140,35 @@ public class ShowCodeActivity extends AppCompatActivity {
     protected void onDestroy() {
         Intent intent = NearbyService.createNearbyIntent("", this);
         stopService(intent);
+
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(msgReceiver);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+            Log.i(TAG, "Receiver was already unregistered.");
+        }
+
+        try {
+            unbindService(myConnection);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+            Log.i(TAG, "KillNotificationService was already unbound.");
+        }
+
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
         super.onDestroy();
+    }
+
+    private void checkPermissions(String[] permissions) {
+        if (!hasPermissions(permissions)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(permissions, REQUEST_CODE_REQUIRED_PERMISSIONS);
+            } else {
+                Log.w(TAG, "Could not check permissions due to version");
+                Toast.makeText(this, R.string.nearby_permissions_version, Toast.LENGTH_LONG).show();
+                closeApp();
+            }
+        }
     }
 
     /**
@@ -122,10 +190,9 @@ public class ShowCodeActivity extends AppCompatActivity {
 
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.w("flyinn.ShowCode", "Permissions necessary for connections were not granted.");
-                mToast.setText(R.string.nearby_missing_permissions);
-                mToast.show();
-                finish();
+                Log.w(TAG, "Permissions necessary for connections were not granted.");
+                Toast.makeText(this, R.string.nearby_missing_permissions, Toast.LENGTH_LONG).show();
+                closeApp();
             }
         }
         recreate();
@@ -167,5 +234,27 @@ public class ShowCodeActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    /**
+     * Closes the app (kills all activities)
+     */
+    public void closeApp() {
+        Log.d(TAG, "Closing app via closeApp function.");
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+
+        this.finishAffinity();
+        finishAndRemoveTask();
+    }
+
+    /**
+     * Finishes all activities and then restarts the app
+     */
+    public void restartApp() {
+        Log.d(TAG, "Restarting app via restartApp function.");
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 }

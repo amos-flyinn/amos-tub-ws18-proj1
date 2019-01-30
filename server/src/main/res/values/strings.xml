@@ -5,6 +5,7 @@
 
     <string name="thread_button_label">Manually start event server thread</string>
 
+    <string name="nearby_permissions_version">Cannot check permissions due to Android API version.</string>
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
     <string name="nearby_close_connection">Close connection to:</string>
     <string name="nearby_discovering_success">Started searching for connections.</string>
@@ -15,7 +16,13 @@
     <string name="nearby_connection_rejected">Connection was rejected.</string>
     <string name="nearby_connection_error">Failed to establish connection.</string>
     <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
-    <string name="nearby_disconnected">Connection closed.</string>
+    <string name="nearby_disconnected">Connection closed. Restarting.</string>
+
+    <string name="notification_name">FlyInn server</string>
+    <string name="notification_initialising">Initialising application.</string>
+    <string name="notification_discovery">Open to FlyInn clients.</string>
+    <string name="notification_connected">Connected to client.</string>
+    <string name="notification_connecting">Connecting to FlyInn server.</string>
 
     <string name="buildinfo_git_tag_name">Git Tag: </string>
     <string name="buildinfo_git_commit_date">Git Commit: </string>
