@@ -17,8 +17,11 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 
 import com.amos.server.mediadecoder.MediaDecoderController;
 import com.amos.server.nearby.ServerConnection;
+import com.chaos.view.PinView;
 
 public class ConnectToClientActivity extends Activity {
 
@@ -42,7 +46,7 @@ public class ConnectToClientActivity extends Activity {
 
     private static final int NOTIFY_ID = 2;
     private static final String CHANNEL_ID = "FlyInn server nearby";
-
+    PinView pinView;
     private ServerConnection connection = ServerConnection.getInstance();
 
     /** Tag for logging purposes. */
@@ -69,6 +73,12 @@ public class ConnectToClientActivity extends Activity {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         EditText text = findViewById(R.id.connect_editText);
 
+        pinView = findViewById(R.id.firstPinView);
+        //deactivate keyboard for the pinview
+        pinView.setInputType(InputType.TYPE_NULL);
+
+        codeBoxes();
+
         createChannel();
         notification(getString(R.string.notification_initialising));
 
@@ -87,6 +97,10 @@ public class ConnectToClientActivity extends Activity {
                     }
                     return false;
                 });
+    }
+
+    private void codeBoxes() {
+
     }
 
     /**
@@ -243,4 +257,65 @@ public class ConnectToClientActivity extends Activity {
         this.finishAffinity();
         finishAndRemoveTask();
     }
+
+    public void onClickbtn1(View view) {
+        pinView.setText(pinView.getText() + "1");
+    }
+
+    public void onClickbtn2(View view) {
+        pinView.setText(pinView.getText() + "2");
+    }
+
+    public void onClickbtn3(View view) {
+        pinView.setText(pinView.getText() + "3");
+    }
+
+    public void onClickbtn4(View view) {
+        pinView.setText(pinView.getText() + "4");
+    }
+
+    public void onClickbtn5(View view) {
+        pinView.setText(pinView.getText() + "5");
+    }
+
+    public void onClickbtn6(View view) {
+        pinView.setText(pinView.getText() + "6");
+    }
+
+    public void onClickbtn7(View view) {
+        pinView.setText(pinView.getText() + "7");
+    }
+
+    public void onClickbtn8(View view) {
+        pinView.setText(pinView.getText() + "8");
+
+    }
+
+    public void onClickbtn9(View view) {
+        pinView.setText(pinView.getText() + "9");
+
+    }
+
+    public void onClickbtn0(View view) {
+        pinView.setText(pinView.getText() + "0");
+    }
+
+    public void onClickbtnSubmit(View view) {
+
+        String name = pinView.getText().toString();
+        if (name.length() == 4) {
+
+            toConnectionSetup(name);
+        }else {
+            Toast.makeText(this, "please provide the right Code!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onClickbackspace(View view) {
+            String name = pinView.getText().toString();
+            if (name.length()>0) {
+                pinView.setText(name.substring(0, name.length() - 1));
+            }
+    }
+
 }
