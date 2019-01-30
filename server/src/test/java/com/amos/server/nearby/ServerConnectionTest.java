@@ -160,7 +160,18 @@ public class ServerConnectionTest {
         ServerConnection connection = ServerConnection.getInstance();
         Whitebox.setInternalState(connection, "connectionsClient", mockClient);
         assertNotEquals(null, Whitebox.getInternalState(connection, "connectionsClient"));
-        connection.discover();
+        ConnectCallback callback = new ConnectCallback() {
+            @Override
+            public void success(String message) {
+                // nothing needed, check in assert
+            }
+
+            @Override
+            public void failure(String message) {
+                // nothing needed, check in assert
+            }
+        };
+        connection.discover(callback, connection.buildEndpointDiscoveryCallback("", callback));
         List<String> expected = Arrays.asList("endName", "endName2", "endNameD1");
         assertEquals(expected, connection.getClients());
     }
@@ -169,17 +180,19 @@ public class ServerConnectionTest {
     public void connectTo() {
         ServerConnection connection = ServerConnection.getInstance();
         Whitebox.setInternalState(connection, "connectionsClient", mockClient);
-        connection.discover();
-        connection.connectTo("me", new ConnectCallback() {
+        ConnectCallback callback = new ConnectCallback() {
             @Override
-            public void success() {
+            public void success(String message) {
+                // check in asserts
             }
 
             @Override
-            public void failure() {
-                fail("Failed callback returned for ok");
+            public void failure(String message) {
+                fail("Failed to connect");
             }
-        });
+        };
+        connection.discover(callback, connection.buildEndpointDiscoveryCallback("", callback));
+        connection.connectTo("me",  callback);
         assertEquals("test", connection.getClientID());
     }
 

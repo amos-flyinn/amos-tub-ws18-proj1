@@ -1,5 +1,6 @@
 package com.amos.flyinn.summoner;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -22,19 +23,15 @@ import java.util.Locale;
  * allow injection of input events into other applications. This daemon controls copying the
  * fakeinputlib binary to a specified location and its execution over adb over network.
  */
+@SuppressLint("SdCardPath")
 public class Daemon {
     private final String[] WRITE_LOCATIONS = {
             Environment.getExternalStorageDirectory() + "/Android/data/flyinn_fakeinputlib.jar",
             "/sdcard/Android/data/flyinn_fakeinputlib.jar",
     };
-    private final String FILE_LOCATION = "/sdcard/Android/data/flyinn_fakeinput.jar";
-    // NOTE: cant use the FAKE_INPUT_SERVER_PATH as this will lead to permission issues, use "/sdcard/", which is a symlink.
-    private final String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar app_process / com.amos.fakeinputlib.Main %d %d";
-    //private final String CMD = "shell:CLASSPATH=%%s nohup app_process / com.amos.fakeinputlib.Main %s %d %d";
+    // private final String FILE_LOCATION = "/sdcard/Android/data/flyinn_fakeinput.jar";
     private final String execCMD;
     private Context context;
-
-    private String binaryPath;
 
     /**
      * Create a new Daemon instance.
@@ -43,6 +40,8 @@ public class Daemon {
      * @param screenDimensions Screen size including status bar and navbar.
      */
     public Daemon(Context context, Point screenDimensions) {
+        // NOTE: cant use the FAKE_INPUT_SERVER_PATH as this will lead to permission issues, use "/sdcard/", which is a symlink.
+        String SHELL_FAKE_INPUT_NOHUP_COMMAND = "shell:CLASSPATH=/sdcard/Android/data/flyinn_fakeinputlib.jar app_process / com.amos.fakeinputlib.Main %d %d";
         execCMD = String.format(Locale.ENGLISH, SHELL_FAKE_INPUT_NOHUP_COMMAND, screenDimensions.x, screenDimensions.y);
         Log.d("AdbDaemon", "Generated cmd: " + this.execCMD);
         this.context = context;
@@ -51,7 +50,7 @@ public class Daemon {
     /**
      * Copy fakeinputlib binary from APK to local directory.
      *
-     * @throws IOException
+     * @throws IOException Failure to write fakeinputlib binary
      */
     public void writeFakeInputToFilesystem() throws IOException {
         InputStream in = this.context.getResources().openRawResource(R.raw.fakeinputlib);
@@ -65,14 +64,12 @@ public class Daemon {
                 for (int read; (read = in.read(buff)) > 0; ) {
                     out.write(buff, 0, read);
                 }
-                binaryPath = fpath.toString();
                 in.close();
                 out.close();
                 Log.d("AdbDaemon", "Wrote fakeinputlib bin to file system " + destination);
                 return;
             } catch (FileNotFoundException ignored) {
                 Log.d("AdbDaemon", "Failed to write fakeinputlib bin to " + destination);
-                continue;
             }
 
         throw new IOException();
@@ -81,8 +78,6 @@ public class Daemon {
     /**
      * Start ADBService, which will call fakeinputlib on commandline. This is necessary in order to
      * keep fakeinputlib alive even when the application itself is closed.
-     *
-     * @throws Exception
      */
     public void spawn_adb() {
         Intent i = new Intent(context, ADBService.class);

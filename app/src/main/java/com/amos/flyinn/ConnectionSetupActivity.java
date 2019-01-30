@@ -1,38 +1,44 @@
 package com.amos.flyinn;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.hardware.display.DisplayManager;
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
+import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.Surface;
 
-import com.amos.flyinn.signaling.ClientSocket;
-import com.amos.flyinn.signaling.Emitter;
-import com.amos.flyinn.summoner.ADBService;
-import com.amos.flyinn.summoner.Daemon;
-import com.amos.flyinn.webrtc.PeerWrapper;
-import com.amos.flyinn.webrtc.SetupStates;
+import com.amos.flyinn.nearbyservice.NearbyService;
+import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
 
-import org.webrtc.PeerConnection;
-import org.webrtc.SurfaceViewRenderer;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import static android.media.MediaCodecList.getCodecCount;
+import static android.media.MediaCodecList.getCodecInfoAt;
 
 /**
  * <h1>ConnectionSetup</h1>
@@ -44,307 +50,245 @@ import java.util.concurrent.TimeUnit;
  * </p>
  */
 
-public class ConnectionSetupActivity extends AppCompatActivity {
-    private ProgressBar infiniteBar;
-    private TextView progressText;
-    private Button switchToHomeScreenButton;
-    private Button closeConnectionButton;
-    private TextView connectedMessage;
+public class ConnectionSetupActivity extends Activity {
+    private static final String TAG = "ConnectionSetupActivity";
+    private static final int REQUEST_CODE = 1000;
+    private int mScreenDensity;
     private MediaProjectionManager mProjectionManager;
-    private PeerConnection localConnection;
-    private ClientSocket clientSocket;
-    private PeerWrapper peerWrapper;
-    private SurfaceViewRenderer render;
-    private Button buttonInit;
+    private MediaProjection mMediaProjection;
+    private MediaProjectionCallback mMediaProjectionCallback;
+    private static final int REQUEST_PERMISSIONS = 10;
+    private Surface si;
+
+    private MediaCodec codec;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_setup);
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+        mScreenDensity = metrics.densityDpi;
+        mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
-
-        infiniteBar = findViewById(R.id.infiniteBar);
-        progressText = findViewById(R.id.progressText);
-        closeConnectionButton = findViewById(R.id.close_connection);
-        switchToHomeScreenButton = findViewById(R.id.switch_home_screen);
-        connectedMessage = findViewById(R.id.connected_message);
-
-        //Giving callback to the close connection button
-        closeConnectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                closeConnection();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, REQUEST_PERMISSIONS);
+        } else {
+            if (mMediaProjection == null) {
+                startActivityForResult(videoIntent(), REQUEST_CODE);
             }
-        });
-
-        //Giving callback to the switch to home button
-        switchToHomeScreenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switchToHomeScreen();
-            }
-        });
+        }
     }
 
-    /**
-     * Method to minimize the app and go to the home screen
-     */
-    public void switchToHomeScreen() {
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(startMain);
-    }
-
-    /**
-     * This method is going to be called after the screen capture permission is asked.
-     * It gives the permissions necessary for the WebRTC screen capture to work
-     *
-     * @param requestCode the permission code for the Android permission
-     * @param resultCode  the result of the operation
-     * @param data        information about the screen capture permissions
-     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode != RESULT_OK) {
-            Toast.makeText(this,
-                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
-            setStateText(SetupStates.PERMISSIONS_FOR_SCREENCAST_DENIED);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CODE) {
+            Log.e(TAG, "Unknown request code: " + requestCode);
             return;
         }
-        setStateText(1);
-        this.configForWebRTC(data);
-        this.initWebRTCScreenCapture();
-    }
-
-    private void initWebRTCScreenCapture() {
-        try {
-            boolean connected = this.clientSocket.connectBlocking(1, TimeUnit.MINUTES);
-            if (!connected) {
-                boolean retry = true;
-                int counter = 0;
-                while (retry) {
-                    boolean retryReconnect = this.clientSocket.reconnectBlocking();
-                    if (retryReconnect) {
-                        retry = false;
-                    }
-
-                    if (counter == 4) {
-                        retry = false;
-                        break;
-                    }
-                    counter++;
-                }
-                if (counter == 4) {
-                    this.setStateText(SetupStates.ERROR_CONNECTING_SERVER);
-                }
-            } else {
-                this.peerWrapper.beginTransactionWithOffer();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Log.d("MainActivity", "initWebRTCScreenCapture: " + "Error traying to connect to the server");
+        if (resultCode != RESULT_OK) {
+            return;
         }
+        mMediaProjectionCallback = new MediaProjectionCallback();
+        mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
+        mMediaProjection.registerCallback(mMediaProjectionCallback, null);
+        if (mMediaProjection == null) {
+            startActivityForResult(videoIntent(), REQUEST_CODE);
+            return;
+        }
+        startScreenShare();
     }
 
-    /**
-     * This method returns the SurfaceViewRender instance that
-     * the client is using for the screen capture streaming
-     *
-     * @return SurfaceViewRenderer return instance of SurfaceView component
-     */
-    public SurfaceViewRenderer getRender() {
-        return render;
-    }
-
-    private void initViewsWebRTC() {
-        render = findViewById(R.id.surface_local_viewer);
-    }
-
-
-    private void configForWebRTC(Intent permissionsScreenCapture) {
-        this.peerWrapper = new PeerWrapper(this, permissionsScreenCapture);
-        this.clientSocket = new ClientSocket(URI.create("ws://192.168.49.1:8080"), this.peerWrapper);
-        this.peerWrapper.setEmitter((Emitter) this.clientSocket);
-
-    }
-
-    private void initScreenCapturePermissions() {
-        mProjectionManager = (MediaProjectionManager) getSystemService
-                (Context.MEDIA_PROJECTION_SERVICE);
-        setStateText(0);
-        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), 42);
+    private Intent videoIntent() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Intent mOptionIntent = mProjectionManager.createScreenCaptureIntent();
+        mOptionIntent.putExtra("return-data", true);
+        mOptionIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        return mOptionIntent;
     }
 
 
-    private void restartAPP() {
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void startScreenShare() {
+        initRecorder();
     }
 
-    /**
-     * This method is to create an ADB service
-     *
-     * @return returns Daemon service to work with the ADB service
-     */
-    protected Daemon createADBService() {
+    @Nullable
+    private static MediaCodecInfo selectCodec(String mimeType) {
+        int numCodecs = getCodecCount();
+        for (int i = 0; i < numCodecs; i++) {
+            MediaCodecInfo codecInfo = getCodecInfoAt(i);
+            if (!codecInfo.isEncoder()) {
+                continue;
+            }
+            String[] types = codecInfo.getSupportedTypes();
+            for (String type : types) {
+                if (type.equalsIgnoreCase(mimeType)) {
+                    return codecInfo;
+                }
+            }
+        }
+        return null;
+    }
+
+    private MediaCodec.Callback buildEncoderCallback(OutputStream data, int width, int height) {
+        return new MediaCodec.Callback() {
+            MediaFormat mOutputFormat;
+            byte[] qq = new byte[width * height * 2];
+            ByteBuffer bb = ByteBuffer.allocate(4 + 8).order(ByteOrder.BIG_ENDIAN);
+            ByteBuffer outputBuffer;
+
+            @Override
+            public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
+                // do not do anything with input buffers
+            }
+
+            @Override
+            public void onOutputBufferAvailable(@NonNull MediaCodec codec, int outputBufferId, @NonNull MediaCodec.BufferInfo info) {
+                outputBuffer = codec.getOutputBuffer(outputBufferId);
+                if (outputBuffer != null) {
+                    outputBuffer.position(info.offset);
+                }
+                if (outputBuffer != null) {
+                    outputBuffer.limit(info.offset + info.size);
+                }
+                try {
+                    bb.rewind();
+                    bb.putLong(info.presentationTimeUs);
+                    bb.putInt(info.size);
+                    data.write(bb.array());
+                    outputBuffer.get(qq, 0, info.size);
+                    data.write(qq, 0, info.size);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                outputBuffer.clear();
+                codec.releaseOutputBuffer(outputBufferId, false);
+            }
+
+            @Override
+            public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
+                // not handling errors yet
+            }
+
+            @Override
+            public void onOutputFormatChanged(@NonNull MediaCodec mc, @NonNull MediaFormat format) {
+                mOutputFormat = format;
+            }
+        };
+    }
+
+    private MediaFormat buildMediaFormat(String mimetype, int width, int height) {
+        MediaFormat format = MediaFormat.createVideoFormat(mimetype, width, height);
+//            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 200_000);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+        format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            format.setInteger(MediaFormat.KEY_ROTATION, 90);
+        }
+        format.setInteger("rotation-degrees", 90);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            format.setInteger(MediaFormat.KEY_PRIORITY, 0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            format.setInteger(MediaFormat.KEY_LATENCY, 0);
+        }
+        return format;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        Daemon d = new Daemon(getApplicationContext(), p);
+        int w = 400;
+        int h = 240;
+        String MIME_TYPE = "video/avc";
         try {
-            d.writeFakeInputToFilesystem();
-            d.spawn_adb();
-        } catch (Exception e) {
-            Log.d("AppDaemon", e.toString());
-        }
-        return d;
-    }
-
-    private void closeConnection() {
-        peerWrapper.closeConnection();
-        this.render.clearImage();
-        this.stopService(new Intent(this, ADBService.class));
-
-        WifiP2pManager mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        WifiP2pManager.Channel mChannel = mManager.initialize(this, getMainLooper(), null);
-        try {
-            @SuppressLint("WifiManagerLeak")
-            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            wifiManager.setWifiEnabled(false);
-            Thread.sleep(100);
-            wifiManager.setWifiEnabled(true);
-        } catch (Exception e) {
-        }
-
-        try {
-            Method[] methods = WifiP2pManager.class.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals("deletePersistentGroup")) {
-                    // Delete any persistent group
-                    for (int netid = 0; netid < 32; netid++) {
-                        methods[i].invoke(mManager, mChannel, netid, null);
-                    }
-                }
+            PipedInputStream stream = new PipedInputStream();
+            PipedOutputStream data2 = new PipedOutputStream(stream);
+            BufferedOutputStream data = new BufferedOutputStream(data2);
+            {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
             }
+//            OutputStream data = new Socket("192.168.2.121", 5551).getOutputStream();
+            VideoStreamSingleton.getInstance().os = stream;
+            Intent intent = NearbyService.createNearbyIntent(NearbyService.VIDEO_START, this);
+            startService(intent);
+
+            {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+            }
+
+            Log.d(TAG, "Payload sent video_start");
+
+            MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
+            assert codecInfo != null;
+            codec = MediaCodec.createEncoderByType(MIME_TYPE);
+            MediaFormat format = buildMediaFormat(MIME_TYPE, w, h);
+
+            Log.d(TAG, format.toString());
+            codec.setCallback(buildEncoderCallback(data, w, h));
+
+            codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            si = codec.createInputSurface();
+            mMediaProjection.createVirtualDisplay(
+                    TAG,
+                    w,
+                    h,
+                    mScreenDensity,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                    si,
+                    null,
+                    null
+            );
+            Log.d(TAG, "Created Media Encoder");
+            new Thread(() -> {
+                Log.d(TAG, "Start encoding");
+                codec.start();
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        finish();
+        startActivity(new Intent(this, ConnectedActivity.class));
     }
 
-
-    /**
-     * This method should be use to update the TextView description state.
-     * It will write a description about the current state of the WebRTC stream.
-     * This method is going to handle all possible error states that the App could reach.
-     * <p>
-     * Please see {@link com.amos.flyinn.webrtc.SetupStates} for the states list.
-     *
-     * @param state the identification number to identify correct or error states.
-     */
-    public void setStateText(int state) {
-
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
+    private class MediaProjectionCallback extends MediaProjection.Callback {
+        @Override
+        public void onStop() {
+            Log.v(TAG, "Recording Stopped");
+            mMediaProjection = null;
+            stopScreenSharing();
         }
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
-                .setCancelable(false)
-                .setTitle("Setup error");
+    }
 
-        builder.setNegativeButton("Restar app", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                restartAPP();
-            }
-        });
+    private void stopScreenSharing() {
+        codec.stop();
+        codec.release();
+        si.release();
+        // If used: mMediaRecorder object cannot be reused again
+        destroyMediaProjection();
+    }
 
-        switch (state) {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Destroy codec");
+        stopScreenSharing();
+    }
 
-            case SetupStates.PERMISSIONS_FOR_SCREENCAST_DENIED:
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                builder.setMessage("Error getting permissions for screen capture");
-                builder.show();
-                break;
-
-            case SetupStates.ASKING_PERMISSIONS:
-                progressText.setText("Asking permissions for screen capture");
-                break;
-
-            case SetupStates.SETUP_SCREEN_CONNECTION:
-                progressText.setText("Setup screen share connection with server");
-                break;
-
-            case SetupStates.LOCAL_DESCRIPTOR_CREATE:
-                progressText.setText("Local descriptor created Successfully");
-                break;
-
-            case SetupStates.REMOTE_DESCRIPTOR_CREATE:
-                progressText.setText("Remote descriptor created Successfully");
-                break;
-
-            case SetupStates.LOCAL_DESCRIPTOR_SETTED:
-                progressText.setText("Local descriptor setted Successfully");
-                break;
-
-            case SetupStates.REMOTE_DESCRIPTOR_SETTED:
-                progressText.setText("Remote descriptor setted Successfully");
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                connectedMessage.setVisibility(View.VISIBLE);
-                switchToHomeScreenButton.setVisibility(View.VISIBLE);
-                closeConnectionButton.setVisibility(View.VISIBLE);
-                break;
-
-            case SetupStates.FAIL_CREATING_LOCAL_DESCRIPTOR:
-                builder.setMessage("Creating local descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-
-            case SetupStates.FAIL_CREATING_REMOTE_DESCRIPTOR:
-                builder.setMessage("Creating remote descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-            case SetupStates.FAIL_SETTED_LOCAL_DESCRIPTION:
-                builder.setMessage("Setting local descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-            case SetupStates.FAIL_SETTED_REMOTE_DESCRIPTION:
-                builder.setMessage("Setting remote descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-            case SetupStates.FAIL_SENDING_SESSION_DESCRIPTOR:
-                builder.setMessage("Sending remote descriptor failed. Please restart the app");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
-
-            case SetupStates.ERROR_CONNECTING_SERVER:
-                builder.setMessage("Error connecting server. Please restart the app and make sure you are connected");
-                builder.show();
-                progressText.setVisibility(View.INVISIBLE);
-                infiniteBar.setVisibility(View.INVISIBLE);
-                break;
+    private void destroyMediaProjection() {
+        if (mMediaProjection != null) {
+            mMediaProjection.unregisterCallback(mMediaProjectionCallback);
+            mMediaProjection.stop();
+            mMediaProjection = null;
         }
+        Log.i(TAG, "MediaProjection Stopped");
     }
 }

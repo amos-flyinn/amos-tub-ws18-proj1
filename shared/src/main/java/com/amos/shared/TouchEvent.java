@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Serializable version of TouchEvents which contain enough information to
@@ -15,6 +16,7 @@ import java.util.List;
  * Only MotionEvent information relevant to reconstructing usable MotionEvents are sent.
  * X and Y are expected to be normalized to the range between 0 and 1.
  */
+@SuppressWarnings("WeakerAccess")
 public class TouchEvent implements Serializable {
     public float x;
     public float y;
@@ -189,11 +191,11 @@ public class TouchEvent implements Serializable {
     }
     /**
      * Create String representation of TouchEvent.
-     * @return
+     * @return Touchevent string information
      */
     @Override
     public String toString() {
-        return String.format("TE: X: %f Y: %f", x, y);
+        return String.format(Locale.ROOT, "TE: X: %f Y: %f", x, y);
     }
 }
 

@@ -25,12 +25,18 @@ android {
 
     defaultConfig {
         applicationId "com.amos.server"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
     }
 
     buildTypes {
@@ -49,10 +55,16 @@ android {
     flavorDimensions "device"
     productFlavors {
         mobile {
-            minSdkVersion 21
+            minSdkVersion 26
         }
         embedded {
             minSdkVersion 27
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
         }
     }
 }
@@ -77,6 +89,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.0.2'
     testImplementation 'androidx.test:core:1.1.0'
     testImplementation 'org.json:json:20160810'
+    //noinspection GradleDependency
     testImplementation 'org.mockito:mockito-core:1.10.19'
     testImplementation "org.powermock:powermock-module-junit4:1.6.6"
     testImplementation "org.powermock:powermock-module-junit4-rule:1.6.6"
@@ -89,10 +102,9 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.1.1'
 }
 
-task prePreBuild {
+preBuild.doFirst {
     exec {
         workingDir '..'
         commandLine('bash', 'update-build-info.sh', 'server')
     }
 }
-preBuild.dependsOn prePreBuild

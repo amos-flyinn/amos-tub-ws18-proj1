@@ -20,7 +20,7 @@ public class BuildInfoActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.buildinfo_git_tag_name)).setText(BuildInfo.GIT_TAG_NAME);
         ((TextView)findViewById(R.id.buildinfo_git_commit_date)).setText(BuildInfo.GIT_COMMIT_DATE);
         ((TextView)findViewById(R.id.buildinfo_build_date)).setText(BuildInfo.GIT_BUILD_DATE);
-        ((TextView)findViewById(R.id.buildinfo_package)).setText(BuildInfo.GIT_PACKAGE);
+        ((TextView)findViewById(R.id.buildinfo_package)).setText("");
     }
 
 

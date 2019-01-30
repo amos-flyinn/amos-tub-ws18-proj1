@@ -1,25 +1,19 @@
 <resources>
     <string name="app_name">server</string>
-    <string name="title_activity_event_grab_demo">EventGrabDemo</string>
     <string name="title_activity_build_info">BuildInfoActivity</string>
 
-    <string name="thread_button_label">Manually start event server thread</string>
-
-    <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
-    <string name="nearby_close_connection">Close connection to:</string>
-    <string name="nearby_discovering_success">Started searching for connections.</string>
-    <string name="nearby_discovering_error">Could not start searching for connections.</string>
-    <string name="nearby_advertising_error">Could not start searching for connections.</string>
-    <string name="nearby_advertising_success">Started broadcasting connection.</string>
-    <string name="nearby_connection_success">Connection established.</string>
-    <string name="nearby_connection_rejected">Connection was rejected.</string>
-    <string name="nearby_connection_error">Failed to establish connection.</string>
-    <string name="nearby_connection_unreachable">No reachable client with selected code.</string>
-    <string name="nearby_disconnected">Connection closed.</string>
-
+    <string name="notification_name">FlyInn server</string>
+    <string name="notification_initialising">Initialising application.</string>
     <string name="buildinfo_git_tag_name">Git Tag: </string>
     <string name="buildinfo_git_commit_date">Git Commit: </string>
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
-    <string name="title_activity_nearby_server">NearbyServerActivity</string>
+    <string name="title_activity_connected">ConnectedActivity</string>
+    <string name="waiting_for_connection">Waiting For Connection</string>
+    <string name="connect_title">Enter the Code from the App</string>
+    <string name="error_message">Something Went Wrong</string>
+    <string name="close_app">Close App</string>
+    <string name="restart_app">Restart App</string>
+    <string name="error_icon">Error icon</string>
+    <string name="nearby_missing_permissions">Missing permissions for android nearby</string>
 </resources>

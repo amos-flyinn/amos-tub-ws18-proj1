@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
+import android.util.SparseArray;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -33,7 +33,8 @@ import java.util.List;
  * <p>
  * The server needs to send input events to the client and correctly receive the recorded screen.
  */
-public class ServerConnection {
+@SuppressWarnings("WeakerAccess")
+public class ServerConnection implements PayloadHandling {
 
     private static final ServerConnection ourInstance = new ServerConnection();
 
@@ -43,6 +44,8 @@ public class ServerConnection {
     private static final Strategy STRATEGY = Strategy.P2P_POINT_TO_POINT;
 
     private final String serverName = generateName();
+
+    private boolean connected = false;
 
     private String clientID;
 
@@ -64,16 +67,19 @@ public class ServerConnection {
     /**
      * Tag for logging purposes.
      */
-    private static final String TAG = "NearbyServer";
+    private static final String TAG = "NearbyServerConnection";
 
     /**
      * Connection manager for the connection to FlyInn clients.
      */
     private ConnectionsClient connectionsClient;
 
+    private SparseArray<HandlePayload> handleMap = new SparseArray<>();
+
     public static ServerConnection getInstance() {
         return ourInstance;
     }
+
 
     /**
      * Create a new server connection.
@@ -91,10 +97,51 @@ public class ServerConnection {
         connectionsClient = Nearby.getConnectionsClient(ctx);
     }
 
+    @Override
+    public void addHandle(int type, HandlePayload handle) {
+        handleMap.put(type, handle);
+    }
+
+    @Override
+    public HandlePayload getHandle(int type) {
+        return handleMap.get(type);
+    }
+
+    @Override
+    public void handlePayload(Payload payload) {
+        Log.d(TAG, String.format("Handling payload %d", payload.getId()));
+        HandlePayload handle = getHandle(payload.getType());
+        if (handle != null) {
+            Log.d(TAG, "Payload handled by receiver");
+            handle.receive(payload);
+        } else {
+            switch(payload.getType()) {
+                case Payload.Type.BYTES:
+                    /* Todo: Use and apply received configuration JSON string */
+                    Log.d(TAG, "Received configuration");
+                    break;
+                case Payload.Type.STREAM:
+                    Log.d(TAG, "Received unregistered stream");
+                    break;
+                default:
+                    Log.d(TAG, "Unknown payload type received");
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void handlePayloadUpdate(PayloadTransferUpdate update) {
+        Log.d(TAG, String.format("Update for payload %d", update.getPayloadId()));
+    }
+
+
     /**
-     * Clears all servers map data as well as serverName/serverID and starts discovery
+     * Discover new endpoints
+     * @param callback Callbacks for success / Failure in discovery
+     * @param discoveryCallback Discovery callbacks to act on discovered entpoints
      */
-    public void discover() {
+    public void discover(ConnectCallback callback, EndpointDiscoveryCallback discoveryCallback) {
         if (connectionsClient == null) {
             Log.e(TAG, "connectionsClient is null, cannot discover.");
             return;
@@ -104,16 +151,12 @@ public class ServerConnection {
         DiscoveryOptions discoveryOptions =
                 new DiscoveryOptions.Builder().setStrategy(STRATEGY).build();
 
-        connectionsClient.startDiscovery("com.amos.server", endpointDiscoveryCallback,
+        connectionsClient.startDiscovery("com.amos.server", discoveryCallback,
                 discoveryOptions)
-                .addOnSuccessListener((Void unused) -> {
-                    // started searching for servers successfully
-                    Log.i(TAG, "Discovering connections on " + serverName);
-                })
+                .addOnSuccessListener((Void unused) -> Log.e(TAG, "Success discover"))
                 .addOnFailureListener((Exception e) -> {
-                    // unable to start discovery
-                    Log.e(TAG, e.toString());
-                    Log.e(TAG, "Unable to start discovery on " + serverName);
+                    Log.e(TAG, "Failed to discover");
+                    callback.failure("Failed to discover");
                 });
     }
 
@@ -123,6 +166,25 @@ public class ServerConnection {
 
     public String getClientID() {
         return clientID;
+    }
+
+    /**
+     * Combined attempt at connecting or initiating discovery if failed.
+     * @param code Suffix of endpoint name to connect to
+     * @param callback Callbacks for success/failure
+     */
+    public void discoverConnect(String code, ConnectCallback callback) {
+        connectTo(code, new ConnectCallback() {
+            @Override
+            public void success(String message) {
+                callback.success(message);
+            }
+
+            @Override
+            public void failure(String message) {
+                discover(callback, buildEndpointDiscoveryCallback(code, callback));
+            }
+        });
     }
 
     /**
@@ -150,7 +212,7 @@ public class ServerConnection {
             // callback success will be called in the subsequent function
             connectionsClient.requestConnection(searchedClientName, endpoint, buildConnectionLifecycleCallback(callback));
         } else {
-            callback.failure();
+            callback.failure("Did not find endpoint");
         }
 
     }
@@ -181,26 +243,13 @@ public class ServerConnection {
                 @Override
                 public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
                     Log.d(TAG, "Payload received from " + endpointId);
-                    Log.d(TAG, payload.toString());
-
-                    byte[] receivedBytes = payload.asBytes();
-
-                    // Get configuration
-                    if(payload.getType()==Payload.Type.BYTES) {
-                        /**
-                         * Todo: Use and apply received configuration JSON string
-                         */
-                        Log.d(TAG, "Received configuration: " +new String(receivedBytes));
-                        Toast.makeText(connectionsClient.getApplicationContext(), "Received configuration: " +new String(receivedBytes), Toast.LENGTH_LONG).show();
-                    }
-
-
+                    handlePayload(payload);
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate update) {
                     Log.d(TAG, "Payload transfer update from " + endpointId);
-                    Log.d(TAG, update.toString());
+                    handlePayloadUpdate(update);
                 }
             };
 
@@ -208,42 +257,47 @@ public class ServerConnection {
      * Handling of discovered endpoints (servers). Adds new endpoints to servers data maps/list,
      * and removes lost endpoints.
      */
-    private final EndpointDiscoveryCallback endpointDiscoveryCallback =
-            new EndpointDiscoveryCallback() {
-                @Override
-                public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo info) {
-                    // discovered a server, add to data maps
-                    String endpointName = info.getEndpointName();
+    public EndpointDiscoveryCallback buildEndpointDiscoveryCallback(String name, ConnectCallback callback) {
+        return new EndpointDiscoveryCallback() {
+            @Override
+            public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo info) {
+                String endpointName = info.getEndpointName();
 
-                    if (!(clientIDsToNames.containsKey(endpointId)
-                            || clientNamesToIDs.containsKey(endpointName))) {
-                        clients.add(endpointName);
-                        clientNamesToIDs.put(endpointName, endpointId);
-                        clientIDsToNames.put(endpointId, endpointName);
-                        Log.i(TAG, serverName + " discovered endpoint " + endpointId + " with name " + endpointName);
+                if (!(clientIDsToNames.containsKey(endpointId)
+                        || clientNamesToIDs.containsKey(endpointName))) {
+                    clients.add(endpointName);
+                    clientNamesToIDs.put(endpointName, endpointId);
+                    clientIDsToNames.put(endpointId, endpointName);
+                    Log.i(TAG, serverName + " discovered endpoint " + endpointId + " with name " + endpointName);
 
-                    } else {
-                        // this should not happen
-                        while (true) {
-                            if (!clients.remove(endpointName)) break;
-                        }
-                        clients.add(endpointName);
-                        clientIDsToNames.put(endpointId, endpointName);
-                        clientNamesToIDs.put(endpointName, endpointId);
-                        Log.i(TAG, serverName + " rediscovered endpoint " + endpointId + " with name " + endpointName);
+                } else {
+                    // this should not happen
+                    while (true) {
+                        if (!clients.remove(endpointName)) break;
                     }
+                    clients.add(endpointName);
+                    clientIDsToNames.put(endpointId, endpointName);
+                    clientNamesToIDs.put(endpointName, endpointId);
+                    Log.i(TAG, serverName + " rediscovered endpoint " + endpointId + " with name " + endpointName);
                 }
 
-                @Override
-                public void onEndpointLost(@NonNull String endpointId) {
-                    // previously discovered server is no longer reachable, remove from data maps
-                    String lostEndpointName = clientIDsToNames.get(endpointId);
-                    clients.remove(lostEndpointName);
-                    clientIDsToNames.remove(endpointId);
-                    clientNamesToIDs.remove(lostEndpointName);
-                    Log.i(TAG, serverName + " lost discovered endpoint " + endpointId);
+                if (endpointName.endsWith(name)) {
+                    clientID = endpointId;
+                    connectionsClient.requestConnection(endpointName, endpointId, buildConnectionLifecycleCallback(callback));
                 }
-            };
+            }
+
+            @Override
+            public void onEndpointLost(@NonNull String endpointId) {
+                // previously discovered server is no longer reachable, remove from data maps
+                String lostEndpointName = clientIDsToNames.get(endpointId);
+                clients.remove(lostEndpointName);
+                clientIDsToNames.remove(endpointId);
+                clientNamesToIDs.remove(lostEndpointName);
+                Log.i(TAG, serverName + " lost discovered endpoint " + endpointId);
+            }
+        };
+    }
 
     private ConnectionLifecycleCallback buildConnectionLifecycleCallback(ConnectCallback callback) {
         return new ConnectionLifecycleCallback() {
@@ -268,26 +322,30 @@ public class ServerConnection {
                         // successful connection with server
                         Log.i(TAG, "Connected with " + endpointId);
                         resetDiscovery();
-                        callback.success();
+                        connected = true;
+                        callback.success("Connected with " + endpointId);
                         break;
                     case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
                         // connection was rejected by one side (or both)
                         Log.i(TAG, "Connection rejected with " + endpointId);
                         clientID = null;
-                        callback.failure();
+                        connected = false;
+                        callback.failure("Connection rejected");
                         break;
                     case ConnectionsStatusCodes.STATUS_ERROR:
                         // connection was lost
                         Log.w(TAG, "Connection lost: " + endpointId);
                         clientID = null;
-                        callback.failure();
+                        connected = false;
+                        callback.failure("Connection lost");
                         break;
                     default:
                         // unknown status code. we shouldn't be here
                         Log.e(TAG, "Unknown error when attempting to connect with "
                                 + endpointId);
+                        connected = false;
                         clientID = null;
-                        callback.failure();
+                        callback.failure("Connection failure unknown");
                         break;
                 }
             }
@@ -297,6 +355,8 @@ public class ServerConnection {
                 // disconnected from server
                 Log.i(TAG, "Disconnected from " + endpointId);
                 resetClientData();
+                connected = false;
+                callback.failure("Disconnected");
             }
         };
     }
@@ -320,6 +380,10 @@ public class ServerConnection {
         String name = Build.MODEL + "_" + sb.toString();
         Log.i(TAG, "Current name is: " + name);
         return name;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 
     /**

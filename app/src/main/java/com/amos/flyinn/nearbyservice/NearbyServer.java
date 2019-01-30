@@ -1,9 +1,13 @@
 package com.amos.flyinn.nearbyservice;
 
 import android.Manifest;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.amos.flyinn.R;
 import com.amos.flyinn.configuration.ConfigurationSender;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
@@ -22,7 +26,7 @@ import com.google.android.gms.nearby.connection.Strategy;
  * incoming connections.
  */
 class NearbyServer {
-    public static final String TAG = NearbyServer.class.getPackage().getName();
+    public static final String TAG = "NearbyServer";
     /**
      * Required permissions for Nearby connections
      */
@@ -47,7 +51,7 @@ class NearbyServer {
     protected ConnectionsClient connectionsClient;
     private final String serviceName = "nearby_server";
     private final String serviceID = "com.amos.server";
-    private String clientID;
+    public String clientID;
     private String clientName;
 
     private NearbyService nearbyService;
@@ -64,6 +68,7 @@ class NearbyServer {
 
     /**
      * Server name as combination of name with suffix which is our nearby code
+     *
      * @return
      */
     public String getServerName() {
@@ -100,12 +105,20 @@ class NearbyServer {
                 connectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener((Void unused) -> {
                     Log.d(TAG, "Start advertising Android nearby");
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Advertising android nearby");
+                    nearbyService.setServiceState(NearbyState.ADVERTISING,
+                            nearbyService.getString(R.string.notification_advertising));
                 })
                 .addOnFailureListener((Exception e) -> {
-                    Log.d(TAG, "Error trying to advertise Android nearby");
+                    Log.e(TAG, "Error trying to advertise Android nearby");
                     nearbyService.handleResponse(true, e.toString());
-                    nearbyService.setServiceState(NearbyState.STOPPED, "Failed to advertise android nearby");
+
+                    (new Handler(Looper.getMainLooper())).post(() -> Toast.makeText(
+                            nearbyService.getApplicationContext(),
+                            R.string.nearby_advertising_error, Toast.LENGTH_LONG).show());
+
+                    nearbyService.setServiceState(NearbyState.STOPPED,
+                            nearbyService.getString(R.string.notification_finish));
+                    nearbyService.sendBroadcastMessage("exit");
                 });
     }
 
@@ -115,72 +128,72 @@ class NearbyServer {
     public void stop() {
         connectionsClient.stopAllEndpoints();
         Log.d(TAG, "Stopped all endpoints");
-        nearbyService.setServiceState(NearbyState.STOPPED, "Stopped all endpoints");
+        nearbyService.setServiceState(NearbyState.STOPPED,
+                nearbyService.getString(R.string.notification_stopped));
     }
 
     /**
      * Callbacks for connections to other devices.
      * Includes token authentication and connection handling.
      */
-    private final ConnectionLifecycleCallback connectionLifecycleCallback =
-            new ConnectionLifecycleCallback() {
-                @Override
-                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                    clientName = connectionInfo.getEndpointName();
-                    connectionsClient.acceptConnection(endpointId, payloadCallback);
-                    Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.CONNECTING, "Connecting to " + endpointId);
-                }
+    private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
+        @Override
+        public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+            clientName = connectionInfo.getEndpointName();
+            connectionsClient.acceptConnection(endpointId, payloadCallback);
+            Log.i(TAG, "Auto accepting initiated connection from " + endpointId);
+            nearbyService.setServiceState(NearbyState.CONNECTING, "Connecting to " + endpointId);
+        }
 
-                @Override
-                public void onConnectionResult(String endpointId, ConnectionResolution result) {
-                    switch (result.getStatus().getStatusCode()) {
-                        case ConnectionsStatusCodes.STATUS_OK:
-                            // successful connection with client
-                            Log.i(TAG, "Connected with " + endpointId);
-                            connectionsClient.stopAdvertising();
-                            clientID = endpointId;
-                            nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
+        @Override
+        public void onConnectionResult(String endpointId, ConnectionResolution result) {
+            switch (result.getStatus().getStatusCode()) {
+                case ConnectionsStatusCodes.STATUS_OK:
+                    // successful connection with client
+                    Log.i(TAG, "Connected with " + endpointId);
+                    connectionsClient.stopAdvertising();
+                    clientID = endpointId;
+                    nearbyService.setServiceState(NearbyState.CONNECTED, "Connected to " + endpointId);
+                    // Send configuration
+                    new ConfigurationSender(endpointId, nearbyService);
+                    break;
 
-                            // Send configuration
-                            new ConfigurationSender(endpointId, nearbyService);
+                case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
+                    // connection was rejected by one side (or both)
+                    Log.i(TAG, "Connection rejected with " + endpointId);
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Rejected with " + endpointId);
+                    clearClientData();
+                    break;
 
-                            break;
+                case ConnectionsStatusCodes.STATUS_ERROR:
+                    // connection was lost
+                    Log.w(TAG, "Connection lost: " + endpointId);
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Connection lost to " + endpointId);
+                    clearClientData();
+                    break;
 
-                        case ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED:
-                            // connection was rejected by one side (or both)
-                            Log.i(TAG, "Connection rejected with " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Rejected with " + endpointId);
-                            clearClientData();
-                            break;
+                default:
+                    // unknown status code. we shouldn't be here
+                    Log.e(TAG, "Unknown error when attempting to connect with " + endpointId);
+                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Unknown error with " + endpointId);
+                    clearClientData();
+                    break;
+            }
+        }
 
-                        case ConnectionsStatusCodes.STATUS_ERROR:
-                            // connection was lost
-                            Log.w(TAG, "Connection lost: " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Connection lost to " + endpointId);
-                            clearClientData();
-                            break;
-
-                        default:
-                            // unknown status code. we shouldn't be here
-                            Log.e(TAG, "Unknown error when attempting to connect with " + endpointId);
-                            nearbyService.setServiceState(NearbyState.ADVERTISING, "Unknown error with " + endpointId);
-                            clearClientData();
-                    }
-                }
-
-                @Override
-                public void onDisconnected(String endpointId) {
-                    // disconnected from client
-                    Log.i(TAG, "Disconnected from " + endpointId);
-                    nearbyService.setServiceState(NearbyState.ADVERTISING, "Disconnected from " + endpointId);
-                }
-            };
+        @Override
+        public void onDisconnected(String endpointId) {
+            // disconnected from client
+            Log.i(TAG, "Disconnected from " + endpointId);
+            nearbyService.setServiceState(NearbyState.ADVERTISING, "Disconnected from " + endpointId);
+        }
+    };
 
     /**
      * Resets client ID and client name to null.
      */
     private void clearClientData() {
+        Log.d(TAG, "Clear client credentials");
         clientID = null;
         clientName = null;
     }

@@ -1,28 +1,32 @@
 <resources>
     <string name="app_name">FlyInn</string>
-    <string name="title_activity_adb">ADBActivity</string>
     <string name="title_activity_build_info">BuildInfoActivity</string>
-
+    
     <string name="nearby_missing_permissions">Cannot start without required permissions.</string>
-    <string name="nearby_close_connection">Close connection to:</string>
-    <string name="nearby_discovering_error">Could not start searching for connections.</string>
-    <string name="nearby_discovering_success">Started searching for connections.</string>
+    <string name="nearby_permissions_version">Cannot check permissions due to Android API version.</string>
     <string name="nearby_advertising_error">Could not start searching for connections.</string>
-    <string name="nearby_connection_success">Connection established.</string>
-    <string name="nearby_connection_rejected">Connection was rejected.</string>
-    <string name="nearby_connection_error">Failed to establish connection.</string>
-    <string name="nearby_disconnected">Connection closed.</string>
 
-    <string name="flyinn_name">FlyInn-</string>
+    <string name="notification_name">FlyInn client</string>
+    <string name="notification_initialising">Initialising application.</string>
+    <string name="notification_advertising">Searching for FlyInn servers.</string>
+    <string name="notification_stopped">Stopped all networking.</string>
+    <string name="notification_finish">Application shutting down.</string>
 
     <string name="buildinfo_git_tag_name">Git Tag: </string>
     <string name="buildinfo_git_commit_date">Git Commit: </string>
     <string name="buildinfo_build_date">Build: </string>
     <string name="buildinfo_package">Package: </string>
-    <string name="title_activity_nearby_connection">NearbyConnectionActivity</string>
-    <string name="title_activity_client_conn_auth">ClientConnAuth</string>
-    <string name="title_activity_configuration">ConfigurationActivity</string>
-
+    <string name="title_activity_connected">ConnectedActivity</string>
     <string name="configuration_screen_ratio">Screen ratio:</string>
     <string name="configuration_proximitysensor">Use proximity sensor</string>
+    <string name="label_code_text">Enter the code on the Vehicle</string>
+    <string name="default_code">1234</string>
+    <string name="minor_label_code_text">To Start Sharing</string>
+    <string name="error_label_text">Something Went Wrong</string>
+    <string name="error_close_label">Close App</string>
+    <string name="error_restart_label">Restart App</string>
+    <string name="label_connected">You are connected</string>
+    <string name="label_home_button">Switch to home screen</string>
+    <string name="label_close_button">Close Connection</string>
+    <string name="error_image_description">Error Sign</string>
 </resources>
