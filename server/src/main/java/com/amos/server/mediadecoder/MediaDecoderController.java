@@ -17,10 +17,6 @@ import java.net.Socket;
 public class MediaDecoderController implements HandlePayload {
     private static final MediaDecoderController ourInstance = new MediaDecoderController();
 
-    public static MediaDecoderController getInstance() {
-        return ourInstance;
-    }
-
     private Surface surface = null;
     private InputStream input = null;
 
@@ -28,6 +24,10 @@ public class MediaDecoderController implements HandlePayload {
     private MediaCodec codec;
 
     private static final String TAG = "MediaDecoderController";
+
+    public static MediaDecoderController getInstance() {
+        return ourInstance;
+    }
 
     private MediaDecoderController() {
     }
@@ -103,7 +103,7 @@ public class MediaDecoderController implements HandlePayload {
         if (input != null) {
             try {
                 input.close();
-            } catch (IOException ignored){} finally {input = null;};
+            } catch (IOException ignored){} finally {input = null;}
         }
         codec.stop();
         codec.reset();

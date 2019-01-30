@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class ConnectedActivity extends Activity {
 
-    SurfaceView surfaceView;
+    private SurfaceView surfaceView;
 
     /**
      * Connection singleton managing nearby connection
@@ -66,6 +66,10 @@ public class ConnectedActivity extends Activity {
         //     }
         // });
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            /**
+             * Executed on surface creation. Not needed, since we will instantiate with available surface.
+             * @param sHolder
+             */
             @Override
             public void surfaceCreated(SurfaceHolder sHolder) {
             }
@@ -78,6 +82,10 @@ public class ConnectedActivity extends Activity {
                 transmitInputEvents();
             }
 
+            /**
+             * Executed on surface destruction. Not implemented, since the view will remain in foreground on the server.
+             * @param sHolder
+             */
             @Override
             public void surfaceDestroyed(SurfaceHolder sHolder) {}
         });

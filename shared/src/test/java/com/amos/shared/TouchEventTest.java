@@ -3,7 +3,6 @@ package com.amos.shared;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.graphics.Point;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

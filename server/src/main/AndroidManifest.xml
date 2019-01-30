@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.amos.server">
 
     <uses-permission
@@ -27,7 +28,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="landscape"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup">
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
@@ -41,6 +43,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.HOME"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -48,14 +51,13 @@
         <activity
             android:name=".ConnectionSetupServerActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SettingsScreen.SettingsActivity" />
+        <activity android:name=".settingscreen.SettingsActivity" />
         <activity
             android:name=".ConnectedActivity"
             android:label="@string/title_activity_connected"
             android:screenOrientation="landscape"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".errorScreen.ErrorActivity" />
     </application>
 
 </manifest>

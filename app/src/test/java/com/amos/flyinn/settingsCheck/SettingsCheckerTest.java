@@ -2,9 +2,6 @@ package com.amos.flyinn.settingsCheck;
 
 import android.content.Context;
 import android.provider.Settings;
-import android.util.Log;
-
-import com.amos.flyinn.summoner.Daemon;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

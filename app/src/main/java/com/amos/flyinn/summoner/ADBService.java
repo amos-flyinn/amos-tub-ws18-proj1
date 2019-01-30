@@ -6,13 +6,17 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.google.android.gms.common.util.IOUtils;
+import com.tananaev.adblib.AdbBase64;
 import com.tananaev.adblib.AdbConnection;
 import com.tananaev.adblib.AdbCrypto;
 import com.tananaev.adblib.AdbStream;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+
 import java.util.Objects;
 
 /**
@@ -48,11 +52,9 @@ public class ADBService extends IntentService {
         AdbConnection connection;
         try {
             Socket socket = new Socket("127.0.0.1", 5555);
-            AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(data -> {
-                String s = Base64.encodeToString(data, 16).replace("\n", "");
-                Log.d("ADBService", "New key is" + s);
-                return s;
-            });
+
+            AdbCrypto crypto = setupADBCrypto();
+
             Log.d("ADBService", "Acquiring connection to port :5555");
             connection = AdbConnection.create(socket, crypto);
             Log.d("ADBService", "Trying to connect to ADB session");
@@ -64,6 +66,48 @@ public class ADBService extends IntentService {
         }
         Log.d("ADBService", "Got the ADB connection");
         return connection;
+    }
+
+    /**
+     * Setup the ADB Crypto object: Try to load it from cache dir or create new one
+     *
+     * @return ADBCrypto
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    public AdbCrypto setupADBCrypto() throws NoSuchAlgorithmException, IOException {
+
+        String cachePath = this.getApplicationContext().getCacheDir().getAbsolutePath();
+
+        File pub = new File(cachePath + File.separatorChar + "pub.key");
+        File priv = new File(cachePath + File.separatorChar + "priv.key");
+        AdbCrypto crypto = null;
+
+        // set base64 function
+        AdbBase64 newadb64=data -> {
+            String s = Base64.encodeToString(data, 16).replace("\n", "");
+            return s;
+        };
+
+        // Try to load a key pair from the files
+        if (pub.exists() && priv.exists()) {
+            try {
+                crypto = AdbCrypto.loadAdbKeyPair(newadb64, priv, pub);
+            } catch (Exception e) {
+                crypto = null;
+            }
+        }
+
+        if (crypto == null) {
+            // Generate ADB key
+            crypto = AdbCrypto.generateAdbKeyPair(newadb64);
+            crypto.saveAdbKeyPair(priv, pub);
+            Log.d("ADBService", "Generated new adb keypair");
+        } else {
+            Log.d("ADBService", "Loaded existing adb keypair");
+        }
+
+        return crypto;
     }
 
     /**
