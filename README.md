@@ -16,7 +16,7 @@ Click the thumbnail to watch the FlyInn app in action!
 
 ## Prerequisites
 
-*   API level: at least 21 (Android 5 Lollipop) for the client, at least 26 (Android 8 Oreo) for the server
+*   API level: at least 21 (Android 5 Lollipop) for the client, at least 25 (Android 7 Nougat) for the server
 *   Google Play Services: version 7.8.0 or higher
 *   Enabled settings: ADB over Network, USB debugging
 *   Permissions: access location (since the apps use Android Nearby)
