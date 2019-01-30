@@ -237,6 +237,9 @@ public class NearbyService extends IntentService {
                 startService(i);
                 Log.d(TAG, "Send payload to activity");
                 break;
+            default:
+                Log.e(TAG, "Unknown payload type");
+                break;
         }
     }
 
