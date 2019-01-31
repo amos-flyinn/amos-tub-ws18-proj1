@@ -42,6 +42,7 @@ public class ShowCodeActivity extends AppCompatActivity {
     private static final String TAG = "showCode";
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
+    private boolean servicesStarted = false;
 
     public static final String[] STORAGE_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -139,6 +140,7 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Starts adb and sets nearby service
      */
     protected void startServices() {
+        if (servicesStarted) { return; }
         try {
             createADBService();
         } catch (Exception e) {
@@ -147,6 +149,7 @@ public class ShowCodeActivity extends AppCompatActivity {
         }
 
         setService();
+        servicesStarted = true;
     }
 
     protected void createADBService() throws Exception {
