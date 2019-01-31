@@ -46,10 +46,10 @@ Remote interaction with the smartphone is possible through input mirroring. Touc
 ### Status
 The current state of the app on both devices is shown in the form of notifications. The server app shows a notification when initializing the app.  
 The client app differentiates between four states:
-* Initializing
-* Searching for devices to connect to
-* Stopped networking
-* Shutting down
+*   Initializing
+*   Searching for devices to connect to
+*   Stopped networking
+*   Shutting down
 
 
 ## Installation
