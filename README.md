@@ -37,26 +37,19 @@ The connection is established as follows:
 :exclamation: Locking the screen on client (or server) devices may close the connection. To ensure correct functionality of the FlyInn app, it is recommended that the device screens always be active.
 
 ### Screen mirroring
-As long as there is a device connection, the client smartphone screen will be mirrored on the embedded server device. If the user chooses to return to the home screen, the app is still running in the background.
-The user can now put their phone away and still track its screen and fully interact with it in real time through the embedded server device.
+As long as there is a device connection, the client smartphone screen will be mirrored on the embedded server device. If the user chooses to return to the home screen, the app is still running in the background. The user can now put their phone away and still track its screen and fully interact with it in real time through the embedded server device.
 
 ### Input mirroring
 Remote interaction with the smartphone is possible through input mirroring. Touch events on the embedded server device will be transmitted to the smartphone in real time. The users are now able to comfortably configure routes in their navigation apps, send text messages, check their e-mail account, etc. --- all while their smartphone is safe in their pocket.
 
-### Status
-The current state of the app on both devices is shown in the form of notifications. The server app shows a notification when initializing the app.  
-The client app differentiates between four states:
-*   Initializing
-*   Searching for devices to connect to
-*   Stopped networking
-*   Shutting down
-
+### App state
+The current state of the running apps on both client and server devices is shown in the form of notifications. Tapping these notifications will open the instance of the respective app currently running on the device.
 
 ## Installation
 To install the FlyInn client or server app, copy the desired *.apk file onto a device and install them like any other app.
 
 ## Troubleshooting
-If the app freezes or crashes, force stop the app (from Settings -> Applications -> Application manager) before restarting it to ensure a clean restart.
+If the app freezes or crashes, force stop the app (from Settings -> Applications) before restarting it to ensure a clean restart.
 
 ## Contributors
 The FlyInn application is a product of the [AMOS (Agile Methods and Open Source) project](https://www.qds.tu-berlin.de/menue/lehre/wintersemester/pj_das_amos_projekt/) offered for Computer Science students at the Technische Universität Berlin. The industry partner for the project is the [IAV Digital Lab](https://www.iav.com/en/digital-lab#overview).
