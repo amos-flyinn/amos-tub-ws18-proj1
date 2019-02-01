@@ -17,9 +17,10 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/firstPinView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.227"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.444" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:visibility="gone"
@@ -45,16 +46,15 @@
         tools:ignore="Autofill" />
 
     <com.chaos.view.PinView
+        android:focusable="false"
         android:id="@+id/firstPinView"
         style="@style/PinWidget.PinView"
-        android:layout_width="192dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="197dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:cursorVisible="true"
-        android:focusable="false"
         android:inputType="text"
         android:itemBackground="@color/white"
         android:textColor="@color/colorPrimaryDark"
@@ -68,10 +68,9 @@
         app:itemSpacing="0dp"
         app:itemWidth="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.261"
+        app:layout_constraintVertical_bias="0.455"
         app:lineColor="@color/colorPrimaryDark"
         app:lineWidth="2dp"
         app:viewType="rectangle" />
@@ -91,16 +90,14 @@
     <LinearLayout
         android:layout_width="227dp"
         android:layout_height="286dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9">
+        app:layout_constraintVertical_bias="0.492">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,12 +110,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn1"
                 android:text="1"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn1"/>
 
             <Button
                 android:id="@+id/btn2"
@@ -127,12 +124,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn2"
                 android:text="2"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn2"/>
 
             <Button
                 android:id="@+id/btn3"
@@ -141,12 +138,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn3"
                 android:text="3"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn3"/>
         </LinearLayout>
 
         <LinearLayout
@@ -160,12 +157,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn4"
                 android:text="4"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn4"/>
 
             <Button
                 android:id="@+id/btn5"
@@ -175,12 +172,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn5"
                 android:text="5"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn5"/>
 
             <Button
                 android:id="@+id/btn6"
@@ -189,12 +186,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn6"
                 android:text="6"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn6"/>
         </LinearLayout>
 
         <LinearLayout
@@ -208,12 +205,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn7"
                 android:text="7"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn7"/>
 
             <Button
                 android:id="@+id/btn8"
@@ -222,12 +219,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn8"
                 android:text="8"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn8"/>
 
             <Button
                 android:id="@+id/btn9"
@@ -236,12 +233,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn9"
                 android:text="9"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn9"/>
         </LinearLayout>
 
         <LinearLayout
@@ -255,12 +252,12 @@
                 android:layout_margin="8dp"
                 android:layout_weight="0"
                 android:background="@drawable/ic_backspace_black_24dp"
-                android:onClick="onClickbackspace"
                 android:text=""
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbackspace"/>
 
 
             <Button
@@ -270,12 +267,13 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
-                android:onClick="onClickbtn0"
                 android:text="0"
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtn0"
+                />
 
             <Button
                 android:id="@+id/btnSubmit"
@@ -284,12 +282,13 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/ic_check_box_black_24dp"
-                android:onClick="onClickbtnSubmit"
                 android:text=""
                 android:textColor="@color/white"
                 android:textSize="25dp"
                 tools:layout_editor_absoluteX="105dp"
-                tools:layout_editor_absoluteY="48dp" />
+                tools:layout_editor_absoluteY="48dp"
+                android:onClick="onClickbtnSubmit"
+                />
 
         </LinearLayout>
     </LinearLayout>
