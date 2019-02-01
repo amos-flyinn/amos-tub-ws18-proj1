@@ -17,7 +17,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,7 +45,7 @@ public class ConnectToClientActivity extends Activity {
 
     private static final int NOTIFY_ID = 2;
     private static final String CHANNEL_ID = "FlyInn server nearby";
-    PinView pinView;
+    private PinView pinView;
     private ServerConnection connection = ServerConnection.getInstance();
 
     /** Tag for logging purposes. */
@@ -76,9 +75,7 @@ public class ConnectToClientActivity extends Activity {
         pinView = findViewById(R.id.firstPinView);
         //deactivate keyboard for the pinview
         pinView.setInputType(InputType.TYPE_NULL);
-
-        codeBoxes();
-
+        
         createChannel();
         notification(getString(R.string.notification_initialising));
 
@@ -99,9 +96,7 @@ public class ConnectToClientActivity extends Activity {
                 });
     }
 
-    private void codeBoxes() {
 
-    }
 
     /**
      * Switch to connection setup activity
