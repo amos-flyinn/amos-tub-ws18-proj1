@@ -67,9 +67,9 @@ public class MediaDecoderController implements HandlePayload {
             codec.configure(format, surface, null, 0);
             codec.start();
             InputQueue inputQueue = new InputQueue(codec, input);
-            OutputQueue outputQueuer = new OutputQueue(codec);
+            OutputQueue outputQueue = new OutputQueue(codec);
             inputThread = new Thread(inputQueue);
-            outputThread = new Thread(outputQueuer);
+            outputThread = new Thread(outputQueue);
             inputThread.start();
             outputThread.start();
         } catch (IOException ignored) {}

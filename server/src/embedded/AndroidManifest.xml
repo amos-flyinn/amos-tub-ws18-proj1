@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.amos.server">
     <application
-        android:screenOrientation="landscape"
+        android:screenOrientation="portrait"
         tools:replace="android:screenOrientation">
         <uses-library android:name="com.google.android.things"
             tools:node="merge"/>
         <activity
             android:name=".BuildInfoActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             tools:replace="android:screenOrientation"/>
         <activity android:name=".ConnectToClientActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             tools:replace="android:screenOrientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".ConnectedActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
         tools:replace="android:screenOrientation"/>
     </application>
 </manifest>
