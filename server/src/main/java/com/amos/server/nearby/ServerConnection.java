@@ -218,6 +218,7 @@ public class ServerConnection implements PayloadHandling {
     }
 
     public void abort() {
+        connectionsClient.stopAllEndpoints();
         resetDiscovery();
         resetClientData();
     }
