@@ -26,27 +26,21 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:screenOrientation="landscape"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
         tools:ignore="AllowBackup"
         android:theme="@style/AppTheme">
         <activity
             android:name=".BuildInfoActivity"
             android:label="@string/title_activity_build_info"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ConnectToClientActivity"
-            android:screenOrientation="landscape" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.HOME"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -55,8 +49,7 @@
         <activity android:name=".settingscreen.SettingsActivity" />
         <activity
             android:name=".ConnectedActivity"
-            android:label="@string/title_activity_connected"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".errorscreen.ErrorActivity" />

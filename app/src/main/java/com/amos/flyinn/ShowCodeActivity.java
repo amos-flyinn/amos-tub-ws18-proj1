@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.summoner.Daemon;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.security.SecureRandom;
 import java.util.Locale;
 
@@ -40,6 +42,7 @@ public class ShowCodeActivity extends AppCompatActivity {
     private static final String TAG = "showCode";
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
 
+    private boolean servicesStarted = false;
 
     public static final String[] STORAGE_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -90,15 +93,54 @@ public class ShowCodeActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver,
                 new IntentFilter("msg-flyinn"));
         bindService(new Intent(ShowCodeActivity.this,
-                        KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
+                KillNotificationService.class), myConnection, Context.BIND_AUTO_CREATE);
 
         setContentView(R.layout.activity_show_code);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         TextView display = findViewById(R.id.textView2);
 
-        checkPermissions(STORAGE_PERMISSIONS);
-        checkPermissions(NearbyService.getRequiredPermissions());
 
+        // create app code between 0 and 9999; secureRandom is non-deterministic
+        nameNum = String.format(Locale.ROOT, "%04d", new SecureRandom().nextInt(9999 + 1));
+
+        Log.i(TAG, "App code is set to " + nameNum);
+        display.setText(nameNum);
+
+        validatePermissionsAndStartServices();
+    }
+
+    /**
+     * Checks if all permissions are given, requests them and start service if yes
+     */
+    protected void validatePermissionsAndStartServices() {
+        // Collect all necessary permissions
+        ArrayList<String> permissionsList = new ArrayList<>();
+        permissionsList.addAll(Arrays.asList(NearbyService.getRequiredPermissions()));
+        permissionsList.addAll(Arrays.asList(STORAGE_PERMISSIONS));
+        String[] allPermissions = new String[permissionsList.size()];
+        allPermissions = permissionsList.toArray(allPermissions);
+
+        // Request missing permissions
+        if(hasPermissions(allPermissions)) {
+            startServices();
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(allPermissions, REQUEST_CODE_REQUIRED_PERMISSIONS);
+        } else {
+            Log.e(TAG, "Could not check permissions due to version");
+            Toast.makeText(this, R.string.nearby_permissions_version, Toast.LENGTH_LONG).show();
+            closeApp();
+        }
+
+    }
+
+    /**
+     * Starts adb and sets nearby service
+     */
+    protected void startServices() {
+        if (servicesStarted) { return; }
         try {
             createADBService();
         } catch (Exception e) {
@@ -106,12 +148,8 @@ public class ShowCodeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // create app code between 0 and 9999; secureRandom is non-deterministic
-        nameNum = String.format(Locale.ROOT, "%04d", new SecureRandom().nextInt(9999 + 1));
-
-        Log.i(TAG, "App code is set to " + nameNum);
-        display.setText(nameNum);
         setService();
+        servicesStarted = true;
     }
 
     protected void createADBService() throws Exception {
@@ -154,17 +192,6 @@ public class ShowCodeActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void checkPermissions(String[] permissions) {
-        if (!hasPermissions(permissions)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(permissions, REQUEST_CODE_REQUIRED_PERMISSIONS);
-            } else {
-                Log.w(TAG, "Could not check permissions due to version");
-                Toast.makeText(this, R.string.nearby_permissions_version, Toast.LENGTH_LONG).show();
-                closeApp();
-            }
-        }
-    }
 
     /**
      * Handles user acceptance (or denial) of our permission request.
@@ -190,7 +217,7 @@ public class ShowCodeActivity extends AppCompatActivity {
                 closeApp();
             }
         }
-        recreate();
+        startServices();
     }
 
     /**

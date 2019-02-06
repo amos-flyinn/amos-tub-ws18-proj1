@@ -51,6 +51,8 @@ public class ConnectToClientActivity extends Activity {
     /** Tag for logging purposes. */
     private static final String TAG = "ServerConnectToClient";
 
+    private boolean nearbyStarted = false;
+
     private ServiceConnection myConnection = new ServiceConnection() {
         public void onServiceConnected (ComponentName className, IBinder binder) {
             ((KillNotificationService.KillBinder) binder).service.startService(
@@ -79,15 +81,11 @@ public class ConnectToClientActivity extends Activity {
         createChannel();
         notification(getString(R.string.notification_initialising));
 
-        checkPermissions();
-        // Ensure survival for life of entire application
-        connection.init(getApplicationContext());
-        // connection.discover();
-        MediaDecoderController.getInstance().registerNearby();
+        checkPermissionsAndStartNearby();
 
         text.setOnEditorActionListener(
                 (TextView v, int actionId, KeyEvent event) -> {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE && nearbyStarted) {
                         String name = v.getText().toString(); // Get the String
                         toConnectionSetup(name);
                         return true;
@@ -116,7 +114,7 @@ public class ConnectToClientActivity extends Activity {
         super.onStart();
 
         // user may have changed permissions
-        checkPermissions();
+        checkPermissionsAndStartNearby();
     }
 
     /**
@@ -141,12 +139,24 @@ public class ConnectToClientActivity extends Activity {
     /**
      * Checks whether FlyInn has the required permissions
      */
-    private void checkPermissions() {
+    private void checkPermissionsAndStartNearby() {
         if (!hasPermissions(this)) {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_REQUIRED_PERMISSIONS);
         } else {
             Log.d(TAG, "Permissions are ok.");
+            startNearby();
         }
+    }
+    
+    private void startNearby() {
+        if (nearbyStarted) { return; }
+
+        // Ensure survival for life of entire application
+        connection.init(getApplicationContext());
+        // connection.discover();
+        MediaDecoderController.getInstance().registerNearby();
+
+        nearbyStarted = true;
     }
 
     /**
@@ -192,9 +202,10 @@ public class ConnectToClientActivity extends Activity {
                         "Nearby Connection were not granted.");
                 toast(getString(R.string.nearby_missing_permissions));
                 closeApp();
+                return;
             }
         }
-        recreate();
+        startNearby();
     }
 
     /**

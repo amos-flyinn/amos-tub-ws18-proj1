@@ -62,14 +62,14 @@ public class MediaDecoderController implements HandlePayload {
         if (input == null) return;
         try {
             codec = MediaCodec.createDecoderByType("video/avc");
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", 800, 480);
-            format.setInteger("KEY_ROTATION", 180);
+            MediaFormat format = MediaFormat.createVideoFormat("video/avc", 480, 800);
+            // format.setInteger("KEY_ROTATION", 180);
             codec.configure(format, surface, null, 0);
             codec.start();
             InputQueue inputQueue = new InputQueue(codec, input);
-            OutputQueue outputQueuer = new OutputQueue(codec);
+            OutputQueue outputQueue = new OutputQueue(codec);
             inputThread = new Thread(inputQueue);
-            outputThread = new Thread(outputQueuer);
+            outputThread = new Thread(outputQueue);
             inputThread.start();
             outputThread.start();
         } catch (IOException ignored) {}
@@ -105,8 +105,10 @@ public class MediaDecoderController implements HandlePayload {
                 input.close();
             } catch (IOException ignored){} finally {input = null;}
         }
-        codec.stop();
-        codec.reset();
+        if (codec != null) {
+            codec.stop();
+            codec.reset();
+        }
         surface = null;
     }
 }
