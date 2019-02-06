@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
-
 import java.util.Objects;
 
 /**
@@ -34,6 +33,12 @@ public class ADBService extends IntentService {
 
     public ADBService() {
         super("ADBService");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("ADBService", "Destroy the ADB Service!");
     }
 
     @Override
@@ -84,7 +89,7 @@ public class ADBService extends IntentService {
         AdbCrypto crypto = null;
 
         // set base64 function
-        AdbBase64 newadb64=data -> {
+        AdbBase64 newadb64 = data -> {
             String s = Base64.encodeToString(data, 16).replace("\n", "");
             return s;
         };

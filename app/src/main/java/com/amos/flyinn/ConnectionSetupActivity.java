@@ -27,6 +27,7 @@ import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
 import com.amos.flyinn.service.FPSOverlay;
 
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -152,6 +153,8 @@ public class ConnectionSetupActivity extends Activity {
                     data.write(bb.array());
                     outputBuffer.get(qq, 0, info.size);
                     data.write(qq, 0, info.size);
+                } catch (EOFException e) {
+                   stopScreenSharing();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

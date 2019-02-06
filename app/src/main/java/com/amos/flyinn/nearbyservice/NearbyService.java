@@ -274,10 +274,12 @@ public class NearbyService extends IntentService {
      * Stop advertising Android nearby.
      */
     public void stop() {
+       try {
+           server.stop();
+       } catch (Exception ignored) {}
         if (serviceState != NearbyState.STOPPED) {
             Log.d(TAG, "Stopping NearbyService");
             serviceState = NearbyState.STOPPED;
-            server.stop();
         } else {
             Log.d(TAG, "NearbyService already stopped");
         }

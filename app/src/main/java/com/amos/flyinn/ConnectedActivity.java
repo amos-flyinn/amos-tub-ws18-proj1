@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import com.amos.flyinn.nearbyservice.NearbyService;
+
 public class ConnectedActivity extends Activity {
 
     @Override
@@ -39,6 +41,9 @@ public class ConnectedActivity extends Activity {
         if (i != null) {
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         }
+        Intent st = NearbyService.createNearbyIntent(NearbyService.ACTION_STOP, this);
+        startService(st);
+
         startActivity(i);
     }
 }
