@@ -2,8 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.amos.server">
-    <application tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+    <application
+        android:screenOrientation="landscape"
+        tools:replace="android:screenOrientation">
         <uses-library android:name="com.google.android.things"
             tools:node="merge"/>
+        <activity
+            android:name=".BuildInfoActivity"
+            android:screenOrientation="landscape"
+            tools:replace="android:screenOrientation"/>
+        <activity android:name=".ConnectToClientActivity"
+            android:screenOrientation="landscape"
+            tools:replace="android:screenOrientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ConnectedActivity"
+            android:screenOrientation="landscape"
+        tools:replace="android:screenOrientation"/>
     </application>
 </manifest>
