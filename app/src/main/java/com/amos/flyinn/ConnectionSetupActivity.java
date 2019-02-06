@@ -1,11 +1,9 @@
 package com.amos.flyinn;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
@@ -20,16 +18,16 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 
 import com.amos.flyinn.nearbyservice.NearbyService;
 import com.amos.flyinn.nearbyservice.VideoStreamSingleton;
+import com.amos.flyinn.service.FPSOverlay;
 
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -57,7 +55,6 @@ public class ConnectionSetupActivity extends Activity {
     private MediaProjectionManager mProjectionManager;
     private MediaProjection mMediaProjection;
     private MediaProjectionCallback mMediaProjectionCallback;
-    private static final int REQUEST_PERMISSIONS = 10;
     private Surface si;
 
     private MediaCodec codec;
@@ -71,12 +68,8 @@ public class ConnectionSetupActivity extends Activity {
         mScreenDensity = metrics.densityDpi;
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, REQUEST_PERMISSIONS);
-        } else {
-            if (mMediaProjection == null) {
-                startActivityForResult(videoIntent(), REQUEST_CODE);
-            }
+        if (mMediaProjection == null) {
+            startActivityForResult(videoIntent(), REQUEST_CODE);
         }
     }
 
@@ -160,6 +153,8 @@ public class ConnectionSetupActivity extends Activity {
                     data.write(bb.array());
                     outputBuffer.get(qq, 0, info.size);
                     data.write(qq, 0, info.size);
+                } catch (EOFException e) {
+                   stopScreenSharing();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -183,7 +178,7 @@ public class ConnectionSetupActivity extends Activity {
         MediaFormat format = MediaFormat.createVideoFormat(mimetype, width, height);
 //            MediaCodecInfo.VideoCapabilities videoCapabilities = codecInfo.getCapabilitiesForType(MIME_TYPE).getVideoCapabilities();
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, 200_000);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 834_001);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 4000);
@@ -205,8 +200,8 @@ public class ConnectionSetupActivity extends Activity {
     private void initRecorder() {
         Point p = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(p);
-        int w = 400;
-        int h = 240;
+        int w = 480;
+        int h = 800;
         String MIME_TYPE = "video/avc";
         try {
             PipedInputStream stream = new PipedInputStream();
@@ -220,11 +215,6 @@ public class ConnectionSetupActivity extends Activity {
             VideoStreamSingleton.getInstance().os = stream;
             Intent intent = NearbyService.createNearbyIntent(NearbyService.VIDEO_START, this);
             startService(intent);
-
-            {
-                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                StrictMode.setThreadPolicy(policy);
-            }
 
             Log.d(TAG, "Payload sent video_start");
 
@@ -253,6 +243,8 @@ public class ConnectionSetupActivity extends Activity {
                 Log.d(TAG, "Start encoding");
                 codec.start();
             }).start();
+            Intent fpsOverlayIntent = new Intent(getApplicationContext(), FPSOverlay.class);
+            startService(fpsOverlayIntent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -269,9 +261,15 @@ public class ConnectionSetupActivity extends Activity {
     }
 
     private void stopScreenSharing() {
-        codec.stop();
-        codec.release();
-        si.release();
+        if (codec != null) {
+            codec.stop();
+            codec.release();
+        }
+        if (si != null) {
+            si.release();
+        }
+        Intent fpsOverlayIntent = new Intent(getApplicationContext(), FPSOverlay.class);
+        stopService(fpsOverlayIntent);
         // If used: mMediaRecorder object cannot be reused again
         destroyMediaProjection();
     }
