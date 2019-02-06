@@ -14,6 +14,9 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:required="true" />
     <uses-permission
+        android:name="permiss android.permission.SYSTEM_ALERT_WINDOW"
+        android:required="true" />
+    <uses-permission
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="true" />
     <uses-permission

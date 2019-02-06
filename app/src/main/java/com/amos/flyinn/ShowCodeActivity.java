@@ -13,6 +13,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -46,7 +47,8 @@ public class ShowCodeActivity extends AppCompatActivity {
 
     public static final String[] STORAGE_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE};
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO};
 
     private BroadcastReceiver msgReceiver = new BroadcastReceiver() {
         @Override
@@ -113,6 +115,12 @@ public class ShowCodeActivity extends AppCompatActivity {
      * Checks if all permissions are given, requests them and start service if yes
      */
     protected void validatePermissionsAndStartServices() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intentSettings = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivityForResult(intentSettings, 10);
+            }
+        }
         // Collect all necessary permissions
         ArrayList<String> permissionsList = new ArrayList<>();
         permissionsList.addAll(Arrays.asList(NearbyService.getRequiredPermissions()));
