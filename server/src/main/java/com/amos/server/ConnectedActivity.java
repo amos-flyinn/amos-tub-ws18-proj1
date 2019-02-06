@@ -41,32 +41,6 @@ public class ConnectedActivity extends Activity {
         hideSystemUI();
 
         surfaceView = findViewById(R.id.surfaceView);
-        // surfaceView.setRotation(270);
-        // surfaceView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-        //     @Override
-        //     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        //         Log.d(TAG, "Surface changed");
-        //         Log.d(TAG, String.format("%d %d", surfaceView.getWidth(), surfaceView.getHeight()));
-        //         transmitInputEvents();
-        //         MediaDecoderController.getInstance().registerOutput(new Surface(surface));
-        //         // MediaDecoderController.getInstance().network();
-
-        //     }
-
-        //     @Override
-        //     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
-        //     }
-
-        //     @Override
-        //     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        //         return false;
-        //     }
-
-        //     @Override
-        //     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        //     }
-        // });
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder sHolder) {
